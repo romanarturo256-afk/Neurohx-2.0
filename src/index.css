@@ -1,0 +1,48 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+:root {
+  --color-primary: #2d7a36;
+  --color-secondary: #f0f4f3;
+  --color-background: #9ba9a6;
+  --color-accent: #8a9996;
+  --text-primary: #1a2b27;
+  --text-secondary: #4a5a57;
+}
+
+.dark {
+  --color-primary: #4ade80;
+  --color-secondary: #1a2b27;
+  --color-background: #0f172a;
+  --color-accent: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+}
+
+@theme {
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
+  --color-background: var(--color-background);
+  --color-accent: var(--color-accent);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+}
+
+/* Performance Optimizations for High Frame Rates */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform, opacity;
+}
+
+.smooth-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}

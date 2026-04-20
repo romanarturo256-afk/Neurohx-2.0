@@ -1,0 +1,29 @@
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import DashboardLayout from '../components/DashboardLayout';
+import Overview from '../components/Overview';
+import Chat from '../components/Chat';
+import Journal from '../components/Journal';
+import Habits from '../components/Habits';
+import Mood from '../components/Mood';
+import Assessments from '../components/Assessments';
+import Settings from '../components/Settings';
+import Support from '../components/Support';
+
+export default function Dashboard() {
+  return (
+    <DashboardLayout>
+      <Routes>
+        <Route index element={<Overview />} />
+        <Route path="chat" element={<Chat />} />
+        <Route path="journal" element={<Journal />} />
+        <Route path="habits" element={<Habits />} />
+        <Route path="mood" element={<Mood />} />
+        <Route path="assessments" element={<Assessments />} />
+        <Route path="settings" element={<Settings />} />
+        <Route path="support" element={<Support />} />
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      </Routes>
+    </DashboardLayout>
+  );
+}

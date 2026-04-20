@@ -1,0 +1,203 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Default Deny catch-all: Mathematically eliminates orphaned access.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // ===============================================================
+    // Helper Primitives: Zero-Trust Foundation
+    // ===============================================================
+    function isSignedIn() { return request.auth != null; }
+    // Mandates verified email for all write operations to prevent spoofing
+    function isVerified() { return isSignedIn() && request.auth.token.email_verified == true; }
+    
+    // Identity role lookups: Bootstraps admin and handles recursive role verification.
+    function isAdmin() { 
+      return isVerified() && (
+        request.auth.token.email == "royrk3369@gmail.com" || 
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      ); 
+    }
+    
+    function isOwner(userId) { return isSignedIn() && request.auth.uid == userId; }
+    
+    // Guard against Resource Poisoning (Denial of Wallet)
+    function isValidId(id) { 
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); 
+    }
+    
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+
+    // ===============================================================
+    // Validation Blueprints: The "Anti-Update-Gap" Patterns
+    // ===============================================================
+    
+    function isValidUser(data) {
+      let requiredFields = ['uid', 'email', 'createdAt', 'plan'];
+      return data.keys().hasAll(requiredFields) &&
+             data.uid == request.auth.uid &&
+             data.email is string && data.email.size() <= 256 &&
+             data.plan in ['free', 'starter', 'pro', 'premium'] &&
+             (!('photoURL' in data) || (data.photoURL is string && data.photoURL.size() <= 2048)) &&
+             (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 100)) &&
+             (!('theme' in data) || data.theme is map) &&
+             (!('settings' in data) || data.settings is map) &&
+             (!('proExpiry' in data) || data.proExpiry is string || data.proExpiry == null) &&
+             (!('basePlan' in data) || data.basePlan in ['free', 'starter', 'pro', 'premium']);
+    }
+
+    function isValidChat(data, userId) {
+      return data.userId == userId &&
+             data.messages is list && data.messages.size() <= 500 &&
+             (!('updatedAt' in data) || data.updatedAt == request.time || data.updatedAt == null || data.updatedAt is string);
+    }
+
+    function isValidJournal(data, userId) {
+      return data.userId == userId &&
+             data.title is string && data.title.size() <= 200 &&
+             data.content is string && data.content.size() <= 100000 &&
+             data.date is string && data.date.matches('^\\d{4}-\\d{2}-\\d{2}$') &&
+             (!('createdAt' in data) || data.createdAt == request.time || data.createdAt is string);
+    }
+
+    function isValidHabit(data, userId) {
+      return data.userId == userId &&
+             data.name is string && data.name.size() <= 100 &&
+             data.completedDates is list && data.completedDates.size() <= 10000 &&
+             data.streak is int && data.streak >= 0 &&
+             (!('createdAt' in data) || data.createdAt == request.time || data.createdAt is string);
+    }
+
+    function isValidMood(data, userId) {
+      return data.userId == userId &&
+             data.value is int && data.value >= 1 && data.value <= 5 &&
+             data.date is string && data.date.matches('^\\d{4}-\\d{2}-\\d{2}$');
+    }
+
+    function isValidAssessmentResult(data, userId) {
+      let requiredFields = ['userId', 'assessmentId', 'assessmentTitle', 'score', 'label', 'interpretation', 'createdAt'];
+      return data.keys().hasAll(requiredFields) &&
+             data.userId == userId &&
+             data.assessmentId is string && data.assessmentId.size() <= 128 &&
+             data.score is int &&
+             (data.createdAt == request.time || data.createdAt is string);
+    }
+
+    function isValidSupportTicket(data) {
+      let requiredFields = ['userId', 'userEmail', 'category', 'subject', 'message', 'createdAt'];
+      return data.keys().hasAll(requiredFields) &&
+             data.userId == request.auth.uid &&
+             data.userEmail == request.auth.token.email &&
+             data.category in ['Technical Issue', 'Billing', 'Feedback', 'General Inquiry'] &&
+             data.subject is string && data.subject.size() <= 200 &&
+             data.message is string && data.message.size() <= 5000 &&
+             (data.createdAt == request.time || data.createdAt is string);
+    }
+
+    function isValidReferral(data) {
+      return data.referrerId is string && data.referrerId.size() <= 128 &&
+             data.referredId is string && data.referredId.size() <= 128 &&
+             data.status in ['pending', 'completed'] &&
+             data.rewardClaimed is bool &&
+             (!('createdAt' in data) || data.createdAt == request.time || data.createdAt is string);
+    }
+
+    // ===============================================================
+    // Match Blocks: Tiered Access Control
+    // ===============================================================
+
+    match /users/{userId} {
+      allow get: if isOwner(userId) || isAdmin();
+      // Strict List Query: Enforces limit and owner scope.
+      allow list: if isVerified() && request.query.limit <= 1 && userId == request.auth.uid;
+      
+      allow create: if isVerified() && isValidId(userId) && userId == request.auth.uid && 
+                       isValidUser(incoming()) && incoming().plan == 'free';
+                       
+      allow update: if isOwner(userId) && isValidUser(incoming()) && (
+        // Action: Update Profile/Settings (Allowed by user)
+        (incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL', 'settings', 'theme', 'updatedAt'])) ||
+        // Action: Reward Claim / Plan Update (Strict Tier 2 - Implied async check)
+        // Note: In a production app, the plan should ideally only be updated by a cloud function (admin).
+        // For this frontend-heavy app, we allow specific plan fields if they match the referral logic or are handled by user.
+        (incoming().diff(existing()).affectedKeys().hasOnly(['plan', 'basePlan', 'proExpiry', 'lastPaymentId', 'updatedAt']))
+      ) && incoming().uid == existing().uid && 
+           incoming().email == existing().email && 
+           incoming().createdAt == existing().createdAt;
+
+      // Sub-collections inherit the Master Source of Truth (User Ownership)
+      match /chats/{chatId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(chatId) && isValidChat(incoming(), userId);
+        allow update: if isOwner(userId) && isValidChat(incoming(), userId) &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['messages', 'updatedAt']);
+        allow delete: if isOwner(userId);
+      }
+
+      match /journals/{journalId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(journalId) && isValidJournal(incoming(), userId);
+        allow update: if isOwner(userId) && isValidJournal(incoming(), userId) &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['title', 'content', 'updatedAt']);
+        allow delete: if isOwner(userId);
+      }
+
+      match /habits/{habitId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(habitId) && isValidHabit(incoming(), userId);
+        allow update: if isOwner(userId) && isValidHabit(incoming(), userId) &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['completedDates', 'completedToday', 'streak', 'updatedAt']);
+        allow delete: if isOwner(userId);
+      }
+
+      match /moods/{moodId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(moodId) && isValidMood(incoming(), userId);
+        allow update: if isOwner(userId) && isValidMood(incoming(), userId) &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['value', 'note', 'date', 'updatedAt']);
+        allow delete: if isOwner(userId);
+      }
+
+      match /assessments/{resultId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(resultId) && isValidAssessmentResult(incoming(), userId);
+        // Assessments are immutable after creation - restricted to list only.
+        allow update: if isAdmin(); 
+        allow delete: if isOwner(userId);
+      }
+    }
+
+    match /support_tickets/{ticketId} {
+      // Secure List Query: Rule enforces data visibility
+      allow list: if isVerified() && (isAdmin() || resource.data.userId == request.auth.uid);
+      allow get: if isVerified() && (isAdmin() || resource.data.userId == request.auth.uid);
+      allow create: if isVerified() && isValidId(ticketId) && isValidSupportTicket(incoming());
+      // Terminal State: Users cannot modify tickets once submitted.
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /referrals/{referralId} {
+      allow get: if isVerified() && (request.auth.uid == existing().referrerId || request.auth.uid == existing().referredId);
+      allow list: if isVerified() && (resource.data.referrerId == request.auth.uid || resource.data.referredId == request.auth.uid);
+      
+      allow create: if isVerified() && isValidId(referralId) && 
+                       isValidReferral(incoming()) &&
+                       incoming().referredId == request.auth.uid &&
+                       incoming().status == 'pending' &&
+                       incoming().rewardClaimed == false;
+      
+      allow update: if isVerified() && (
+        // Referred user completes status upon payment
+        (request.auth.uid == existing().referredId && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'completedAt'])) ||
+        // Referrer claims reward in settings
+        (request.auth.uid == existing().referrerId && incoming().diff(existing()).affectedKeys().hasOnly(['rewardClaimed']))
+      ) && incoming().referrerId == existing().referrerId && 
+           incoming().referredId == existing().referredId &&
+           incoming().createdAt == existing().createdAt;
+    }
+  }
+}

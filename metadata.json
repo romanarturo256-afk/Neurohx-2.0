@@ -1,0 +1,7 @@
+{
+  "name": "Neurohx: AI Mental Wellness",
+  "description": "Hardened AI mental wellness platform for reflection, journaling, and personal growth with secure Firestore integration.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
