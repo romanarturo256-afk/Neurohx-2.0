@@ -52,7 +52,7 @@ import { Link } from 'react-router-dom';
 
 const plans = [
   { id: 'free', name: 'Free', price: '₹0', amount: 0, features: ['Unlimited AI Chat', 'Basic Responses'] },
-  { id: 'starter', name: 'Starter', price: '₹33', amount: 33, features: ['Save Journals', '1 Habit Tracker'] },
+  { id: 'starter', name: 'Starter', price: '₹33', amount: 33, features: ['Save Journals', 'Daily Reminders'] },
   { id: 'pro', name: 'Pro', price: '₹99', amount: 99, features: ['Unlimited Journals', 'Mood Charts', 'PDF Export'] },
   { id: 'premium', name: 'Premium', price: '₹222', amount: 222, features: ['AI Life Coach', 'Weekly Reports', 'Priority AI'] },
 ];
@@ -200,7 +200,17 @@ export default function Settings() {
         language: 'en',
         fontSize: 'medium',
         darkMode: false,
-        notifications: { email: true, push: true, dailyReminders: true }
+        notifications: { 
+          email: true, 
+          push: true, 
+          dailyReminders: true,
+          smartReminders: {
+            enabled: true,
+            assessmentNudges: true,
+            habitNudges: true,
+            journalNudges: true
+          }
+        }
       };
 
       const pathParts = settingPath.split('.');
@@ -775,6 +785,57 @@ export default function Settings() {
                   </button>
                 </div>
               ))}
+
+              <div className="pt-4 mt-4 border-t border-[#f5f2eb]">
+                <div className="flex items-center gap-2 mb-4">
+                  <Sparkles size={16} className="text-[#8b7cf6]" />
+                  <h4 className="text-xs font-bold text-[#111110] uppercase tracking-wider">Clinical Smart Reminders</h4>
+                </div>
+                
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-4 rounded-2xl bg-[#8b7cf6]/5 border border-[#8b7cf6]/10">
+                    <div>
+                      <p className="text-sm font-bold text-[#111110]">Active Smart Nudges</p>
+                      <p className="text-xs text-[#888880]">Let the sage monitor your metrics and nudge you when intervention is needed.</p>
+                    </div>
+                    <button
+                      onClick={() => handleSettingsUpdate('notifications.smartReminders.enabled', !profile?.settings?.notifications?.smartReminders?.enabled)}
+                      className={cn(
+                        "w-12 h-6 rounded-full relative transition-all",
+                        profile?.settings?.notifications?.smartReminders?.enabled ? "bg-[#8b7cf6]" : "bg-[#e0dbd0]"
+                      )}
+                    >
+                      <div className={cn(
+                        "absolute top-1 w-4 h-4 bg-white rounded-full transition-all",
+                        profile?.settings?.notifications?.smartReminders?.enabled ? "left-7" : "left-1"
+                      )} />
+                    </button>
+                  </div>
+
+                  {profile?.settings?.notifications?.smartReminders?.enabled && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-4">
+                      {[
+                        { id: 'assessmentNudges', label: 'Clinical Red Flags', desc: 'Alerts based on high GAD/PHQ scores' },
+                        { id: 'journalNudges', label: 'Reflection Gaps', desc: 'Prompts after long journaling gaps' }
+                      ].map((subItem) => (
+                        <button
+                          key={subItem.id}
+                          onClick={() => handleSettingsUpdate(`notifications.smartReminders.${subItem.id}`, !(profile?.settings?.notifications?.smartReminders as any)?.[subItem.id])}
+                          className={cn(
+                            "text-left p-3 rounded-xl border transition-all",
+                            (profile?.settings?.notifications?.smartReminders as any)?.[subItem.id]
+                              ? "bg-white border-[#8b7cf6] shadow-sm"
+                              : "bg-transparent border-[#f5f2eb] text-[#888880]"
+                          )}
+                        >
+                          <p className="text-[10px] font-bold uppercase tracking-tight mb-1">{subItem.label}</p>
+                          <p className="text-[9px] leading-tight opacity-70">{subItem.desc}</p>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </motion.section>
 

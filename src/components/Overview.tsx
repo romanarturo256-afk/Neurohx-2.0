@@ -48,7 +48,6 @@ export default function Overview() {
   const { profile } = useUser();
   const navigate = useNavigate();
   const [recentJournal, setRecentJournal] = useState<any>(null);
-  const [habits, setHabits] = useState<any[]>([]);
   const [recentMood, setRecentMood] = useState<any>(null);
   const [recentChats, setRecentChats] = useState<any[]>([]);
   const [latestAssessment, setLatestAssessment] = useState<any>(null);
@@ -88,37 +87,6 @@ export default function Overview() {
       }
     }, (err) => console.error('Journal snapshot error:', err));
 
-    // Fetch habits
-    const habitsQuery = query(
-      collection(db, 'users', auth.currentUser.uid, 'habits'),
-      limit(3)
-    );
-    const unsubHabits = onSnapshot(habitsQuery, (snapshot) => {
-      try {
-        const today = new Date().toISOString().split('T')[0];
-        const yesterdayDate = new Date();
-        yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-        const yesterday = yesterdayDate.toISOString().split('T')[0];
-
-        const habitsData = snapshot.docs.map(doc => {
-          const data = doc.data();
-          const completedDates = data.completedDates || [];
-          const isCompletedToday = completedDates.includes(today);
-          const wasCompletedYesterday = completedDates.includes(yesterday);
-          
-          let displayStreak = data.streak || 0;
-          if (!isCompletedToday && !wasCompletedYesterday) {
-            displayStreak = 0;
-          }
-
-          return { id: doc.id, ...data, displayStreak };
-        });
-        setHabits(habitsData);
-      } catch (err) {
-        console.error('Error in habits snapshot:', err);
-      }
-    }, (err) => console.error('Habits snapshot error:', err));
-
     // Fetch recent mood
     const moodQuery = query(
       collection(db, 'users', auth.currentUser.uid, 'moods'),
@@ -156,7 +124,6 @@ export default function Overview() {
     return () => {
       unsubAss();
       unsubJournal();
-      unsubHabits();
       unsubMood();
       unsubChats();
     };
@@ -409,51 +376,7 @@ export default function Overview() {
         </motion.div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Habit Streaks */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="bg-white rounded-[40px] p-10 border border-[#e0dbd0] shadow-sm"
-        >
-          <div className="flex justify-between items-center mb-8">
-            <h3 className="font-bold text-[#111110]">Habit Streaks</h3>
-            <button 
-              onClick={() => navigate('/dashboard/habits')}
-              className="text-[10px] font-bold text-[#8b7cf6] uppercase tracking-widest hover:underline"
-            >
-              View All
-            </button>
-          </div>
-          
-          <div className="space-y-6">
-            {habits.length > 0 ? habits.map((habit) => (
-              <div key={habit.id} className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-[#f0eeff] rounded-2xl flex items-center justify-center text-[#8b7cf6]">
-                    <CheckCircle2 size={24} />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-[#111110] text-sm">{habit.name}</h4>
-                    <p className="text-xs text-[#888880]">{habit.displayStreak} days streak</p>
-                  </div>
-                </div>
-                <div className={cn(
-                  "w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all",
-                  habit.completedToday ? "bg-[#8b7cf6] border-[#8b7cf6] text-white" : "border-[#e0dbd0] text-transparent"
-                )}>
-                  <CheckCircle2 size={14} />
-                </div>
-              </div>
-            )) : (
-              <div className="text-center py-8 text-[#888880] italic text-sm">
-                No habits tracked yet. Start building your routine!
-              </div>
-            )}
-          </div>
-        </motion.div>
-
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Recent Journal */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}

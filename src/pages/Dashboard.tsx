@@ -4,7 +4,6 @@ import DashboardLayout from '../components/DashboardLayout';
 import Overview from '../components/Overview';
 import Chat from '../components/Chat';
 import Journal from '../components/Journal';
-import Habits from '../components/Habits';
 import Mood from '../components/Mood';
 import Assessments from '../components/Assessments';
 import Settings from '../components/Settings';
@@ -17,7 +16,6 @@ export default function Dashboard() {
         <Route index element={<Overview />} />
         <Route path="chat" element={<Chat />} />
         <Route path="journal" element={<Journal />} />
-        <Route path="habits" element={<Habits />} />
         <Route path="mood" element={<Mood />} />
         <Route path="assessments" element={<Assessments />} />
         <Route path="settings" element={<Settings />} />

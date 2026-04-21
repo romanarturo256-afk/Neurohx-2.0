@@ -53,18 +53,6 @@
         "createdAt": { "type": "string" }
       }
     },
-    "Habit": {
-      "title": "Habit Tracker",
-      "description": "A habit to be tracked daily.",
-      "type": "object",
-      "properties": {
-        "userId": { "type": "string" },
-        "name": { "type": "string" },
-        "streak": { "type": "integer" },
-        "completedDates": { "type": "array", "items": { "type": "string" } },
-        "createdAt": { "type": "string" }
-      }
-    },
     "Mood": {
       "title": "Mood Log",
       "description": "Daily mood rating.",
@@ -119,7 +107,6 @@
     "/users/{userId}": { "schema": "User", "description": "Top-level user profile" },
     "/users/{userId}/chats/{chatId}": { "schema": "Chat", "description": "Chat history subcollection" },
     "/users/{userId}/journals/{journalId}": { "schema": "Journal", "description": "Journal subcollection" },
-    "/users/{userId}/habits/{habitId}": { "schema": "Habit", "description": "Habit subcollection" },
     "/users/{userId}/moods/{moodId}": { "schema": "Mood", "description": "Mood subcollection" },
     "/users/{userId}/assessments/{resultId}": { "schema": "AssessmentResult", "description": "Assessment results subcollection" },
     "/support_tickets/{ticketId}": { "schema": "SupportTicket", "description": "Global support tickets" },

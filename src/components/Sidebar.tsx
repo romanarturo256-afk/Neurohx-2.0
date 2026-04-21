@@ -26,7 +26,6 @@ const navItems = [
   { icon: MessageSquare, label: 'Intake', path: '/dashboard/chat' },
   { icon: BookOpen, label: 'Journal', path: '/dashboard/journal' },
   { icon: ClipboardCheck, label: 'Metrics', path: '/dashboard/assessments' },
-  { icon: CheckCircle, label: 'Habits', path: '/dashboard/habits' },
   { icon: BarChart2, label: 'Analytics', path: '/dashboard/mood' },
   { icon: Wind, label: 'Pneuma', path: '#breathing', action: 'breathing' },
 ];

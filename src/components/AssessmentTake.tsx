@@ -95,31 +95,6 @@ export default function AssessmentTake({ assessment, onBack }: Props) {
     }
   };
 
-  const handleAddSuggestionAsHabit = async (suggestion: string) => {
-    if (!auth.currentUser) return;
-    
-    // Extract title from "Title: Description" format if possible
-    const name = suggestion.split(':')[0].trim();
-    
-    try {
-      const path = `users/${auth.currentUser.uid}/habits`;
-      await addDoc(collection(db, path), {
-        userId: auth.currentUser.uid,
-        name: name,
-        streak: 0,
-        completedToday: false,
-        completedDates: [],
-        category: assessment.category,
-        source: `Assessment: ${assessment.title}`,
-        createdAt: serverTimestamp()
-      }).catch(e => handleFirestoreError(e, 'create', path));
-      
-      showToast(`"${name}" added to your daily habits!`, 'success');
-    } catch (error) {
-      showToast('Failed to add suggested habit.', 'error');
-    }
-  };
-
   const handleSubmit = async () => {
     if (!auth.currentUser) {
       showToast('You must be signed in to submit assessments.', 'error');
@@ -254,14 +229,7 @@ export default function AssessmentTake({ assessment, onBack }: Props) {
                             key={idx} 
                             className="bg-white/10 rounded-2xl p-4 flex items-center justify-between group/suggest"
                           >
-                            <p className="text-xs font-medium text-white/90 pr-4">{suggestion}</p>
-                            <button
-                              onClick={() => handleAddSuggestionAsHabit(suggestion)}
-                              className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center hover:bg-white hover:text-[#8b7cf6] transition-all shrink-0"
-                              title="Add to habit tracker"
-                            >
-                              <Plus size={16} />
-                            </button>
+                            <p className="text-xs font-medium text-white/90">{suggestion}</p>
                           </div>
                         ))}
                       </div>

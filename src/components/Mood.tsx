@@ -11,6 +11,7 @@ import {
   getDocs
 } from 'firebase/firestore';
 import { auth, db, handleFirestoreError } from '../lib/firebase';
+import { GoogleGenAI } from "@google/genai";
 import { 
   LineChart, 
   Line, 
@@ -62,6 +63,8 @@ export default function Mood() {
   const [selectedMood, setSelectedMood] = useState<number | null>(null);
   const [note, setNote] = useState('');
   const [loading, setLoading] = useState(false);
+  const [aiInsight, setAiInsight] = useState<string>('');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const canUseMood = isPlanAtLeast('starter');
   const canSeeCharts = isPlanAtLeast('pro');
@@ -72,15 +75,20 @@ export default function Mood() {
     const q = query(
       collection(db, 'users', auth.currentUser.uid, 'moods'),
       orderBy('date', 'asc'),
-      limit(30)
+      limit(100)
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       try {
-        setHistory(snapshot.docs.map(doc => ({
+        const data = snapshot.docs.map(doc => ({
+          id: doc.id,
           ...doc.data(),
-          displayDate: new Date(doc.data().date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-        })));
+        }));
+        setHistory(data);
+        
+        if (data.length >= 5 && canSeeCharts) {
+          generateAIInsight(data);
+        }
       } catch (err) {
         console.error('Error in mood snapshot:', err);
       }
@@ -88,6 +96,31 @@ export default function Mood() {
 
     return () => unsubscribe();
   }, []);
+
+  const generateAIInsight = async (data: any[]) => {
+    if (isAnalyzing || aiInsight) return;
+    setIsAnalyzing(true);
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const moodData = data.slice(-14).map(h => ({
+        date: h.date,
+        value: h.value,
+        note: h.note || 'No note'
+      }));
+
+      const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: `Analyze these mood logs for a mental wellness app. Provide 1 concise, powerful, empathetic insight (max 30 words) about their recent emotional trend and resilience. 
+        Data (value 1-5, where 5 is Great): ${JSON.stringify(moodData)}`,
+      });
+
+      setAiInsight(response.text || '');
+    } catch (error) {
+      console.error('AI Insight error:', error);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
 
   const saveMood = async () => {
     if (!selectedMood || !auth.currentUser) return;
@@ -125,9 +158,25 @@ export default function Mood() {
     ? (history.reduce((acc, curr) => acc + curr.value, 0) / history.length).toFixed(1)
     : '0.0';
 
+  const chartData = React.useMemo(() => {
+    const groups: { [key: string]: { sum: number; count: number } } = {};
+    history.forEach(item => {
+      if (!groups[item.date]) groups[item.date] = { sum: 0, count: 0 };
+      groups[item.date].sum += item.value;
+      groups[item.date].count += 1;
+    });
+
+    return Object.keys(groups).sort().map(d => ({
+      date: d,
+      displayDate: new Date(d + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      value: Number((groups[d].sum / groups[d].count).toFixed(1))
+    })).slice(-30);
+  }, [history]);
+
   const moodDistribution = moods.map(m => ({
     name: m.label,
-    value: history.filter(h => h.value === m.value).length
+    value: history.filter(h => h.value === m.value).length,
+    color: m.color
   })).filter(m => m.value > 0);
 
   return (
@@ -178,7 +227,7 @@ export default function Mood() {
             </div>
             <div className="h-[350px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={canSeeCharts ? history : []}>
+                <AreaChart data={canSeeCharts ? chartData : []}>
                   <defs>
                     <linearGradient id="moodTrendGradient" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#8b7cf6" stopOpacity={0.1}/>
@@ -235,7 +284,7 @@ export default function Mood() {
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
-                      data={moodDistribution.length > 0 ? moodDistribution : [{ name: 'Empty', value: 1 }]}
+                      data={moodDistribution.length > 0 ? moodDistribution : [{ name: 'Empty', value: 1, color: '#f5f2eb' }]}
                       cx="50%"
                       cy="50%"
                       innerRadius={60}
@@ -243,10 +292,9 @@ export default function Mood() {
                       paddingAngle={5}
                       dataKey="value"
                     >
-                      {moodDistribution.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      {(moodDistribution.length > 0 ? moodDistribution : [{ color: '#f5f2eb' }]).map((entry: any, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
-                      {moodDistribution.length === 0 && <Cell fill="#f5f2eb" />}
                     </Pie>
                     <Tooltip />
                   </PieChart>
@@ -276,7 +324,7 @@ export default function Mood() {
                 <p className="text-xl font-['Syne'] font-bold leading-relaxed">
                   {history.length < 5 
                     ? "Log your mood for 5 more days to unlock personalized AI emotional insights."
-                    : "Your emotional resilience is increasing. You've handled stress 20% better this week compared to last month."}
+                    : aiInsight || "Analyzing your emotional resilience..."}
                 </p>
                 <div className="pt-4 flex items-center gap-4">
                   <div className="flex -space-x-2">

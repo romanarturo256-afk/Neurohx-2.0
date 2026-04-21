@@ -28,6 +28,11 @@ interface UserProfile {
       email: boolean;
       push: boolean;
       dailyReminders: boolean;
+        smartReminders: {
+          enabled: boolean;
+          assessmentNudges: boolean;
+          journalNudges: boolean;
+        };
     };
     autoSpeak?: boolean;
     soundEffects?: boolean;
@@ -113,6 +118,22 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
                 referralCode: Math.random().toString(36).substring(2, 10).toUpperCase(),
                 referredBy: referredByUid,
                 createdAt: new Date().toISOString(),
+                settings: {
+                  aiTone: 'professional',
+                  language: 'en',
+                  fontSize: 'medium',
+                  darkMode: false,
+                  notifications: {
+                    email: true,
+                    push: true,
+                    dailyReminders: true,
+                    smartReminders: {
+                      enabled: true,
+                      assessmentNudges: true,
+                      journalNudges: true
+                    }
+                  }
+                }
               };
               await setDoc(userDocRef, newProfile).catch(e => handleFirestoreError(e, 'create', `users/${user.uid}`));
               
