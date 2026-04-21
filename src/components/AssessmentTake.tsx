@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AssessmentDefinition } from '../constants/assessments';
-import { ChevronLeft, ChevronRight, CheckCircle2, AlertCircle, Sparkles, Brain, ArrowRight, Loader2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CheckCircle2, AlertCircle, Sparkles, Brain, ArrowRight, Loader2, Plus } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 import { db, auth, handleFirestoreError } from '../lib/firebase';
@@ -47,6 +47,8 @@ export default function AssessmentTake({ assessment, onBack }: Props) {
     }
   };
 
+  const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
+
   const getAiConclusion = async (score: number, label: string) => {
     setIsAnalyzing(true);
     try {
@@ -56,7 +58,18 @@ export default function AssessmentTake({ assessment, onBack }: Props) {
       User Score: ${score}
       Clinical Label: ${label}
       
-      The user just completed this assessment. Please provide a deep, empathetic analysis of what this result means for their mental well-being and life quality. Then, conclude with a brief offer to "train" or coach them on specific strategies to improve this aspect of their life. Keep the tone insightful, warm, and professional.`;
+      The user just completed this assessment. 
+      First, provide a deep, empathetic analysis (2-3 paragraphs) of what this result means for their mental well-being.
+      Second, provide exactly 3 concrete, 10-minute daily habits they can start TODAY to improve in this specific area.
+      
+      Format your response EXACTLY as follows:
+      [ANALYSIS]
+      (Your analysis here)
+      
+      [SUGGESTIONS]
+      - Suggestion 1: Brief description
+      - Suggestion 2: Brief description
+      - Suggestion 3: Brief description`;
 
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
@@ -64,12 +77,46 @@ export default function AssessmentTake({ assessment, onBack }: Props) {
       });
 
       const text = response.text || "";
-      setAiAnalysis(text || "I was unable to generate a deep analysis at this moment, but I am ready to discuss this with you in chat.");
+      
+      const analysisPart = text.split('[SUGGESTIONS]')[0].replace('[ANALYSIS]', '').trim();
+      const suggestionsPart = text.split('[SUGGESTIONS]')[1] || "";
+      const parsedSuggestions = suggestionsPart
+        .split('\n')
+        .filter(line => line.trim().startsWith('-'))
+        .map(line => line.replace('-', '').trim());
+
+      setAiAnalysis(analysisPart || "I was unable to generate a deep analysis at this moment.");
+      setAiSuggestions(parsedSuggestions);
     } catch (error) {
       console.error('AI Analysis error:', error);
       setAiAnalysis("Your result indicates we should talk more about this in our next session.");
     } finally {
       setIsAnalyzing(false);
+    }
+  };
+
+  const handleAddSuggestionAsHabit = async (suggestion: string) => {
+    if (!auth.currentUser) return;
+    
+    // Extract title from "Title: Description" format if possible
+    const name = suggestion.split(':')[0].trim();
+    
+    try {
+      const path = `users/${auth.currentUser.uid}/habits`;
+      await addDoc(collection(db, path), {
+        userId: auth.currentUser.uid,
+        name: name,
+        streak: 0,
+        completedToday: false,
+        completedDates: [],
+        category: assessment.category,
+        source: `Assessment: ${assessment.title}`,
+        createdAt: serverTimestamp()
+      }).catch(e => handleFirestoreError(e, 'create', path));
+      
+      showToast(`"${name}" added to your daily habits!`, 'success');
+    } catch (error) {
+      showToast('Failed to add suggested habit.', 'error');
     }
   };
 
@@ -111,12 +158,17 @@ export default function AssessmentTake({ assessment, onBack }: Props) {
       const path = `users/${auth.currentUser.uid}/assessments`;
       await addDoc(collection(db, path), result).catch(e => handleFirestoreError(e, 'create', path));
       setCompletedResult({ ...resultData, score: totalScore });
+      setAiSuggestions(resultData.suggestions || []); // Set static suggestions immediately
       showToast('Assessment submitted successfully!', 'success');
       
-      // Get AI Analysis
-      getAiConclusion(totalScore, resultData.label).catch(err => {
-        console.error('Final AI Conclusion catch-all:', err);
-      });
+      // Get AI Analysis if key exists
+      try {
+        getAiConclusion(totalScore, resultData.label).catch(err => {
+          console.error('Final AI Conclusion catch-all:', err);
+        });
+      } catch (e) {
+        console.log('Skipping AI analysis, key missing');
+      }
     } catch (error: any) {
       console.error('Error submitting assessment:', error);
       if (error?.code === 'resource-exhausted') {
@@ -184,25 +236,55 @@ export default function AssessmentTake({ assessment, onBack }: Props) {
                     <Loader2 className="animate-spin" size={32} />
                     <p className="text-sm font-bold animate-pulse">Deeply analyzing your results...</p>
                   </div>
-                ) : aiAnalysis ? (
-                  <div className="space-y-4">
-                    <p className="text-sm leading-relaxed text-white/90">
-                      {aiAnalysis}
-                    </p>
-                    <button
-                      onClick={() => navigate('/dashboard/chat', { 
-                        state: { 
-                          context: `I just completed the ${assessment.title} assessment. My score was ${completedResult.score} (${completedResult.label}). I'd like you to train/coach me on how to improve in this area as you suggested in your analysis: "${aiAnalysis}"` 
-                        } 
-                      })}
-                      className="w-full py-4 bg-white text-[#8b7cf6] rounded-2xl font-bold text-sm shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-2"
-                    >
-                      Start Training Session
-                      <Brain size={18} />
-                    </button>
-                  </div>
                 ) : (
-                  <p className="text-sm opacity-70 italic">AI Analysis is pending...</p>
+                  <div className="space-y-6">
+                    {aiAnalysis && (
+                      <div className="space-y-4">
+                        <p className="text-sm leading-relaxed text-white/90">
+                          {aiAnalysis}
+                        </p>
+                      </div>
+                    )}
+
+                    {aiSuggestions.length > 0 && (
+                      <div className="space-y-3 pt-4 border-t border-white/10">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-white/60 mb-2">Suggested Daily Rituals</p>
+                        {aiSuggestions.map((suggestion, idx) => (
+                          <div 
+                            key={idx} 
+                            className="bg-white/10 rounded-2xl p-4 flex items-center justify-between group/suggest"
+                          >
+                            <p className="text-xs font-medium text-white/90 pr-4">{suggestion}</p>
+                            <button
+                              onClick={() => handleAddSuggestionAsHabit(suggestion)}
+                              className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center hover:bg-white hover:text-[#8b7cf6] transition-all shrink-0"
+                              title="Add to habit tracker"
+                            >
+                              <Plus size={16} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {aiAnalysis ? (
+                      <button
+                        onClick={() => navigate('/dashboard/chat', { 
+                          state: { 
+                            context: `I just completed the ${assessment.title} assessment. My score was ${completedResult.score} (${completedResult.label}). Analysis: "${aiAnalysis.slice(0, 500)}..."` 
+                          } 
+                        })}
+                        className="w-full py-4 bg-white text-[#8b7cf6] rounded-2xl font-bold text-sm shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-2"
+                      >
+                        Deepen via AI Chat
+                        <Brain size={18} />
+                      </button>
+                    ) : (
+                      <div className="pt-4 text-center">
+                        <p className="text-[10px] text-white/40 uppercase tracking-widest">AI Connection Offline</p>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
               

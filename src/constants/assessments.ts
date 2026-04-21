@@ -11,7 +11,12 @@ export interface AssessmentDefinition {
   description: string;
   category: string;
   questions: AssessmentQuestion[];
-  scoring: (total: number) => { label: string; interpretation: string; color: string };
+  scoring: (total: number) => { 
+    label: string; 
+    interpretation: string; 
+    color: string;
+    suggestions: string[];
+  };
 }
 
 const PHQ9_OPTIONS = [
@@ -62,11 +67,36 @@ export const ASSESSMENTS: AssessmentDefinition[] = [
       { id: '9', text: 'Thoughts that you would be better off dead or of hurting yourself in some way', options: PHQ9_OPTIONS },
     ],
     scoring: (total) => {
-      if (total <= 4) return { label: 'Minimal Depression', interpretation: 'Normal range. No treatment needed.', color: '#22c55e' };
-      if (total <= 9) return { label: 'Mild Depression', interpretation: 'Likely temporary. Watchful waiting and repeat test in few weeks.', color: '#eab308' };
-      if (total <= 14) return { label: 'Moderate Depression', interpretation: 'Treatment plan, consider counseling or psychotherapy.', color: '#f97316' };
-      if (total <= 19) return { label: 'Moderately Severe Depression', interpretation: 'Active treatment with psychotherapy and/or pharmacotherapy.', color: '#ef4444' };
-      return { label: 'Severe Depression', interpretation: 'Immediate treatment with counseling and possibly medication.', color: '#991b1b' };
+      if (total <= 4) return { 
+        label: 'Minimal Depression', 
+        interpretation: 'Normal range. No treatment needed.', 
+        color: '#22c55e',
+        suggestions: ['Maintain current routine', 'Practice daily gratitude', 'Stay socially active']
+      };
+      if (total <= 9) return { 
+        label: 'Mild Depression', 
+        interpretation: 'Likely temporary. Watchful waiting and repeat test in few weeks.', 
+        color: '#eab308',
+        suggestions: ['Increase physical activity', 'Establish a strict sleep schedule', 'Limit social media use']
+      };
+      if (total <= 14) return { 
+        label: 'Moderate Depression', 
+        interpretation: 'Treatment plan, consider counseling or psychotherapy.', 
+        color: '#f97316',
+        suggestions: ['Schedule a counseling intake', 'Join a support group', 'Practice mindfulness meditation']
+      };
+      if (total <= 19) return { 
+        label: 'Moderately Severe Depression', 
+        interpretation: 'Active treatment with psychotherapy and/or pharmacotherapy.', 
+        color: '#ef4444',
+        suggestions: ['Consult a psychiatrist', 'Engage in CBT exercises', 'Monitor symptoms daily']
+      };
+      return { 
+        label: 'Severe Depression', 
+        interpretation: 'Immediate treatment with counseling and possibly medication.', 
+        color: '#991b1b',
+        suggestions: ['Seek urgent clinical consultation', 'Engage crisis support if needed', 'Intensive daily therapy']
+      };
     }
   },
   {
@@ -84,10 +114,30 @@ export const ASSESSMENTS: AssessmentDefinition[] = [
       { id: '7', text: 'Feeling afraid as if something awful might happen', options: GAD7_OPTIONS },
     ],
     scoring: (total) => {
-      if (total <= 4) return { label: 'Minimal Anxiety', interpretation: 'Normal range.', color: '#22c55e' };
-      if (total <= 9) return { label: 'Mild Anxiety', interpretation: 'Try relaxation techniques and mindfulness.', color: '#eab308' };
-      if (total <= 14) return { label: 'Moderate Anxiety', interpretation: 'Consider seeking professional guidance.', color: '#f97316' };
-      return { label: 'Severe Anxiety', interpretation: 'Requires professional consultation and support.', color: '#ef4444' };
+      if (total <= 4) return { 
+        label: 'Minimal Anxiety', 
+        interpretation: 'Normal range.', 
+        color: '#22c55e',
+        suggestions: ['Regular physical exercise', 'Mindful breathing', 'Balanced nutrition']
+      };
+      if (total <= 9) return { 
+        label: 'Mild Anxiety', 
+        interpretation: 'Try relaxation techniques and mindfulness.', 
+        color: '#eab308',
+        suggestions: ['Limit caffeine intake', 'Progressive muscle relaxation', 'Journaling worries']
+      };
+      if (total <= 14) return { 
+        label: 'Moderate Anxiety', 
+        interpretation: 'Consider seeking professional guidance.', 
+        color: '#f97316',
+        suggestions: ['Cognitive restructuring', 'Structured breathing exercises', 'Reduce screen time']
+      };
+      return { 
+        label: 'Severe Anxiety', 
+        interpretation: 'Requires professional consultation and support.', 
+        color: '#ef4444',
+        suggestions: ['Immediate medical consultation', 'Begin therapeutic intervention', 'Anxiety management plan']
+      };
     }
   },
   {
@@ -108,11 +158,24 @@ export const ASSESSMENTS: AssessmentDefinition[] = [
       { id: '10', text: 'In the last month, how often have you felt difficulties were piling up so high that you could not overcome them?', options: PSS10_OPTIONS },
     ],
     scoring: (total) => {
-      // PSS-10 Scoring: Questions 4, 5, 7, 8 are reverse scored.
-      // But for simplicity in this UI, I'll assume total is calculated correctly in the taker.
-      if (total <= 13) return { label: 'Low Stress', interpretation: 'Manageable levels of stress.', color: '#22c55e' };
-      if (total <= 26) return { label: 'Moderate Stress', interpretation: 'Consider healthy stress-management techniques.', color: '#f97316' };
-      return { label: 'High Stress', interpretation: 'Levels indicative of high psychological distress. Consider professional support.', color: '#ef4444' };
+      if (total <= 13) return { 
+        label: 'Low Stress', 
+        interpretation: 'Manageable levels of stress.', 
+        color: '#22c55e',
+        suggestions: ['Active relaxation', 'Adequate sleep (7-9h)', 'Time management']
+      };
+      if (total <= 26) return { 
+        label: 'Moderate Stress', 
+        interpretation: 'Consider healthy stress-management techniques.', 
+        color: '#f97316',
+        suggestions: ['Yoga or light stretching', 'Take regular work breaks', 'Deep breathing (4-7-8)']
+      };
+      return { 
+        label: 'High Stress', 
+        interpretation: 'Levels indicative of high psychological distress. Consider professional support.', 
+        color: '#ef4444',
+        suggestions: ['Professional stress management', 'Boundary setting', 'Stress-reduction therapy']
+      };
     }
   },
   {
@@ -133,12 +196,11 @@ export const ASSESSMENTS: AssessmentDefinition[] = [
       { id: '10', text: 'I see myself as someone who has an active imagination.', options: BIG5_OPTIONS },
     ],
     scoring: (total) => {
-      // For BFI-10, scoring is specific to traits. 
-      // But for a simple total display:
       return { 
         label: 'Personality Profile Generated', 
         interpretation: 'Your trait distribution shows your unique psychological structure. Review your detailed scores for Extraversion, Agreeableness, Conscientiousness, Neuroticism, and Openness.', 
-        color: '#8b7cf6' 
+        color: '#8b7cf6',
+        suggestions: ['Explore personality-fit career paths', 'Understand social dynamics', 'Leverage core strengths']
       };
     }
   }
