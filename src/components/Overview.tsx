@@ -15,7 +15,8 @@ import {
   Zap,
   Target,
   Clock,
-  ClipboardCheck
+  ClipboardCheck,
+  Flame
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { 
@@ -269,6 +270,26 @@ export default function Overview() {
             </div>
             <div className="ml-auto text-[#8b7cf6] text-[10px] font-bold">2/3</div>
           </motion.div>
+
+          {profile?.streak && profile.streak.count > 0 && (
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+              className="bg-gradient-to-br from-orange-500 to-red-600 rounded-[32px] p-6 shadow-xl flex items-center gap-4 group text-white"
+            >
+              <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+                <Flame size={24} fill="currentColor" />
+              </div>
+              <div>
+                <p className="text-[10px] font-bold text-white/70 uppercase tracking-widest">Login Streak</p>
+                <h4 className="text-xl font-bold">{profile.streak.count} Days</h4>
+              </div>
+              {profile.streak.lastFreezeUsed === new Date().toISOString().split('T')[0] && (
+                <div className="ml-auto bg-white/20 px-2 py-0.5 rounded-md text-[8px] font-bold uppercase">Repaired</div>
+              )}
+            </motion.div>
+          )}
         </div>
       </div>
 

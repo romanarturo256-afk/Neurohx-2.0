@@ -14,7 +14,8 @@ import {
   Crown,
   LifeBuoy,
   Wind,
-  ClipboardCheck
+  ClipboardCheck,
+  Flame
 } from 'lucide-react';
 import { auth } from '../lib/firebase';
 import { cn } from '../lib/utils';
@@ -168,6 +169,12 @@ export default function Sidebar() {
                   )}>
                     {profile?.plan || 'Free'}
                   </span>
+                  {profile?.streak && profile.streak.count > 0 && (
+                    <div className="flex items-center gap-1 bg-orange-500/10 text-orange-600 px-1.5 py-0.5 rounded-md text-[8px] font-bold">
+                      <Flame size={8} fill="currentColor" />
+                      <span>{profile.streak.count} DAYS</span>
+                    </div>
+                  )}
                 </div>
               </div>
               {profile?.plan !== 'free' && (

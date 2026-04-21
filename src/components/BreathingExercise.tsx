@@ -175,9 +175,9 @@ export default function BreathingExercise({ onClose }: { onClose: () => void }) 
       <motion.div 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-white w-full max-w-lg rounded-[48px] overflow-hidden shadow-2xl border border-[#e0dbd0]"
+        className="bg-white w-full max-w-2xl max-h-[90vh] rounded-[48px] shadow-2xl border border-[#e0dbd0] flex flex-col"
       >
-        <div className="p-8 flex justify-between items-center border-b border-[#f5f2eb]">
+        <div className="p-8 flex justify-between items-center border-b border-[#f5f2eb] shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-[#f0eeff] rounded-2xl flex items-center justify-center text-[#8b7cf6]">
               <Wind size={20} />
@@ -189,37 +189,37 @@ export default function BreathingExercise({ onClose }: { onClose: () => void }) 
           </button>
         </div>
 
-        <div className="p-8 space-y-12">
+        <div className="flex-1 overflow-y-auto p-6 md:p-12 space-y-8 md:space-y-12 scrollbar-hide">
           {/* Visualizer */}
-          <div className="relative h-64 flex items-center justify-center">
+          <div className="relative h-64 md:h-80 flex items-center justify-center">
             <AnimatePresence mode="wait">
               <motion.div
                 key={phase}
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ 
-                  scale: phase === 'Inhale' ? 1.5 : phase === 'Exhale' ? 0.8 : 1.2,
+                  scale: phase === 'Inhale' ? 1.8 : phase === 'Exhale' ? 1.0 : 1.4,
                   opacity: 1
                 }}
                 transition={{ 
                   duration: timeLeft > 0 ? timeLeft : 1,
                   ease: "easeInOut"
                 }}
-                className="w-32 h-32 rounded-full shadow-2xl flex items-center justify-center relative gpu-accelerated"
+                className="w-40 h-40 rounded-full shadow-2xl flex items-center justify-center relative gpu-accelerated"
                 style={{ backgroundColor: selectedTech.color }}
               >
-                <div className="absolute inset-0 rounded-full animate-ping opacity-20" style={{ backgroundColor: selectedTech.color }} />
-                <span className="text-white font-bold text-xl relative z-10">
+                <div className="absolute inset-0 rounded-full animate-pulse opacity-20" style={{ backgroundColor: selectedTech.color }} />
+                <span className="text-white font-bold text-2xl relative z-10 transition-all">
                   {phase === 'Ready' ? 'Ready?' : timeLeft}
                 </span>
               </motion.div>
             </AnimatePresence>
             
             <div className="absolute bottom-0 text-center">
-              <h3 className="text-2xl font-bold text-[#111110] mb-1">
-                {phase.startsWith('Hold') ? 'Hold' : phase}
+              <h3 className="text-3xl font-bold font-['Syne'] text-[#111110] mb-1">
+                {phase === 'Ready' ? '' : (phase.startsWith('Hold') ? 'Hold' : phase)}
               </h3>
-              <p className="text-[#888880] text-sm uppercase tracking-widest font-bold">
-                {phase === 'Inhale' ? 'Breathe in slowly' : phase === 'Exhale' ? 'Release tension' : phase.startsWith('Hold') ? 'Hold gently' : 'Select a technique'}
+              <p className="text-[#888880] text-xs uppercase tracking-[0.3em] font-bold">
+                {phase === 'Inhale' ? 'Breathe in slowly' : phase === 'Exhale' ? 'Release tension' : phase.startsWith('Hold') ? 'Hold gently' : 'SELECT A TECHNIQUE'}
               </p>
             </div>
           </div>

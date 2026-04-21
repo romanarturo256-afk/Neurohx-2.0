@@ -16,6 +16,14 @@
         "referredBy": { "type": "string" },
         "theme": { "type": "object" },
         "settings": { "type": "object" },
+        "streak": {
+          "type": "object",
+          "properties": {
+            "count": { "type": "integer" },
+            "lastLoginDate": { "type": "string", "format": "date" },
+            "lastFreezeUsed": { "type": "string", "format": "date" }
+          }
+        },
         "createdAt": { "type": "string", "format": "date-time" },
         "updatedAt": { "type": "string", "format": "date-time" }
       },
