@@ -66,6 +66,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const profileUnsubscribeRef = React.useRef<(() => void) | null>(null);
+  const streakCheckedRef = React.useRef<string | null>(null);
 
   // Store referral code from URL if present
   useEffect(() => {
@@ -81,6 +82,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       const handleAuthStateChange = async () => {
+        if (!user) streakCheckedRef.current = null;
         // Clean up previous profile listener if it exists
         if (profileUnsubscribeRef.current) {
           profileUnsubscribeRef.current();
@@ -184,58 +186,66 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
                     }
 
                     // Daily Login Streak Logic
-                    const today = new Date();
-                    const todayStr = today.toISOString().split('T')[0];
-                    const lastLogin = data.streak?.lastLoginDate;
-                    
-                    if (lastLogin !== todayStr) {
-                      const lastLoginDate = lastLogin ? new Date(lastLogin) : null;
-                      const nowTs = new Date().setHours(0,0,0,0);
-                      const lastTs = lastLoginDate ? new Date(lastLoginDate).setHours(0,0,0,0) : 0;
-                      const diffDays = lastLoginDate ? Math.floor((nowTs - lastTs) / (1000 * 60 * 60 * 24)) : null;
+                    if (streakCheckedRef.current !== user.uid) {
+                      const today = new Date();
+                      const todayStr = today.toISOString().split('T')[0];
+                      const lastLogin = data.streak?.lastLoginDate;
+                      
+                      if (lastLogin !== todayStr) {
+                        const lastLoginDate = lastLogin ? new Date(lastLogin) : null;
+                        const nowTs = new Date().setHours(0,0,0,0);
+                        const lastTs = lastLoginDate ? new Date(lastLoginDate).setHours(0,0,0,0) : 0;
+                        const diffDays = lastLoginDate ? Math.floor((nowTs - lastTs) / (1000 * 60 * 60 * 24)) : null;
 
-                      let newCount = (data.streak?.count || 0);
-                      let freezeUsed = data.streak?.lastFreezeUsed;
-                      let shouldUpdate = false;
+                        let newCount = (data.streak?.count || 0);
+                        let freezeUsed = data.streak?.lastFreezeUsed;
+                        let shouldUpdate = false;
 
-                      if (!lastLoginDate) {
-                        newCount = 1;
-                        shouldUpdate = true;
-                      } else if (diffDays === 1) {
-                        newCount += 1;
-                        shouldUpdate = true;
-                      } else if (diffDays === 2) {
-                        const lastFreeze = freezeUsed ? new Date(freezeUsed) : null;
-                        const weeksSinceFreeze = lastFreeze 
-                          ? (today.getTime() - lastFreeze.getTime()) / (1000 * 60 * 60 * 24 * 7)
-                          : 99;
-
-                        if (weeksSinceFreeze >= 1) {
-                          newCount += 1;
-                          const yesterday = new Date();
-                          yesterday.setDate(today.getDate() - 1);
-                          freezeUsed = yesterday.toISOString().split('T')[0];
+                        if (!lastLoginDate) {
+                          newCount = 1;
                           shouldUpdate = true;
-                        } else {
+                        } else if (diffDays === 1) {
+                          newCount += 1;
+                          shouldUpdate = true;
+                        } else if (diffDays === 2) {
+                          const lastFreeze = freezeUsed ? new Date(freezeUsed) : null;
+                          const weeksSinceFreeze = lastFreeze 
+                            ? (today.getTime() - lastFreeze.getTime()) / (1000 * 60 * 60 * 24 * 7)
+                            : 99;
+
+                          if (weeksSinceFreeze >= 1) {
+                            newCount += 1;
+                            const yesterday = new Date();
+                            yesterday.setDate(today.getDate() - 1);
+                            freezeUsed = yesterday.toISOString().split('T')[0];
+                            shouldUpdate = true;
+                          } else {
+                            newCount = 1;
+                            shouldUpdate = true;
+                          }
+                        } else if (diffDays && diffDays > 2) {
                           newCount = 1;
                           shouldUpdate = true;
                         }
-                      } else if (diffDays && diffDays > 2) {
-                        newCount = 1;
-                        shouldUpdate = true;
-                      }
 
-                      if (shouldUpdate) {
-                        const path = `users/${user.uid}`;
-                        await setDoc(doc(db, path), {
-                          streak: {
-                            count: newCount,
-                            lastLoginDate: todayStr,
-                            lastFreezeUsed: freezeUsed || null
-                          }
-                        }, { merge: true }).catch(err => {
-                          console.error('Failed to update streak:', err);
-                        });
+                        if (shouldUpdate) {
+                          streakCheckedRef.current = user.uid; // Mark as checked to prevent loop
+                          const path = `users/${user.uid}`;
+                          await setDoc(doc(db, path), {
+                            streak: {
+                              count: newCount,
+                              lastLoginDate: todayStr,
+                              lastFreezeUsed: freezeUsed || null
+                            }
+                          }, { merge: true }).catch(err => {
+                            console.error('Failed to update streak:', err);
+                            streakCheckedRef.current = null;
+                          });
+                        } else {
+                          streakCheckedRef.current = user.uid;
+                        }
+                      } else {
+                        streakCheckedRef.current = user.uid;
                       }
                     }
 
