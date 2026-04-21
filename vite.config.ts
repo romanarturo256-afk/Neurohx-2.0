@@ -5,6 +5,11 @@ import {defineConfig, loadEnv} from 'vite';
 
 export default defineConfig(({mode}) => {
   const env = loadEnv(mode, '.', '');
+  
+  console.log('Build Mode:', mode);
+  console.log('Env GEMINI_API_KEY present:', !!env.GEMINI_API_KEY);
+  console.log('Process GEMINI_API_KEY present:', !!process.env.GEMINI_API_KEY);
+  
   const geminiKey = env.GEMINI_API_KEY || process.env.GEMINI_API_KEY || '';
   
   return {

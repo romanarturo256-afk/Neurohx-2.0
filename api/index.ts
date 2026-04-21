@@ -8,6 +8,13 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
+app.get("/api/debug-env", (req, res) => {
+  res.json({ 
+    keys: Object.keys(process.env).filter(k => k.includes("GEMINI") || k.includes("API") || k.includes("GOOGLE")),
+    nodeEnv: process.env.NODE_ENV
+  });
+});
+
 // Razorpay Order Creation (Mock/Structure)
 app.post("/api/payments/create-order", async (req, res) => {
   const { amount } = req.body;
