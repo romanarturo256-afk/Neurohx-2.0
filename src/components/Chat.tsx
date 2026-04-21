@@ -247,47 +247,7 @@ export default function Chat() {
     setIsTyping(true);
     setIsPaused(false);
     stopTypingRef.current = false;
-    
-    const typeNextChar = () => {
-      if (stopTypingRef.current) {
-        setIsTyping(false);
-        return;
-      }
-
-      if (isPaused) return;
-
-      if (currentTypingIndexRef.current < fullResponseRef.current.length) {
-        const nextChar = fullResponseRef.current[currentTypingIndexRef.current];
-        setTypingMessage(prev => prev + nextChar);
-        currentTypingIndexRef.current++;
-        const delay = nextChar === '.' || nextChar === '?' || nextChar === '!' 
-          ? 600 
-          : nextChar === ',' || nextChar === ';' || nextChar === ':'
-          ? 300
-          : Math.floor(Math.random() * 35) + 15;
-        setTimeout(typeNextChar, delay);
-      } else {
-        const aiMessage = {
-          role: 'model',
-          content: fullResponseRef.current,
-          timestamp: new Date().toISOString()
-        };
-        const messagesToUse = baseMessages || messages;
-        const updatedMessages = [...messagesToUse, aiMessage];
-        const path = `users/${auth.currentUser.uid}/chats/${chatId!}`;
-        updateDoc(doc(db, path), {
-          messages: updatedMessages,
-          updatedAt: serverTimestamp()
-        }).catch(e => {
-          console.error('Error updating chat after typing:', e);
-          // Don't re-throw here to avoid unhandled rejection in non-awaited background task
-        });
-        if (profile?.settings?.autoSpeak) speak(fullResponseRef.current);
-        setIsTyping(false);
-        setTypingMessage('');
-      }
-    };
-    typeNextChar();
+    // The logic is handled by the useEffect watching isTyping/isPaused
   };
 
   useEffect(() => {
@@ -438,14 +398,14 @@ export default function Chat() {
             data: base64Audio
           }
         });
-        if (input) promptParts.push({ text: input });
+        if (finalInput) promptParts.push({ text: finalInput });
       } else {
-        promptParts.push({ text: input });
+        promptParts.push({ text: finalInput });
       }
 
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
-        contents: { parts: promptParts },
+        contents: [{ role: 'user', parts: promptParts }],
         config: {
           systemInstruction: systemInstruction
         }
@@ -466,9 +426,16 @@ export default function Chat() {
 
       startTypingEffect(aiText, newMessages);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Chat error:', error);
-      showToast('AI is temporarily unavailable. Please try again later.', 'error');
+      const errorMessage = error?.message?.toLowerCase() || '';
+      if (errorMessage.includes('api key') || errorMessage.includes('invalid')) {
+        showToast('AI configuration issue. Please check API settings.', 'error');
+      } else if (errorMessage.includes('safety') || errorMessage.includes('filtered')) {
+        showToast('AI response filtered for safety. Try rephrasing.', 'info');
+      } else {
+        showToast('AI is temporarily unavailable. Please try again later.', 'error');
+      }
     } finally {
       setLoading(false);
     }
@@ -507,7 +474,7 @@ export default function Chat() {
   };
 
   useEffect(() => {
-    if (isTyping && !isPaused) {
+    if (isTyping && !isPaused && currentTypingIndexRef.current < fullResponseRef.current.length) {
       const typeNextChar = () => {
         if (stopTypingRef.current || isPaused || !isTyping) return;
 
@@ -515,7 +482,13 @@ export default function Chat() {
           const nextChar = fullResponseRef.current[currentTypingIndexRef.current];
           setTypingMessage(prev => prev + nextChar);
           currentTypingIndexRef.current++;
-          const delay = nextChar === '.' || nextChar === '?' || nextChar === '!' ? 400 : 30;
+          
+          const delay = nextChar === '.' || nextChar === '?' || nextChar === '!' 
+            ? 600 
+            : nextChar === ',' || nextChar === ';' || nextChar === ':'
+            ? 300
+            : Math.floor(Math.random() * 35) + 15;
+            
           setTimeout(typeNextChar, delay);
         } else {
           const aiMessage = {
@@ -530,16 +503,17 @@ export default function Chat() {
             updatedAt: serverTimestamp()
           }).catch(e => {
             console.error('Error saving chat messages after typing:', e);
-            // Optionally handle contextually, but don't re-throw to avoid unhandled rejection
           });
           if (profile?.settings?.autoSpeak) speak(fullResponseRef.current);
           setIsTyping(false);
           setTypingMessage('');
         }
       };
-      typeNextChar();
+      
+      const timer = setTimeout(typeNextChar, 50);
+      return () => clearTimeout(timer);
     }
-  }, [isPaused, isTyping]);
+  }, [isPaused, isTyping, chatId, messages.length]);
 
   const toggleListening = async () => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
