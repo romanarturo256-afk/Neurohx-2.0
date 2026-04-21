@@ -130,6 +130,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
             }
 
             // Listen to user profile changes
+            console.log('📡 Starting profile snapshot listener...');
             profileUnsubscribeRef.current = onSnapshot(userDocRef, (snapshot) => {
               const processSnapshot = async () => {
                 try {
@@ -138,20 +139,27 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
                     const data = snapshot.data() as UserProfile;
                     
                     // Check for pro expiry
-                    if (data.proExpiry && new Date(data.proExpiry) < new Date()) {
-                      const path = `users/${user.uid}`;
+                    if (data.proExpiry) {
                       try {
-                        await setDoc(doc(db, path), { 
-                          plan: data.basePlan || 'free', 
-                          proExpiry: null 
-                        }, { merge: true });
-                      } catch (e) {
-                        console.error('Failed to auto-revoke expired pro plan:', e);
+                        const expiryDate = new Date(data.proExpiry);
+                        if (!isNaN(expiryDate.getTime()) && expiryDate < new Date()) {
+                          console.log('⏰ Plan expired, revoking...');
+                          const path = `users/${user.uid}`;
+                          await setDoc(doc(db, path), { 
+                            plan: data.basePlan || 'free', 
+                            proExpiry: null 
+                          }, { merge: true }).catch(err => {
+                            console.error('Failed to auto-revoke expired plan:', err);
+                          });
+                        }
+                      } catch (expiryErr) {
+                        console.error('Error checking plan expiry:', expiryErr);
                       }
                     }
 
                     setProfile({ uid: user.uid, ...data });
                   } else {
+                    console.log('⚠️ Profile snapshot does not exist');
                     setProfile(null);
                   }
                 } catch (err) {

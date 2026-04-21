@@ -14,21 +14,23 @@ window.addEventListener('unhandledrejection', (event) => {
   
   try {
     if (reason instanceof Error) {
-      message = reason.message;
+      message = reason.message || 'Error with no message';
       stack = reason.stack || '';
     } else if (typeof reason === 'object' && reason !== null) {
-      message = reason.message || JSON.stringify(reason);
+      message = reason.message || reason.code || JSON.stringify(reason);
       stack = reason.stack || '';
     } else {
       message = String(reason);
     }
   } catch (e) {
-    message = String(reason);
+    message = 'Error stringifying rejection reason';
   }
   
   console.error('❌ Unhandled Promise Rejection:', message);
-  if (stack) console.error('Stack Trace:', stack);
-  console.error('Full Reason Object:', reason);
+  if (stack) {
+    console.error('Stack Trace:', stack);
+  }
+  console.log('Detailed Rejection Reason:', reason);
 });
 
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean, error: any }> {
