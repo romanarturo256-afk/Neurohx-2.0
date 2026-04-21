@@ -16,7 +16,8 @@ import {
   Target,
   Clock,
   ClipboardCheck,
-  Flame
+  Flame,
+  X
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { 
@@ -202,22 +203,19 @@ export default function Overview() {
         >
           <div className="relative z-10 max-w-md space-y-6">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-widest">
-              <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
-              Neurohx AI is ready
+              <div className="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse" />
+              Neurohx AI is At Capacity
             </div>
             <h2 className="font-['Syne'] text-5xl font-bold leading-tight">
-              Your quiet space for reflection is open.
+              Assistant Offline for Maintenance.
             </h2>
             <p className="text-white/80 text-lg leading-relaxed">
-              Talk through your thoughts, decompress from the morning, or explore your emotions with Neurohx.
+              We're currently scaling our infrastructure to handle high demand. Please focus on your personal journals and metrics in the meantime.
             </p>
-            <button 
-              onClick={() => navigate('/dashboard/chat')}
-              className="group flex items-center gap-3 bg-white text-[#8b7cf6] px-8 py-4 rounded-full font-bold transition-all hover:scale-105 active:scale-95 shadow-xl"
-            >
-              Start a Conversation with Neurohx
-              <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-            </button>
+            <div className="flex items-center gap-3 bg-white/10 text-white/50 px-8 py-4 rounded-full font-bold cursor-not-allowed border border-white/20">
+              Session Unavailable
+              <X size={20} />
+            </div>
           </div>
           
           {/* Abstract Shapes */}

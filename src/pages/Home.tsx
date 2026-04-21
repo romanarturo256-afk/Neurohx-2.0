@@ -6,7 +6,8 @@ import {
   CheckCircle2,
   Users,
   Award,
-  ArrowRight
+  ArrowRight,
+  X
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { cn } from '../lib/utils';
@@ -108,12 +109,15 @@ export default function Home() {
               </p>
 
               <div className="flex items-center gap-4">
-                <div className="flex items-center bg-[#2d7a36] text-white overflow-hidden rounded shadow-lg group">
-                  <Link to="/auth" className="px-10 py-5 font-bold tracking-tight">Book a Session</Link>
-                  <div className="bg-white text-[#2d7a36] p-5 border-l border-[#2d7a36]">
-                    <Plus size={24} />
+                <div className="flex items-center bg-[#1a2b27]/20 text-[#1a2b27]/40 overflow-hidden rounded border border-[#1a2b27]/10 group cursor-not-allowed">
+                  <span className="px-10 py-5 font-bold tracking-tight uppercase text-xs tracking-[0.2em]">at capacity</span>
+                  <div className="bg-[#1a2b27]/5 p-5 border-l border-[#1a2b27]/10">
+                    <X size={24} />
                   </div>
                 </div>
+                <p className="text-[10px] font-bold text-[#4a5a57] uppercase tracking-widest max-w-[150px]">
+                  AI assistant currently offline due to high demand.
+                </p>
               </div>
             </motion.div>
 

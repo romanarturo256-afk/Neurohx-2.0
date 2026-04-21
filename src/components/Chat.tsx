@@ -77,13 +77,11 @@ export default function Chat() {
   const { isPlanAtLeast, profile } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
-  const [isAiComingSoon, setIsAiComingSoon] = useState(false);
+  const [isAiComingSoon, setIsAiComingSoon] = useState(true); // Forced for maintenance
   
   useEffect(() => {
-    const key = process.env.GEMINI_API_KEY;
-    if (!key || key === 'MY_GEMINI_API_KEY' || key === 'undefined') {
-      setIsAiComingSoon(true);
-    }
+    // Maintenance mode active
+    setIsAiComingSoon(true);
   }, []);
 
   const [messages, setMessages] = useState<any[]>([]);
@@ -799,25 +797,31 @@ export default function Chat() {
 
   if (isAiComingSoon) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] p-8 text-center bg-[#fcfaf7] rounded-[48px] border border-[#e0dbd0] my-8 max-w-4xl mx-auto w-full">
-        <div className="w-24 h-24 bg-[#f0eeff] rounded-full flex items-center justify-center mb-8 text-[#8b7cf6]">
-          <MessageSquare size={40} className="animate-pulse" />
+      <div className="flex flex-col items-center justify-center min-h-[60vh] p-8 text-center bg-white rounded-[48px] border border-[#1a2b27]/10 my-8 max-w-4xl mx-auto w-full shadow-2xl">
+        <div className="w-24 h-24 bg-[#f0f4f3] rounded-full flex items-center justify-center mb-8 text-[#1a2b27]">
+          <X size={40} className="animate-pulse" />
         </div>
-        <h2 className="font-['Syne'] text-4xl font-bold text-[#111110] mb-4">AI Chat: Coming Soon</h2>
-        <p className="text-[#888880] text-lg max-w-md mx-auto leading-relaxed mb-8">
-          We're currently fine-tuning our clinical AI models to ensure the highest safety and quality standards for your mental wellness journey.
+        <h2 className="font-['Syne'] text-4xl font-bold text-[#1a2b27] mb-4 uppercase italic">AI Session: Offline</h2>
+        <p className="text-[#4a5a57] text-lg max-w-md mx-auto leading-relaxed mb-8 font-medium">
+          Our clinical AI engines are currently at peak capacity. We're recalibrating our neural networks to maintain the highest quality of care.
         </p>
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           <button 
             onClick={() => navigate('/dashboard/assessments')}
-            className="px-8 py-4 bg-[#8b7cf6] text-white rounded-2xl font-bold transition-all hover:scale-105"
+            className="px-8 py-4 bg-[#1a2b27] text-white rounded-2xl font-bold transition-all hover:bg-[#2d7a36] uppercase text-xs tracking-widest shadow-xl shadow-[#1a2b27]/20"
           >
-            Explore clinical metrics
+            Review Clinical Baseline
+          </button>
+          <button 
+            onClick={() => navigate('/dashboard/journal')}
+            className="px-8 py-4 border border-[#1a2b27]/10 text-[#1a2b27] rounded-2xl font-bold transition-all hover:bg-[#f0f4f3] uppercase text-xs tracking-widest"
+          >
+            Access Private Journal
           </button>
         </div>
-        <div className="mt-12 flex items-center gap-2 text-[10px] font-bold text-[#8b7cf6] uppercase tracking-[0.2em]">
-          <div className="w-1.5 h-1.5 bg-[#8b7cf6] rounded-full animate-ping" />
-          System Under Integration
+        <div className="mt-12 flex items-center gap-2 text-[10px] font-bold text-[#4a5a57]/40 uppercase tracking-[0.3em]">
+          <div className="w-1.5 h-1.5 bg-red-400 rounded-full animate-ping" />
+          Infrastructure Scaling in Progress
         </div>
       </div>
     );
