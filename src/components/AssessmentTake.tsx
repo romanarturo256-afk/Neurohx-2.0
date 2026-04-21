@@ -9,8 +9,13 @@ import { useToast } from './Toast';
 import { GoogleGenAI } from '@google/genai';
 import { useNavigate } from 'react-router-dom';
 
-const apiKey = process.env.GEMINI_API_KEY || '';
-const ai = new GoogleGenAI({ apiKey });
+const getAiClient = () => {
+  const key = process.env.GEMINI_API_KEY || '';
+  if (!key) {
+    throw new Error('GEMINI_API_KEY is missing. Please configure it in the AI Studio Secrets panel.');
+  }
+  return new GoogleGenAI({ apiKey: key });
+};
 
 interface Props {
   assessment: AssessmentDefinition;
@@ -45,6 +50,7 @@ export default function AssessmentTake({ assessment, onBack }: Props) {
   const getAiConclusion = async (score: number, label: string) => {
     setIsAnalyzing(true);
     try {
+      const ai = getAiClient();
       const prompt = `As a professional psychological counselor, assess this assessment result:
       Assessment: ${assessment.title}
       User Score: ${score}

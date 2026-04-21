@@ -43,8 +43,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
 
-const apiKey = process.env.GEMINI_API_KEY || '';
-const ai = new GoogleGenAI({ apiKey });
+const getAiClient = () => {
+  const key = process.env.GEMINI_API_KEY || '';
+  if (!key) {
+    throw new Error('GEMINI_API_KEY is missing. Please configure it in the AI Studio Secrets panel.');
+  }
+  return new GoogleGenAI({ apiKey: key });
+};
 
 const TypingIndicator = () => (
   <div className="flex gap-1.5 items-center px-1">
@@ -96,6 +101,7 @@ export default function Chat() {
   const fullResponseRef = useRef<string>('');
   const currentTypingIndexRef = useRef<number>(0);
   const idleTimerRef = useRef<any>(null);
+  const typingTimerRef = useRef<any>(null);
 
   const isPremium = isPlanAtLeast('premium');
 
@@ -214,6 +220,7 @@ export default function Chat() {
     
     setLoading(true);
     try {
+      const ai = getAiClient();
       const tone = profile?.settings?.aiTone || 'professional';
       const language = profile?.settings?.language || 'en';
       
@@ -241,14 +248,72 @@ export default function Chat() {
   };
 
   const startTypingEffect = (text: string, baseMessages?: any[]) => {
+    if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
+    
     fullResponseRef.current = text;
     currentTypingIndexRef.current = 0;
     setTypingMessage('');
     setIsTyping(true);
     setIsPaused(false);
     stopTypingRef.current = false;
-    // The logic is handled by the useEffect watching isTyping/isPaused
+
+    const typeNextChar = () => {
+      if (stopTypingRef.current) {
+        setIsTyping(false);
+        setTypingMessage('');
+        return;
+      }
+
+      if (isPaused) {
+        typingTimerRef.current = setTimeout(typeNextChar, 100);
+        return;
+      }
+
+      if (currentTypingIndexRef.current < fullResponseRef.current.length) {
+        const nextChar = fullResponseRef.current[currentTypingIndexRef.current];
+        setTypingMessage(prev => prev + nextChar);
+        currentTypingIndexRef.current++;
+        
+        const delay = nextChar === '.' || nextChar === '?' || nextChar === '!' 
+          ? 600 
+          : nextChar === ',' || nextChar === ';' || nextChar === ':'
+          ? 300
+          : Math.floor(Math.random() * 35) + 15;
+          
+        typingTimerRef.current = setTimeout(typeNextChar, delay);
+      } else {
+        const aiMessage = {
+          role: 'model',
+          content: fullResponseRef.current,
+          timestamp: new Date().toISOString()
+        };
+        
+        setMessages(prev => {
+          const updated = [...prev, aiMessage];
+          if (chatId) {
+            const path = `users/${auth.currentUser.uid}/chats/${chatId}`;
+            updateDoc(doc(db, path), {
+              messages: updated,
+              updatedAt: serverTimestamp()
+            }).catch(e => console.error('Error saving message after typing:', e));
+          }
+          return updated;
+        });
+
+        if (profile?.settings?.autoSpeak) speak(fullResponseRef.current);
+        setIsTyping(false);
+        setTypingMessage('');
+      }
+    };
+
+    typeNextChar();
   };
+
+  useEffect(() => {
+    return () => {
+      if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (chatId && location.state?.context) {
@@ -352,6 +417,7 @@ export default function Chat() {
     setReplyTo(null);
 
     try {
+      const ai = getAiClient();
       const tone = profile?.settings?.aiTone || 'professional';
       const language = profile?.settings?.language || 'en';
       
@@ -407,7 +473,8 @@ export default function Chat() {
         model: 'gemini-3-flash-preview',
         contents: [{ role: 'user', parts: promptParts }],
         config: {
-          systemInstruction: systemInstruction
+          systemInstruction: systemInstruction,
+          temperature: 0.7,
         }
       });
 
