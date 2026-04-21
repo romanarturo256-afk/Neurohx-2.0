@@ -60,6 +60,23 @@ service cloud.firestore {
              (!('createdAt' in data) || data.createdAt == request.time || data.createdAt is timestamp || data.createdAt is string);
     }
 
+    function isValidHabit(data, userId) {
+      return data.get('userId', '') == userId &&
+             data.get('title', '') is string &&
+             (!('description' in data) || data.description is string) &&
+             (!('icon' in data) || data.icon is string) &&
+             (!('color' in data) || data.color is string) &&
+             (!('frequency' in data) || data.frequency is number) &&
+             (!('streak' in data) || data.streak is number) &&
+             (!('lastCompleted' in data) || data.lastCompleted is string) &&
+             (!('completedDates' in data) || data.completedDates is list) &&
+             (!('updatedAt' in data) || data.updatedAt == request.time || data.updatedAt is timestamp || data.updatedAt is string) &&
+             (
+               (request.method == 'create' && (!('createdAt' in data) || data.createdAt == request.time || data.createdAt is timestamp)) ||
+               (request.method == 'update' && data.createdAt == resource.data.createdAt)
+             );
+    }
+
     function isValidMood(data, userId) {
       return data.userId == userId &&
              data.value is int && data.value >= 1 && data.value <= 5 &&
@@ -141,6 +158,14 @@ service cloud.firestore {
         allow create: if isOwner(userId) && isValidId(resultId) && isValidAssessmentResult(incoming(), userId);
         // Assessments are immutable after creation - restricted to list only.
         allow update: if isAdmin(); 
+        allow delete: if isOwner(userId);
+      }
+
+      match /habits/{habitId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(habitId) && isValidHabit(incoming(), userId);
+        allow update: if isOwner(userId) && isValidHabit(incoming(), userId) &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['title', 'description', 'icon', 'color', 'frequency', 'streak', 'lastCompleted', 'completedDates', 'updatedAt']);
         allow delete: if isOwner(userId);
       }
     }

@@ -6,6 +6,7 @@ import Chat from '../components/Chat';
 import Journal from '../components/Journal';
 import Mood from '../components/Mood';
 import Assessments from '../components/Assessments';
+import HabitTracker from '../components/HabitTracker';
 import Settings from '../components/Settings';
 import Support from '../components/Support';
 
@@ -17,6 +18,7 @@ export default function Dashboard() {
         <Route path="chat" element={<Chat />} />
         <Route path="journal" element={<Journal />} />
         <Route path="mood" element={<Mood />} />
+        <Route path="habits" element={<HabitTracker />} />
         <Route path="assessments" element={<Assessments />} />
         <Route path="settings" element={<Settings />} />
         <Route path="support" element={<Support />} />

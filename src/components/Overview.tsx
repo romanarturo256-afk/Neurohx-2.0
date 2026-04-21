@@ -52,10 +52,19 @@ export default function Overview() {
   const [recentMood, setRecentMood] = useState<any>(null);
   const [recentChats, setRecentChats] = useState<any[]>([]);
   const [latestAssessment, setLatestAssessment] = useState<any>(null);
+  const [habits, setHabits] = useState<any[]>([]);
 
   useEffect(() => {
     if (!auth.currentUser) return;
     
+    // Fetch habits for status
+    const habitsQuery = query(
+      collection(db, 'users', auth.currentUser.uid, 'habits')
+    );
+    const unsubHabits = onSnapshot(habitsQuery, (snapshot) => {
+      setHabits(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
+
     // Fetch latest assessment
     const assessmentQuery = query(
       collection(db, 'users', auth.currentUser.uid, 'assessments'),
@@ -123,6 +132,7 @@ export default function Overview() {
     }, (err) => console.error('Chats snapshot error:', err));
 
     return () => {
+      unsubHabits();
       unsubAss();
       unsubJournal();
       unsubMood();
@@ -259,16 +269,21 @@ export default function Overview() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-[#111110] rounded-[32px] p-6 shadow-xl flex items-center gap-4 group"
+            onClick={() => navigate('/dashboard/habits')}
+            className="bg-[#111110] rounded-[32px] p-6 shadow-xl flex items-center gap-4 group cursor-pointer"
           >
             <div className="w-12 h-12 bg-[#8b7cf6] rounded-2xl flex items-center justify-center text-white group-hover:scale-110 transition-transform">
-              <Target size={24} />
+              <Zap size={24} />
             </div>
             <div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Goal Status</p>
-              <h4 className="text-xl font-bold text-white">On Track</h4>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Habit Progress</p>
+              <h4 className="text-xl font-bold text-white">
+                {habits.length > 0 ? (Math.round((habits.filter(h => h.completedDates?.includes(new Date().toISOString().split('T')[0])).length / habits.length) * 100)) : 0}%
+              </h4>
             </div>
-            <div className="ml-auto text-[#8b7cf6] text-[10px] font-bold">2/3</div>
+            <div className="ml-auto text-[#8b7cf6] text-[10px] font-bold">
+              {habits.filter(h => h.completedDates?.includes(new Date().toISOString().split('T')[0])).length}/{habits.length}
+            </div>
           </motion.div>
 
           {profile?.streak && profile.streak.count > 0 && (

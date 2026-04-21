@@ -109,6 +109,24 @@
         "rewardClaimed": { "type": "boolean" },
         "createdAt": { "type": "string" }
       }
+    },
+    "Habit": {
+      "title": "Habit",
+      "description": "Advanced habit tracking with streaks and frequency.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "icon": { "type": "string" },
+        "color": { "type": "string" },
+        "frequency": { "type": "integer" },
+        "streak": { "type": "integer" },
+        "lastCompleted": { "type": "string" },
+        "completedDates": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "title", "frequency"]
     }
   },
   "firestore": {
@@ -117,6 +135,7 @@
     "/users/{userId}/journals/{journalId}": { "schema": "Journal", "description": "Journal subcollection" },
     "/users/{userId}/moods/{moodId}": { "schema": "Mood", "description": "Mood subcollection" },
     "/users/{userId}/assessments/{resultId}": { "schema": "AssessmentResult", "description": "Assessment results subcollection" },
+    "/users/{userId}/habits/{habitId}": { "schema": "Habit", "description": "Habit tracking subcollection" },
     "/support_tickets/{ticketId}": { "schema": "SupportTicket", "description": "Global support tickets" },
     "/referrals/{referralId}": { "schema": "Referral", "description": "Global referral tracking" }
   }

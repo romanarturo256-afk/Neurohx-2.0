@@ -15,7 +15,8 @@ import {
   LifeBuoy,
   Wind,
   ClipboardCheck,
-  Flame
+  Flame,
+  Zap
 } from 'lucide-react';
 import { auth } from '../lib/firebase';
 import { cn } from '../lib/utils';
@@ -26,6 +27,7 @@ const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
   { icon: MessageSquare, label: 'Intake', path: '/dashboard/chat' },
   { icon: BookOpen, label: 'Journal', path: '/dashboard/journal' },
+  { icon: Zap, label: 'Habits', path: '/dashboard/habits' },
   { icon: ClipboardCheck, label: 'Metrics', path: '/dashboard/assessments' },
   { icon: BarChart2, label: 'Analytics', path: '/dashboard/mood' },
   { icon: Wind, label: 'Pneuma', path: '#breathing', action: 'breathing' },
