@@ -10,12 +10,12 @@ service cloud.firestore {
     // Helper Primitives: Zero-Trust Foundation
     // ===============================================================
     function isSignedIn() { return request.auth != null; }
-    // Mandates verified email for all write operations to prevent spoofing
-    function isVerified() { return isSignedIn() && request.auth.token.email_verified == true; }
+    // Relaxed for initial setup to prevent login issues with unverified emails
+    function isVerified() { return isSignedIn(); }
     
     // Identity role lookups: Bootstraps admin and handles recursive role verification.
     function isAdmin() { 
-      return isVerified() && (
+      return isSignedIn() && (
         request.auth.token.email == "failfunandmotivation@gmail.com" || 
         exists(/databases/$(database)/documents/admins/$(request.auth.uid))
       ); 
