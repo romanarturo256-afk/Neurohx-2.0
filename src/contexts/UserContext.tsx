@@ -69,104 +69,122 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     console.log('🔄 UserProvider: Setting up listeners...');
     
-    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
-      // Clean up previous profile listener if it exists
-      if (profileUnsubscribeRef.current) {
-        profileUnsubscribeRef.current();
-        profileUnsubscribeRef.current = null;
-      }
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      const handleAuthStateChange = async () => {
+        // Clean up previous profile listener if it exists
+        if (profileUnsubscribeRef.current) {
+          profileUnsubscribeRef.current();
+          profileUnsubscribeRef.current = null;
+        }
 
-      try {
-        console.log('👤 Auth state changed:', user?.uid || 'Guest');
-        if (user) {
-          setLoading(true);
-          const userDocRef = doc(db, 'users', user.uid);
-          
-          // Check for profile existence first
-          const initialSnap = await getDoc(userDocRef);
-          
-          if (!initialSnap.exists()) {
-            console.log('🆕 Creating new user profile...');
-            const storedRefCode = sessionStorage.getItem('referralCode');
-            let referredByUid = null;
-
-            if (storedRefCode) {
-              const usersRef = collection(db, 'users');
-              const q = query(usersRef, where('referralCode', '==', storedRefCode));
-              try {
-                const querySnapshot = await getDocs(q).catch(e => handleFirestoreError(e, 'list', 'users'));
-                if (!querySnapshot.empty) {
-                  referredByUid = querySnapshot.docs[0].id;
-                }
-              } catch (e) {
-                console.error('Referral lookup failed:', e);
-              }
-            }
-
-            const newProfile: UserProfile = {
-              uid: user.uid,
-              email: user.email,
-              displayName: user.displayName,
-              plan: 'free',
-              basePlan: 'free',
-              referralCode: Math.random().toString(36).substring(2, 10).toUpperCase(),
-              referredBy: referredByUid,
-              createdAt: new Date().toISOString(),
-            };
-            await setDoc(userDocRef, newProfile).catch(e => handleFirestoreError(e, 'create', `users/${user.uid}`));
+        try {
+          console.log('👤 Auth state changed:', user?.uid || 'Guest');
+          if (user) {
+            setLoading(true);
+            const userDocRef = doc(db, 'users', user.uid);
             
-            // If referred, create a pending referral record
-            if (referredByUid) {
-              const refId = Math.random().toString(36).substring(7);
-              await setDoc(doc(db, 'referrals', refId), {
-                referrerId: referredByUid,
-                referredId: user.uid,
-                status: 'pending',
-                rewardClaimed: false,
-                createdAt: new Date().toISOString()
-              }).catch(e => handleFirestoreError(e, 'create', `referrals/${refId}`));
-            }
-          }
+            // Check for profile existence first
+            const initialSnap = await getDoc(userDocRef);
+            
+            if (!initialSnap.exists()) {
+              console.log('🆕 Creating new user profile...');
+              const storedRefCode = sessionStorage.getItem('referralCode');
+              let referredByUid = null;
 
-          // Listen to user profile changes
-          profileUnsubscribeRef.current = onSnapshot(userDocRef, async (snapshot) => {
-            try {
-              console.log('📄 Profile snapshot received');
-              if (snapshot.exists()) {
-                const data = snapshot.data() as UserProfile;
-                
-                // Check for pro expiry
-                if (data.proExpiry && new Date(data.proExpiry) < new Date()) {
-                  const path = `users/${user.uid}`;
-                  await setDoc(doc(db, path), { 
-                    plan: data.basePlan || 'free', 
-                    proExpiry: null 
-                  }, { merge: true }).catch(e => handleFirestoreError(e, 'update', path));
+              if (storedRefCode) {
+                const usersRef = collection(db, 'users');
+                const q = query(usersRef, where('referralCode', '==', storedRefCode));
+                try {
+                  const querySnapshot = await getDocs(q).catch(e => handleFirestoreError(e, 'list', 'users'));
+                  if (!querySnapshot.empty) {
+                    referredByUid = querySnapshot.docs[0].id;
+                  }
+                } catch (e) {
+                  console.error('Referral lookup failed:', e);
                 }
-
-                setProfile({ uid: user.uid, ...data });
-              } else {
-                setProfile(null);
               }
-              setLoading(false);
-            } catch (err) {
-              console.error('Error in profile listener:', err);
-              setLoading(false);
+
+              const newProfile: UserProfile = {
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                plan: 'free',
+                basePlan: 'free',
+                referralCode: Math.random().toString(36).substring(2, 10).toUpperCase(),
+                referredBy: referredByUid,
+                createdAt: new Date().toISOString(),
+              };
+              await setDoc(userDocRef, newProfile).catch(e => handleFirestoreError(e, 'create', `users/${user.uid}`));
+              
+              // If referred, create a pending referral record
+              if (referredByUid) {
+                const refId = Math.random().toString(36).substring(7);
+                await setDoc(doc(db, 'referrals', refId), {
+                  referrerId: referredByUid,
+                  referredId: user.uid,
+                  status: 'pending',
+                  rewardClaimed: false,
+                  createdAt: new Date().toISOString()
+                }).catch(e => handleFirestoreError(e, 'create', `referrals/${refId}`));
+              }
             }
-          }, (error) => {
-            console.error('❌ Profile snapshot error:', error);
+
+            // Listen to user profile changes
+            profileUnsubscribeRef.current = onSnapshot(userDocRef, (snapshot) => {
+              const processSnapshot = async () => {
+                try {
+                  console.log('📄 Profile snapshot received');
+                  if (snapshot.exists()) {
+                    const data = snapshot.data() as UserProfile;
+                    
+                    // Check for pro expiry
+                    if (data.proExpiry && new Date(data.proExpiry) < new Date()) {
+                      const path = `users/${user.uid}`;
+                      try {
+                        await setDoc(doc(db, path), { 
+                          plan: data.basePlan || 'free', 
+                          proExpiry: null 
+                        }, { merge: true });
+                      } catch (e) {
+                        console.error('Failed to auto-revoke expired pro plan:', e);
+                      }
+                    }
+
+                    setProfile({ uid: user.uid, ...data });
+                  } else {
+                    setProfile(null);
+                  }
+                } catch (err) {
+                  console.error('Error processing profile listener snapshot:', err);
+                } finally {
+                  setLoading(false);
+                }
+              };
+
+              processSnapshot().catch(err => {
+                console.error('Unhandled error in profile snapshot processing:', err);
+                setLoading(false);
+              });
+            }, (error) => {
+              console.error('❌ Profile snapshot listener error:', error);
+              setLoading(false);
+            });
+          } else {
+            setProfile(null);
             setLoading(false);
-          });
-        } else {
-          setProfile(null);
+          }
+        } catch (err) {
+          console.error('Error in auth state change handling:', err);
           setLoading(false);
         }
-      } catch (err) {
-        console.error('Error in auth state change:', err);
+      };
+
+      handleAuthStateChange().catch(err => {
+        console.error('Unhandled error in auth state change wrapper:', err);
         setLoading(false);
-      }
+      });
     }, (error) => {
-      console.error('❌ Auth error:', error);
+      console.error('❌ Auth listener error:', error);
       setLoading(false);
     });
 

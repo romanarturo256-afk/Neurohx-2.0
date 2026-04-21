@@ -30,17 +30,12 @@ export default function Auth() {
         await signInWithEmailAndPassword(auth, email, password);
       } else {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        // Important: Update the auth profile with the name so UserContext captures it
         await updateProfile(userCredential.user, { displayName: name });
         
-        // Create user doc
-        const path = `users/${userCredential.user.uid}`;
-        await setDoc(doc(db, path), {
-          uid: userCredential.user.uid,
-          email: userCredential.user.email,
-          displayName: name,
-          plan: 'free',
-          createdAt: new Date()
-        }).catch(e => handleFirestoreError(e, 'create', path));
+        // Note: UserContext.tsx has an onAuthStateChanged listener that will 
+        // automatically detect this new user and create the Firestore profile document.
+        // We no longer need to call setDoc here manually.
       }
       navigate('/dashboard/chat');
     } catch (err: any) {
@@ -52,25 +47,25 @@ export default function Auth() {
 
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
+    setError('');
+    setLoading(true);
     try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      
-      const userDoc = await getDoc(doc(db, 'users', user.uid)).catch(e => handleFirestoreError(e, 'get', `users/${user.uid}`));
-      if (!userDoc.exists()) {
-        const path = `users/${user.uid}`;
-        await setDoc(doc(db, path), {
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-          photoURL: user.photoURL,
-          plan: 'free',
-          createdAt: new Date()
-        }).catch(e => handleFirestoreError(e, 'create', path));
-      }
+      await signInWithPopup(auth, provider);
+      // UserContext listener will handle profile creation/loading
       navigate('/dashboard/chat');
     } catch (err: any) {
-      setError(err.message);
+      console.error('Google Sign In Error:', err);
+      // Handle the case where user cancels or domain is unauthorized
+      if (err.code === 'auth/unauthorized-domain') {
+        setError('Unauthorized Domain: Please add this URL to your Firebase Console > Auth > Settings > Authorized domains.');
+      } else if (err.code === 'auth/popup-closed-by-user') {
+        // Just ignore or show a gentle message
+        console.log('User closed the login popup.');
+      } else {
+        setError(err.message || 'An unexpected authentication error occurred.');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
