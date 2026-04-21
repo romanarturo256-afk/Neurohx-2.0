@@ -59,8 +59,14 @@ async function testConnection() {
   try {
     await getDocFromServer(doc(db, 'test', 'connection'));
   } catch (error) {
-    if (error instanceof Error && (error.message.includes('the client is offline') || error.message.includes('unavailable'))) {
-      console.error("Please check your Firebase configuration. The client is reporting as offline or connection is unavailable.");
+    if (error instanceof Error) {
+      if (error.message.includes('permission-denied')) {
+        // Silently ignore permission denied for test collection
+        return;
+      }
+      if (error.message.includes('the client is offline') || error.message.includes('unavailable')) {
+        console.error("Please check your Firebase configuration. The client is reporting as offline or connection is unavailable.");
+      }
     }
   }
 }

@@ -46,7 +46,9 @@ service cloud.firestore {
              (!('theme' in data) || data.theme is map) &&
              (!('settings' in data) || data.settings is map) &&
              (!('proExpiry' in data) || data.proExpiry is string || data.proExpiry == null) &&
-             (!('basePlan' in data) || data.basePlan in ['free', 'starter', 'pro', 'premium']);
+             (!('basePlan' in data) || data.basePlan in ['free', 'starter', 'pro', 'premium']) &&
+             (!('referralCode' in data) || (data.referralCode is string && data.referralCode.size() <= 50)) &&
+             (!('referredBy' in data) || (data.referredBy is string || data.referredBy == null));
     }
 
     function isValidChat(data, userId) {
@@ -111,8 +113,12 @@ service cloud.firestore {
 
     match /users/{userId} {
       allow get: if isOwner(userId) || isAdmin();
-      // Strict List Query: Enforces limit and owner scope.
-      allow list: if isVerified() && request.query.limit <= 1 && userId == request.auth.uid;
+      // Allow searching for users by referral code during signup
+      allow list: if isVerified() && (
+        (request.query.limit <= 1) || 
+        (userId == request.auth.uid) ||
+        isAdmin()
+      ); 
       
       allow create: if isVerified() && isValidId(userId) && userId == request.auth.uid && 
                        isValidUser(incoming()) && incoming().plan == 'free';
