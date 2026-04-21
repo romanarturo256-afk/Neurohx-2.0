@@ -10,9 +10,9 @@ import { GoogleGenAI } from '@google/genai';
 import { useNavigate } from 'react-router-dom';
 
 const getAiClient = () => {
-  const key = process.env.GEMINI_API_KEY || '';
-  if (!key) {
-    throw new Error('GEMINI_API_KEY is missing. Please configure it in the AI Studio Secrets panel.');
+  const key = process.env.GEMINI_API_KEY;
+  if (!key || key === 'MY_GEMINI_API_KEY' || key === 'undefined') {
+    throw new Error('GEMINI_API_KEY is not configured. Please add it to your project secrets.');
   }
   return new GoogleGenAI({ apiKey: key });
 };

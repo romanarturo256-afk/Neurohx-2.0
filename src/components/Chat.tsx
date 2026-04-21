@@ -44,9 +44,9 @@ import { motion, AnimatePresence } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
 
 const getAiClient = () => {
-  const key = process.env.GEMINI_API_KEY || '';
-  if (!key) {
-    throw new Error('GEMINI_API_KEY is missing. Please configure it in the AI Studio Secrets panel.');
+  const key = process.env.GEMINI_API_KEY;
+  if (!key || key === 'MY_GEMINI_API_KEY' || key === 'undefined') {
+    throw new Error('GEMINI_API_KEY is not configured. Please add it to your project secrets.');
   }
   return new GoogleGenAI({ apiKey: key });
 };
@@ -496,12 +496,15 @@ export default function Chat() {
     } catch (error: any) {
       console.error('Chat error:', error);
       const errorMessage = error?.message?.toLowerCase() || '';
-      if (errorMessage.includes('api key') || errorMessage.includes('invalid')) {
-        showToast('AI configuration issue. Please check API settings.', 'error');
+      
+      if (errorMessage.includes('api key') || errorMessage.includes('not configured')) {
+        showToast('AI Service Configuration Error: ' + (error.message || 'Check your API keys.'), 'error');
       } else if (errorMessage.includes('safety') || errorMessage.includes('filtered')) {
-        showToast('AI response filtered for safety. Try rephrasing.', 'info');
+        showToast('The AI safely filtered that request. Let\'s try rephrasing.', 'warning');
+      } else if (errorMessage.includes('quota') || errorMessage.includes('exhausted')) {
+        showToast('AI usage limit reached. Please try again later.', 'warning');
       } else {
-        showToast('AI is temporarily unavailable. Please try again later.', 'error');
+        showToast('The AI service is temporarily unavailable. Please try again.', 'error');
       }
     } finally {
       setLoading(false);
