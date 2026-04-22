@@ -170,6 +170,16 @@ service cloud.firestore {
       }
     }
 
+    match /presence/{userId} {
+      allow read: if isSignedIn();
+      allow write: if isOwner(userId) && isValidId(userId);
+    }
+
+    match /system/stats {
+      allow get, list: if true;
+      allow write: if isVerified();
+    }
+
     match /support_tickets/{ticketId} {
       // Secure List Query: Rule enforces data visibility
       allow list: if isVerified() && (isAdmin() || resource.data.userId == request.auth.uid);

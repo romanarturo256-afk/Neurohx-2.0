@@ -26,9 +26,8 @@ export default function SmartReminders() {
     let assessmentUnsubscribe: (() => void) | undefined;
     if (smartSettings.assessmentNudges) {
       const q = query(
-        collection(db, 'assessment_results'),
-        where('userId', '==', profile.uid),
-        orderBy('completedAt', 'desc'),
+        collection(db, 'users', profile.uid, 'assessments'),
+        orderBy('createdAt', 'desc'),
         limit(1)
       );
 
@@ -38,8 +37,8 @@ export default function SmartReminders() {
           // Logic for PHQ-9 (ID: phq9) or GAD-7 (ID: gad7)
           if ((latest.assessmentId === 'phq9' || latest.assessmentId === 'gad7') && latest.score >= 10) {
             // Only nudge if recently completed (within last 24h)
-            const completedAt = latest.completedAt instanceof Timestamp ? latest.completedAt.toDate() : new Date(latest.completedAt);
-            const timeDiff = Date.now() - completedAt.getTime();
+            const createdAt = latest.createdAt instanceof Timestamp ? latest.createdAt.toDate() : new Date(latest.createdAt);
+            const timeDiff = Date.now() - createdAt.getTime();
             if (timeDiff < 24 * 60 * 60 * 1000) {
               showToast(
                 `Smart Nudge: Your recent ${latest.assessmentId.toUpperCase()} score suggests moderate levels. Consider a guided breathing session.`, 
@@ -55,8 +54,7 @@ export default function SmartReminders() {
     let journalUnsubscribe: (() => void) | undefined;
     if (smartSettings.journalNudges) {
       const q = query(
-        collection(db, 'journals'),
-        where('userId', '==', profile.uid),
+        collection(db, 'users', profile.uid, 'journals'),
         orderBy('createdAt', 'desc'),
         limit(1)
       );
@@ -73,9 +71,45 @@ export default function SmartReminders() {
       });
     }
 
+    // 2. Mood-based Nudges
+    let moodUnsubscribe: (() => void) | undefined;
+    if (smartSettings.enabled) {
+      const q = query(
+        collection(db, 'users', profile.uid, 'moods'),
+        orderBy('date', 'desc'),
+        limit(1)
+      );
+
+      moodUnsubscribe = onSnapshot(q, (snapshot) => {
+        if (!snapshot.empty) {
+          const latest = snapshot.docs[0].data();
+          if (latest.value <= 2) {
+            showToast("Smart Nudge: We noticed your mood is a bit low. Reflecting in your journal might help process these feelings.", 'info');
+          }
+        }
+      });
+    }
+
+    // 4. Inactivity Detection (Breathing Exercise)
+    let inactivityTimer: any;
+    const resetTimer = () => {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => {
+        showToast("Smart Nudge: You've been focused for a while. A 60-second Pneuma breathing session could help reset your nervous system.", 'info');
+      }, 300000); // 5 minutes of inactivity
+    };
+
+    window.addEventListener('mousemove', resetTimer);
+    window.addEventListener('keydown', resetTimer);
+    resetTimer();
+
     return () => {
       assessmentUnsubscribe?.();
+      moodUnsubscribe?.();
       journalUnsubscribe?.();
+      clearTimeout(inactivityTimer);
+      window.removeEventListener('mousemove', resetTimer);
+      window.removeEventListener('keydown', resetTimer);
     };
   }, [profile?.uid, profile?.settings?.notifications?.smartReminders]);
 

@@ -23,6 +23,8 @@ import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { useUser } from '../contexts/UserContext';
 
+import RealTimeStatus from './RealTimeStatus';
+
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
   { icon: MessageSquare, label: 'Intake', path: '/dashboard/chat' },
@@ -58,7 +60,7 @@ export default function Sidebar() {
           </button>
         </div>
         
-        <nav className="flex-1 px-6 space-y-2">
+        <nav className="flex-1 px-6 space-y-2 overflow-y-auto no-scrollbar py-6">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path || (item.path === '/dashboard' && location.pathname === '/dashboard/');
             const isSoon = item.path === '/dashboard/chat' && isAiDisabled;
@@ -99,6 +101,10 @@ export default function Sidebar() {
               </Link>
             );
           })}
+          
+          <div className="pt-6 mt-6 px-2">
+            <RealTimeStatus />
+          </div>
         </nav>
 
         <div className="p-8 space-y-4">

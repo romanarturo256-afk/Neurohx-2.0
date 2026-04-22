@@ -136,6 +136,8 @@
     "/users/{userId}/moods/{moodId}": { "schema": "Mood", "description": "Mood subcollection" },
     "/users/{userId}/assessments/{resultId}": { "schema": "AssessmentResult", "description": "Assessment results subcollection" },
     "/users/{userId}/habits/{habitId}": { "schema": "Habit", "description": "Habit tracking subcollection" },
+    "/presence/{userId}": { "schema": "object", "description": "Real-time user presence tracking" },
+    "/system/stats": { "schema": "object", "description": "Global application statistics" },
     "/support_tickets/{ticketId}": { "schema": "SupportTicket", "description": "Global support tickets" },
     "/referrals/{referralId}": { "schema": "Referral", "description": "Global referral tracking" }
   }

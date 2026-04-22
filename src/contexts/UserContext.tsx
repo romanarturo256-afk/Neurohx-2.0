@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth, db, handleFirestoreError } from '../lib/firebase';
-import { doc, onSnapshot, setDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc, getDoc, collection, query, where, getDocs, updateDoc, increment, serverTimestamp } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 
 interface UserProfile {
@@ -143,6 +143,13 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
                 }
               };
               await setDoc(userDocRef, newProfile).catch(e => handleFirestoreError(e, 'create', `users/${user.uid}`));
+              
+              // Increment global user count
+              const statsPath = 'system/stats';
+              await setDoc(doc(db, statsPath), { 
+                totalSignedUp: increment(1),
+                updatedAt: serverTimestamp() 
+              }, { merge: true }).catch(err => console.error('Failed to increment global user count:', err));
               
               // If referred, create a pending referral record
               if (referredByUid) {
