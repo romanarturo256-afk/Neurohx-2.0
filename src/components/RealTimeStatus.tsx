@@ -9,7 +9,8 @@ import {
   where, 
   Timestamp,
   serverTimestamp,
-  getDocs
+  getDocs,
+  getCountFromServer
 } from 'firebase/firestore';
 import { Users, Activity, Circle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -43,10 +44,24 @@ export default function RealTimeStatus() {
 
   // 2. Statistics Listeners
   useEffect(() => {
-    // Total Signed Up
+    // Total Signed Up (Aggregate Count)
+    const fetchTotalCount = async () => {
+      try {
+        const coll = collection(db, 'users');
+        const snapshot = await getCountFromServer(coll);
+        setTotalSignedUp(snapshot.data().count);
+      } catch (err) {
+        console.error('Failed to fetch total user count:', err);
+      }
+    };
+
+    fetchTotalCount();
+
+    // Total Signed Up (Real-time fallback/updates)
     const statsUnsubscribe = onSnapshot(doc(db, 'system', 'stats'), (doc) => {
       if (doc.exists()) {
-        setTotalSignedUp(doc.data().totalSignedUp || 0);
+        const liveCount = doc.data().totalSignedUp || 0;
+        setTotalSignedUp(prev => Math.max(prev, liveCount));
       }
     });
 

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useUser } from '../contexts/UserContext';
 import { db } from '../lib/firebase';
 import { 
@@ -8,20 +8,79 @@ import {
   orderBy, 
   limit, 
   onSnapshot,
-  Timestamp 
+  Timestamp,
+  getDocs
 } from 'firebase/firestore';
 import { useToast } from './Toast';
-import { Brain, Star, Clock } from 'lucide-react';
+import { Brain, Star, Clock, Wind, Book, BarChart2 } from 'lucide-react';
 
 export default function SmartReminders() {
   const { profile } = useUser();
   const { showToast } = useToast();
+  const nudgedRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     if (!profile?.uid || !profile?.settings?.notifications?.smartReminders?.enabled) return;
 
     const smartSettings = profile.settings.notifications.smartReminders;
+    const today = new Date().toISOString().split('T')[0];
 
+    // Helper to check if nudged today
+    const checkNudge = (key: string) => {
+      const lastNudge = localStorage.getItem(`nudge_${key}`);
+      return lastNudge === today;
+    };
+
+    const setNudge = (key: string) => {
+      localStorage.setItem(`nudge_${key}`, today);
+      nudgedRef.current.add(key);
+    };
+
+    // --- PROACTIVE DAILY CHECKS ---
+    const runProactiveChecks = async () => {
+      if (!profile?.uid) return;
+
+      // 1. Daily Mood Check-In
+      if (!checkNudge('mood')) {
+        const moodQ = query(
+          collection(db, 'users', profile.uid, 'moods'),
+          where('date', '==', today),
+          limit(1)
+        );
+        const moodSnap = await getDocs(moodQ);
+        if (moodSnap.empty) {
+          showToast("Daily Baseline: You haven't tracked your mood yet today. Technical self-awareness is key to growth.", 'info');
+          setNudge('mood');
+        }
+      }
+
+      // 2. Journal Reflection (Evening Focus)
+      const hour = new Date().getHours();
+      if (hour >= 18 && !checkNudge('journal_evening')) {
+        const journalQ = query(
+          collection(db, 'users', profile.uid, 'journals'),
+          where('date', '==', today),
+          limit(1)
+        );
+        const journalSnap = await getDocs(journalQ);
+        if (journalSnap.empty) {
+          showToast("Evening Reflection: A neural unload via journaling is recommended before sleep to improve cognitive recovery.", 'info');
+          setNudge('journal_evening');
+        }
+      }
+
+      // 3. Morning Breathing
+      if (hour >= 6 && hour <= 10 && !checkNudge('breathing_morning')) {
+        showToast("Morning Pneuma: Start your day with a 60s breathing cycle to calibrate your autonomic nervous system.", 'info');
+        setNudge('breathing_morning');
+      }
+    };
+
+    // Run proactive checks on mount
+    runProactiveChecks();
+
+    // --- REACTIVE LISTENERS ---
+    
     // 1. Clinical Red Flags (Assessment Nudges)
     let assessmentUnsubscribe: (() => void) | undefined;
     if (smartSettings.assessmentNudges) {

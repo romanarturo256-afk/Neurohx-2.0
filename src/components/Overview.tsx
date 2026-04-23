@@ -17,7 +17,8 @@ import {
   Clock,
   ClipboardCheck,
   Flame,
-  X
+  X,
+  Users
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { 
@@ -33,7 +34,7 @@ import {
 } from 'recharts';
 import { useUser } from '../contexts/UserContext';
 import { auth, db } from '../lib/firebase';
-import { collection, query, orderBy, limit, onSnapshot, getDocs, where } from 'firebase/firestore';
+import { collection, query, orderBy, limit, onSnapshot, getDocs, where, getCountFromServer } from 'firebase/firestore';
 import { cn } from '../lib/utils';
 
 const weeklyData = [
@@ -54,10 +55,23 @@ export default function Overview() {
   const [recentChats, setRecentChats] = useState<any[]>([]);
   const [latestAssessment, setLatestAssessment] = useState<any>(null);
   const [habits, setHabits] = useState<any[]>([]);
+  const [totalUsers, setTotalUsers] = useState(0);
 
   useEffect(() => {
     if (!auth.currentUser) return;
     
+    // Fetch total signed up (agg)
+    const fetchStats = async () => {
+      try {
+        const coll = collection(db, 'users');
+        const snap = await getCountFromServer(coll);
+        setTotalUsers(snap.data().count);
+      } catch (err) {
+        console.error('Failed to fetch total user count in overview:', err);
+      }
+    };
+    fetchStats();
+
     // Fetch habits for status
     const habitsQuery = query(
       collection(db, 'users', auth.currentUser.uid, 'habits')
@@ -139,6 +153,47 @@ export default function Overview() {
       unsubMood();
       unsubChats();
     };
+  }, []);
+
+  const [pendingTasks, setPendingTasks] = useState<{ id: string, label: string, icon: any, path: string }[]>([]);
+
+  useEffect(() => {
+    if (!auth.currentUser) return;
+    
+    // Check pending tasks
+    const checkPending = async () => {
+      const tasks = [];
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Mood
+      const moodQ = query(
+        collection(db, 'users', auth.currentUser!.uid, 'moods'),
+        where('date', '==', today),
+        limit(1)
+      );
+      const moodSnap = await getDocs(moodQ);
+      if (moodSnap.empty) {
+        tasks.push({ id: 'mood', label: 'Track Daily Mood', icon: Activity, path: '/dashboard/mood' });
+      }
+
+      // Journal
+      const journalQ = query(
+        collection(db, 'users', auth.currentUser!.uid, 'journals'),
+        where('date', '==', today),
+        limit(1)
+      );
+      const journalSnap = await getDocs(journalQ);
+      if (journalSnap.empty) {
+        tasks.push({ id: 'journal', label: 'Evening Reflection', icon: BookOpen, path: '/dashboard/journal' });
+      }
+
+      // Breathing (Always suggest if fewer than 2 tasks or just as a default healthy nudge)
+      tasks.push({ id: 'breathing', label: 'Pneuma Breathing', icon: Sparkles, path: '#breathing' });
+
+      setPendingTasks(tasks);
+    };
+
+    checkPending();
   }, []);
 
   const getMoodEmoji = (value: number) => {
@@ -234,6 +289,21 @@ export default function Overview() {
             transition={{ delay: 0.1 }}
             className="bg-white rounded-[32px] p-6 border border-[#e0dbd0] shadow-sm flex items-center gap-4 group hover:border-[#8b7cf6] transition-all"
           >
+            <div className="w-12 h-12 bg-[#fefce8] rounded-2xl flex items-center justify-center text-yellow-600 group-hover:scale-110 transition-transform">
+              <Users size={24} />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-[#888880] uppercase tracking-widest">Global Community</p>
+              <h4 className="text-xl font-bold text-[#111110]">{totalUsers.toLocaleString()} Members</h4>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.15 }}
+            className="bg-white rounded-[32px] p-6 border border-[#e0dbd0] shadow-sm flex items-center gap-4 group hover:border-[#8b7cf6] transition-all"
+          >
             <div className="w-12 h-12 bg-[#f0eeff] rounded-2xl flex items-center justify-center text-[#8b7cf6] group-hover:scale-110 transition-transform">
               <Activity size={24} />
             </div>
@@ -307,6 +377,56 @@ export default function Overview() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Proactive Neural Tasks */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-[40px] p-8 border border-[#e0dbd0] shadow-sm overflow-hidden"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="font-bold text-[#111110] flex items-center gap-2">
+              <Zap size={18} className="text-[#8b7cf6]" />
+              Neural Tasks
+            </h3>
+            <span className="text-[10px] font-bold text-[#888880] uppercase tracking-widest bg-[#f5f2eb] px-2 py-1 rounded-md">
+              {pendingTasks.length} Pending
+            </span>
+          </div>
+          
+          <div className="space-y-3">
+            {pendingTasks.map((task) => (
+              <button
+                key={task.id}
+                onClick={() => {
+                  if (task.id === 'breathing') {
+                    window.dispatchEvent(new CustomEvent('open-breathing'));
+                  } else {
+                    navigate(task.path);
+                  }
+                }}
+                className="w-full flex items-center gap-4 p-4 rounded-2xl bg-[#fcfaf7] border border-[#e0dbd0] hover:border-[#8b7cf6] group transition-all text-left"
+              >
+                <div className="w-10 h-10 rounded-xl bg-white border border-[#e0dbd0] flex items-center justify-center text-[#8b7cf6] group-hover:scale-110 transition-transform shadow-sm">
+                  <task.icon size={18} />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-bold text-[#111110]">{task.label}</p>
+                  <p className="text-[10px] text-[#888880] uppercase tracking-wider">Required focus</p>
+                </div>
+                <ChevronRight size={16} className="text-[#e0dbd0] group-hover:text-[#8b7cf6]" />
+              </button>
+            ))}
+            {pendingTasks.length === 0 && (
+              <div className="py-8 text-center space-y-3">
+                <div className="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center text-green-500 mx-auto">
+                  <CheckCircle2 size={24} />
+                </div>
+                <p className="text-sm text-[#888880] font-medium italic">Neural pathways synchronized.</p>
+              </div>
+            )}
+          </div>
+        </motion.div>
+
         {/* Daily Mood */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
