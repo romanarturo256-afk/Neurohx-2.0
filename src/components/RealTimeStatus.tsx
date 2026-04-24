@@ -44,20 +44,20 @@ export default function RealTimeStatus() {
 
   // 2. Statistics Listeners
   useEffect(() => {
-    // Total Signed Up (Aggregate Count)
-    const fetchTotalCount = async () => {
+    // Total Signed Up (Admin Direct Count)
+    const fetchRealCount = async () => {
+      // Use profile?.email from context if available, or just standard check if we have access
       try {
         const coll = collection(db, 'users');
-        const snapshot = await getCountFromServer(coll);
-        setTotalSignedUp(snapshot.data().count);
+        const snap = await getCountFromServer(coll);
+        setTotalSignedUp(snap.data().count);
       } catch (err) {
-        console.error('Failed to fetch total user count:', err);
+        // Fallback for non-admins is handled by onSnapshot
       }
     };
+    fetchRealCount();
 
-    fetchTotalCount();
-
-    // Total Signed Up (Real-time fallback/updates)
+    // Total Signed Up (Real-time stats doc)
     const statsUnsubscribe = onSnapshot(doc(db, 'system', 'stats'), (doc) => {
       if (doc.exists()) {
         const liveCount = doc.data().totalSignedUp || 0;

@@ -61,6 +61,7 @@ export default function BreathingExercise({ onClose }: { onClose: () => void }) 
       if (!voiceEnabled || !window.speechSynthesis) return;
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
+      utterance.volume = 1; // Explicitly set to maximum volume
       utterance.rate = 0.9;
       utterance.pitch = 1;
       window.speechSynthesis.speak(utterance);
@@ -86,8 +87,8 @@ export default function BreathingExercise({ onClose }: { onClose: () => void }) 
       osc.frequency.setValueAtTime(freq, ctx.currentTime);
       
       gain.gain.setValueAtTime(0, ctx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.1);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+      gain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
 
       osc.connect(gain);
       gain.connect(ctx.destination);

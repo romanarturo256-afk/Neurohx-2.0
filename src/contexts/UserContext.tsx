@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth, db, handleFirestoreError } from '../lib/firebase';
-import { doc, onSnapshot, setDoc, getDoc, collection, query, where, getDocs, updateDoc, increment, serverTimestamp } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc, getDoc, collection, query, where, getDocs, updateDoc, increment, serverTimestamp, getCountFromServer } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 
 interface UserProfile {
@@ -161,6 +161,28 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
                   rewardClaimed: false,
                   createdAt: new Date().toISOString()
                 }).catch(e => handleFirestoreError(e, 'create', `referrals/${refId}`));
+              }
+            }
+
+            // ADMIN SYNC: If admin logs in, repair the stats doc if it's out of sync
+            if (user.email === 'failfunandmotivation@gmail.com') {
+              try {
+                const coll = collection(db, 'users');
+                const snap = await getCountFromServer(coll);
+                const realCount = snap.data().count;
+                
+                const statsSnap = await getDoc(doc(db, 'system', 'stats'));
+                const storedCount = statsSnap.exists() ? statsSnap.data().totalSignedUp : 0;
+                
+                if (realCount > storedCount) {
+                  console.log('🛠 Admin: Repairing global stats...', { realCount, storedCount });
+                  await setDoc(doc(db, 'system', 'stats'), {
+                    totalSignedUp: realCount,
+                    updatedAt: serverTimestamp()
+                  }, { merge: true });
+                }
+              } catch (err) {
+                console.error('Admin sync error:', err);
               }
             }
 

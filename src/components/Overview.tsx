@@ -34,7 +34,7 @@ import {
 } from 'recharts';
 import { useUser } from '../contexts/UserContext';
 import { auth, db } from '../lib/firebase';
-import { collection, query, orderBy, limit, onSnapshot, getDocs, where, getCountFromServer } from 'firebase/firestore';
+import { collection, query, orderBy, limit, onSnapshot, getDocs, where, doc, getCountFromServer } from 'firebase/firestore';
 import { cn } from '../lib/utils';
 
 const weeklyData = [
@@ -60,17 +60,29 @@ export default function Overview() {
   useEffect(() => {
     if (!auth.currentUser) return;
     
-    // Fetch total signed up (agg)
-    const fetchStats = async () => {
-      try {
-        const coll = collection(db, 'users');
-        const snap = await getCountFromServer(coll);
-        setTotalUsers(snap.data().count);
-      } catch (err) {
-        console.error('Failed to fetch total user count in overview:', err);
+    // Fetch total signed up
+    const fetchTotalUsers = async () => {
+      // If admin, we can get the real count directly
+      if (profile?.email === 'failfunandmotivation@gmail.com') {
+        try {
+          const coll = collection(db, 'users');
+          const snap = await getCountFromServer(coll);
+          setTotalUsers(snap.data().count);
+        } catch (err) {
+          console.error('Admin failover user count:', err);
+        }
       }
     };
-    fetchStats();
+    fetchTotalUsers();
+
+    // Fetch total signed up (stats doc) for real-time updates and non-admins
+    const unsubStats = onSnapshot(doc(db, 'system', 'stats'), (doc) => {
+      if (doc.exists()) {
+        const docCount = doc.data().totalSignedUp || 0;
+        // If we already set a higher count (from getCountFromServer), keep the higher one
+        setTotalUsers(prev => Math.max(prev, docCount));
+      }
+    });
 
     // Fetch habits for status
     const habitsQuery = query(
@@ -147,6 +159,7 @@ export default function Overview() {
     }, (err) => console.error('Chats snapshot error:', err));
 
     return () => {
+      unsubStats();
       unsubHabits();
       unsubAss();
       unsubJournal();
@@ -162,35 +175,39 @@ export default function Overview() {
     
     // Check pending tasks
     const checkPending = async () => {
-      const tasks = [];
-      const today = new Date().toISOString().split('T')[0];
-      
-      // Mood
-      const moodQ = query(
-        collection(db, 'users', auth.currentUser!.uid, 'moods'),
-        where('date', '==', today),
-        limit(1)
-      );
-      const moodSnap = await getDocs(moodQ);
-      if (moodSnap.empty) {
-        tasks.push({ id: 'mood', label: 'Track Daily Mood', icon: Activity, path: '/dashboard/mood' });
+      try {
+        const tasks = [];
+        const today = new Date().toISOString().split('T')[0];
+        
+        // Mood
+        const moodQ = query(
+          collection(db, 'users', auth.currentUser!.uid, 'moods'),
+          where('date', '==', today),
+          limit(1)
+        );
+        const moodSnap = await getDocs(moodQ);
+        if (moodSnap.empty) {
+          tasks.push({ id: 'mood', label: 'Track Daily Mood', icon: Activity, path: '/dashboard/mood' });
+        }
+
+        // Journal
+        const journalQ = query(
+          collection(db, 'users', auth.currentUser!.uid, 'journals'),
+          where('date', '==', today),
+          limit(1)
+        );
+        const journalSnap = await getDocs(journalQ);
+        if (journalSnap.empty) {
+          tasks.push({ id: 'journal', label: 'Evening Reflection', icon: BookOpen, path: '/dashboard/journal' });
+        }
+
+        // Breathing (Always suggest if fewer than 2 tasks or just as a default healthy nudge)
+        tasks.push({ id: 'breathing', label: 'Pneuma Breathing', icon: Sparkles, path: '#breathing' });
+
+        setPendingTasks(tasks);
+      } catch (err) {
+        console.error('Error checking pending tasks:', err);
       }
-
-      // Journal
-      const journalQ = query(
-        collection(db, 'users', auth.currentUser!.uid, 'journals'),
-        where('date', '==', today),
-        limit(1)
-      );
-      const journalSnap = await getDocs(journalQ);
-      if (journalSnap.empty) {
-        tasks.push({ id: 'journal', label: 'Evening Reflection', icon: BookOpen, path: '/dashboard/journal' });
-      }
-
-      // Breathing (Always suggest if fewer than 2 tasks or just as a default healthy nudge)
-      tasks.push({ id: 'breathing', label: 'Pneuma Breathing', icon: Sparkles, path: '#breathing' });
-
-      setPendingTasks(tasks);
     };
 
     checkPending();
