@@ -33,6 +33,7 @@ const navItems = [
   { icon: ClipboardCheck, label: 'Metrics', path: '/dashboard/assessments' },
   { icon: BarChart2, label: 'Analytics', path: '/dashboard/mood' },
   { icon: Wind, label: 'Pneuma', path: '#breathing', action: 'breathing' },
+  { icon: BookOpen, label: 'Articles', path: 'https://neurohx.blogspot.com/search', isExternal: true },
 ];
 
 export default function Sidebar() {
@@ -78,6 +79,26 @@ export default function Sidebar() {
                   <item.icon size={18} className="opacity-60" />
                   {item.label}
                 </button>
+              );
+            }
+
+            if (item.isExternal) {
+              return (
+                <a
+                  key={item.label}
+                  href={item.path}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-4 px-5 py-3.5 rounded-2xl text-[13px] font-bold transition-all duration-300 text-[#1a2b27] bg-[#2d7a36]/5 hover:bg-[#2d7a36]/10 hover:shadow-sm relative group overflow-hidden border border-[#2d7a36]/10"
+                >
+                  <item.icon size={18} className="text-[#2d7a36]" />
+                  <span className="flex-1">{item.label}</span>
+                  <motion.span 
+                    animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="w-1.5 h-1.5 bg-[#2d7a36] rounded-full"
+                  />
+                </a>
               );
             }
 

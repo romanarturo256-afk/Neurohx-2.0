@@ -263,6 +263,19 @@ export default function Home() {
               <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-1 rounded-full bg-primary transition-all group-hover:w-full opacity-0 group-hover:opacity-100" />
             </a>
           ))}
+          <a 
+            href="https://neurohx.blogspot.com/search" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="flex items-center gap-2 px-5 py-2 rounded-full bg-primary text-white text-[10px] font-bold uppercase tracking-widest hover:shadow-lg hover:shadow-primary/20 transition-all transform hover:-translate-y-0.5"
+          >
+            Articles
+            <motion.span 
+              animate={{ opacity: [0.4, 1, 0.4] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="w-1 h-1 bg-white rounded-full shadow-[0_0_8px_white]"
+            />
+          </a>
         </div>
 
         <div className="flex items-center gap-4">
@@ -466,6 +479,10 @@ export default function Home() {
               <Link to="/legal#journal" className="hover:text-primary transition-colors">Journal</Link>
               <Link to="/legal#mood" className="hover:text-primary transition-colors">Mood Tracker</Link>
               <Link to="/legal#buddy" className="hover:text-primary transition-colors">AI Buddy</Link>
+              <a href="https://neurohx.blogspot.com/search" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors flex items-center gap-1.5">
+                Articles
+                <span className="w-1 h-1 rounded-full bg-primary" />
+              </a>
             </div>
             <div className="flex flex-col gap-4">
               <span className="text-primary/60">Legal</span>
