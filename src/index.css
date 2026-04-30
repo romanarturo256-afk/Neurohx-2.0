@@ -1,22 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Syne:wght@700;800&display=swap');
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
 :root {
-  --color-primary: #2d7a36;
-  --color-secondary: #f0f4f3;
-  --color-background: #9ba9a6;
-  --color-accent: #8a9996;
-  --text-primary: #1a2b27;
-  --text-secondary: #4a5a57;
+  --color-primary: #b89d6d;
+  --color-secondary: #fdfaf5;
+  --color-background: #f8f5f2;
+  --color-accent: #1e3a34;
+  --text-primary: #1a1a1a;
+  --text-secondary: #4a4a4a;
+  
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Inter", sans-serif;
+  --font-display: "Syne", sans-serif;
 }
 
 .dark {
-  --color-primary: #4ade80;
-  --color-secondary: #1a2b27;
-  --color-background: #0f172a;
-  --color-accent: #334155;
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
+  --color-primary: #d4af37;
+  --color-secondary: #1a2f2b;
+  --color-background: #0d1412;
+  --color-accent: #1e3a34;
+  --text-primary: #f8f5f2;
+  --text-secondary: #a8b2af;
 }
 
 @theme {
@@ -26,6 +31,22 @@
   --color-accent: var(--color-accent);
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
+  
+  --font-serif: var(--font-serif);
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+}
+
+@utility font-serif {
+  font-family: var(--font-serif);
+}
+
+@utility font-sans {
+  font-family: var(--font-sans);
+}
+
+@utility font-display {
+  font-family: var(--font-display);
 }
 
 /* Performance Optimizations for High Frame Rates */

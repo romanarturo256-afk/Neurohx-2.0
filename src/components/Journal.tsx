@@ -24,7 +24,9 @@ import {
   Tag,
   Lock,
   MoreHorizontal,
-  BookOpen
+  BookOpen,
+  Layout,
+  X
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useToast } from './Toast';
@@ -33,6 +35,75 @@ import { useUser } from '../contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
 import { jsPDF } from 'jspdf';
 
+const JOURNAL_TEMPLATES = [
+  {
+    id: 'blank',
+    title: 'Blank Entry',
+    description: 'Start with a clean slate.',
+    content: ''
+  },
+  {
+    id: 'gratitude',
+    title: 'Gratitude Bloom',
+    description: 'Focus on the light in your day.',
+    content: 'Today, I am grateful for...\n1. \n2. \n3. \n\nOne person who made me smile today: \n\nA small victory I achieved: '
+  },
+  {
+    id: 'morning',
+    title: 'Morning Intention',
+    description: 'Set the tone for a peaceful day.',
+    content: 'My focus for today is...\n\nOne thing that would make today great: \n\nAffirmation for the day: "I am..." '
+  },
+  {
+    id: 'evening',
+    title: 'Evening Unwind',
+    description: 'Process and release the day.',
+    content: 'The best part of my day was...\n\nA challenge I faced and how I handled it: \n\nTonight, I am letting go of: '
+  },
+  {
+    id: 'shadow',
+    title: 'Shadow Work',
+    description: 'Explore hidden emotions.',
+    content: 'An emotion I felt today that I tried to ignore or hide: \n\nWhat triggered this emotion? \n\nWhat is this feeling trying to tell me about my needs?'
+  },
+  {
+    id: 'cbt',
+    title: 'CBT Thought Record',
+    description: 'Reframe negative patterns.',
+    content: 'Situation (What happened?): \n\nAutomatic Thought (What did I tell myself?): \n\nEvidence FOR this thought: \n\nEvidence AGAINST this thought: \n\nBalanced Perspective: '
+  },
+  {
+    id: 'anxiety',
+    title: 'Anxiety Anchor',
+    description: 'Ground yourself in the present.',
+    content: '5 things I can see: \n4 things I can feel: \n3 things I can hear: \n2 things I can smell: \n1 thing I can taste: \n\nHow do I feel after this exercise?'
+  },
+  {
+    id: 'self-compassion',
+    title: 'Self-Compassion Letter',
+    description: 'Write with kindness to yourself.',
+    content: 'Dear Self, \n\nI noticed you were struggling with... today. \n\nI want you to know it is okay to feel this way because... \n\nYou are doing your best, and I am proud of you for...'
+  },
+  {
+    id: 'goals',
+    title: 'Goal Harvest',
+    description: 'Track your growth path.',
+    content: 'One small step I took toward my goal: \n\nA new thing I learned today: \n\nWhat I will focus on tomorrow to keep the momentum: '
+  },
+  {
+    id: 'stoic',
+    title: 'Stoic Review',
+    description: 'Evaluate your character.',
+    content: 'What did I do well today? \n\nWhat did I do poorly? \n\nIf I could relive today, what would I do differently to align with my values?'
+  },
+  {
+    id: 'body-scan',
+    title: 'Mindful Body Scan',
+    description: 'Connect mind and body.',
+    content: 'Head/Face sensations: \n\nShoulders/Back tension level: \n\nStomach/Chest (any tightness?): \n\nHips/Legs: \n\nOverall energy level (1-10): '
+  }
+];
+
 export default function Journal() {
   const { showToast } = useToast();
   const { isPlanAtLeast, profile } = useUser();
@@ -40,6 +111,7 @@ export default function Journal() {
   const [entries, setEntries] = useState<any[]>([]);
   const [selectedEntry, setSelectedEntry] = useState<any>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -61,7 +133,7 @@ export default function Journal() {
       try {
         const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setEntries(docs);
-        if (docs.length > 0 && !selectedEntry) {
+        if (docs.length > 0 && !selectedEntry && !isEditing && !showTemplates) {
           setSelectedEntry(docs[0]);
         }
       } catch (err) {
@@ -79,9 +151,17 @@ export default function Journal() {
       return;
     }
     setSelectedEntry(null);
-    setIsEditing(true);
+    setIsEditing(false);
+    setShowTemplates(true);
     setTitle('');
     setContent('');
+  };
+
+  const selectTemplate = (template: typeof JOURNAL_TEMPLATES[0]) => {
+    setTitle(template.id === 'blank' ? '' : template.title);
+    setContent(template.content);
+    setShowTemplates(false);
+    setIsEditing(true);
   };
 
   const handleSave = async () => {
@@ -262,7 +342,41 @@ export default function Journal() {
 
       {/* Main Content */}
       <div className="flex-1 bg-white rounded-[48px] border border-[#e0dbd0] shadow-sm overflow-hidden flex flex-col">
-        {isEditing || (!selectedEntry && entries.length === 0) ? (
+        {showTemplates ? (
+          <div className="flex-1 p-8 lg:p-12 overflow-y-auto">
+            <div className="flex items-center justify-between mb-12">
+              <div>
+                <h2 className="font-['Syne'] text-3xl font-bold text-[#111110] mb-2">Choose a Template</h2>
+                <p className="text-[#888880] text-sm italic">Select a ritual to guide your thoughts today.</p>
+              </div>
+              <button 
+                onClick={() => setShowTemplates(false)}
+                className="p-3 bg-[#f5f2eb] text-[#111110] rounded-2xl hover:bg-[#ede9df] transition-all"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-12">
+              {JOURNAL_TEMPLATES.map((template) => (
+                <button
+                  key={template.id}
+                  onClick={() => selectTemplate(template)}
+                  className="text-left p-8 rounded-[40px] border border-[#e0dbd0] hover:border-[#b89d6d] hover:bg-[#fcfaf5] transition-all group relative overflow-hidden"
+                >
+                  <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+                    <BookOpen size={48} />
+                  </div>
+                  <h4 className="font-serif text-xl text-primary mb-2 italic">{template.title}</h4>
+                  <p className="text-xs text-[#888880] leading-relaxed mb-4">{template.description}</p>
+                  <div className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary/60 group-hover:text-primary transition-colors">
+                    Start Reflection <ChevronRight size={12} />
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : isEditing || (!selectedEntry && entries.length === 0) ? (
           <div className="flex-1 flex flex-col p-8 lg:p-12 space-y-8">
             <input 
               type="text"

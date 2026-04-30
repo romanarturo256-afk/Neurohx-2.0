@@ -127,6 +127,19 @@
         "createdAt": { "type": "string" }
       },
       "required": ["userId", "title", "frequency"]
+    },
+    "Review": {
+      "title": "Public Review",
+      "description": "User shared review with rating.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "displayName": { "type": "string" },
+        "rating": { "type": "integer" },
+        "content": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "rating", "content", "createdAt"]
     }
   },
   "firestore": {
@@ -139,6 +152,7 @@
     "/presence/{userId}": { "schema": "object", "description": "Real-time user presence tracking" },
     "/system/stats": { "schema": "object", "description": "Global application statistics" },
     "/support_tickets/{ticketId}": { "schema": "SupportTicket", "description": "Global support tickets" },
-    "/referrals/{referralId}": { "schema": "Referral", "description": "Global referral tracking" }
+    "/referrals/{referralId}": { "schema": "Referral", "description": "Global referral tracking" },
+    "/reviews/{reviewId}": { "schema": "Review", "description": "Global public reviews" }
   }
 }

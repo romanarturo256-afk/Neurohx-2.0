@@ -144,12 +144,16 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
               };
               await setDoc(userDocRef, newProfile).catch(e => handleFirestoreError(e, 'create', `users/${user.uid}`));
               
-              // Increment global user count
+              // Increment global user count and store masked email
               const statsPath = 'system/stats';
+              const namePart = (user.displayName || user.email || 'User').split('@')[0];
+              const masked = namePart.slice(0, 2) + '***@' + (user.email?.split('@')[1] || 'domain.com');
+              
               await setDoc(doc(db, statsPath), { 
                 totalSignedUp: increment(1),
+                latestUserMasked: masked,
                 updatedAt: serverTimestamp() 
-              }, { merge: true }).catch(err => console.error('Failed to increment global user count:', err));
+              }, { merge: true }).catch(err => console.error('Failed to update stats:', err));
               
               // If referred, create a pending referral record
               if (referredByUid) {

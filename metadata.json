@@ -1,6 +1,6 @@
 {
   "name": "Neurohx: AI Mental Wellness",
-  "description": "Hardened AI mental wellness platform for reflection, journaling, and personal growth with secure Firestore integration.",
+  "description": "An animated, serene landing page for mental health and wellness, featuring calming visuals, smooth transitions, and empathetic design.",
   "requestFramePermissions": [
     "microphone"
   ]

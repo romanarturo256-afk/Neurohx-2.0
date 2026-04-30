@@ -10,6 +10,7 @@ import { auth } from './lib/firebase';
 import Home from './pages/Home';
 import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
+import Legal from './pages/Legal';
 import { ToastProvider } from './components/Toast';
 import { UserProvider } from './contexts/UserContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -26,6 +27,7 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/auth" element={<AuthRedirect />} />
+              <Route path="/legal" element={<Legal />} />
               <Route path="/dashboard/*" element={<DashboardGuard />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

@@ -112,6 +112,16 @@ service cloud.firestore {
              (!('createdAt' in data) || data.createdAt == request.time || data.createdAt is string);
     }
 
+    function isValidReview(data) {
+      let requiredFields = ['userId', 'rating', 'content', 'createdAt'];
+      return data.keys().hasAll(requiredFields) &&
+             data.userId == request.auth.uid &&
+             data.rating is int && data.rating >= 1 && data.rating <= 5 &&
+             data.content is string && data.content.size() <= 2000 &&
+             (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 128)) &&
+             (data.createdAt == request.time || data.createdAt is timestamp || data.createdAt is string);
+    }
+
     // ===============================================================
     // Match Blocks: Tiered Access Control
     // ===============================================================
@@ -208,6 +218,14 @@ service cloud.firestore {
       ) && incoming().referrerId == existing().referrerId && 
            incoming().referredId == existing().referredId &&
            incoming().createdAt == existing().createdAt;
+    }
+
+    match /reviews/{reviewId} {
+      allow list, get: if true;
+      allow create: if isVerified() && isValidId(reviewId) && isValidReview(incoming());
+      allow update: if isVerified() && isOwner(existing().userId) && isValidReview(incoming()) &&
+                       incoming().diff(existing()).affectedKeys().hasOnly(['rating', 'content', 'updatedAt']);
+      allow delete: if isVerified() && (isOwner(existing().userId) || isAdmin());
     }
   }
 }
