@@ -9,6 +9,7 @@ import Assessments from '../components/Assessments';
 import HabitTracker from '../components/HabitTracker';
 import Settings from '../components/Settings';
 import Support from '../components/Support';
+import DeepWorkTimer from '../components/DeepWorkTimer';
 
 export default function Dashboard() {
   return (
@@ -20,6 +21,7 @@ export default function Dashboard() {
         <Route path="mood" element={<Mood />} />
         <Route path="habits" element={<HabitTracker />} />
         <Route path="assessments" element={<Assessments />} />
+        <Route path="timer" element={<DeepWorkTimer />} />
         <Route path="settings" element={<Settings />} />
         <Route path="support" element={<Support />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />

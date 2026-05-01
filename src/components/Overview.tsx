@@ -18,7 +18,8 @@ import {
   ClipboardCheck,
   Flame,
   X,
-  Users
+  Users,
+  Timer
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { 
@@ -36,6 +37,8 @@ import { useUser } from '../contexts/UserContext';
 import { auth, db } from '../lib/firebase';
 import { collection, query, orderBy, limit, onSnapshot, getDocs, where, doc, getCountFromServer } from 'firebase/firestore';
 import { cn } from '../lib/utils';
+
+import DailyInspiration from './DailyInspiration';
 
 const weeklyData = [
   { day: 'MON', activity: 40, mood: 30 },
@@ -203,6 +206,9 @@ export default function Overview() {
 
         // Breathing (Always suggest if fewer than 2 tasks or just as a default healthy nudge)
         tasks.push({ id: 'breathing', label: 'Pneuma Breathing', icon: Sparkles, path: '#breathing' });
+
+        // Deep Work
+        tasks.push({ id: 'focus-timer', label: 'Deep Work Block', icon: Timer, path: '/dashboard/timer' });
 
         setPendingTasks(tasks);
       } catch (err) {
@@ -480,6 +486,16 @@ export default function Overview() {
           >
             Update Mood
           </button>
+        </motion.div>
+
+        {/* Daily Inspiration */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="flex flex-col"
+        >
+          <DailyInspiration />
         </motion.div>
 
         {/* Work Progress / Productivity */}

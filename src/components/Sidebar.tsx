@@ -16,7 +16,8 @@ import {
   Wind,
   ClipboardCheck,
   Flame,
-  Zap
+  Zap,
+  Timer
 } from 'lucide-react';
 import { auth } from '../lib/firebase';
 import { cn } from '../lib/utils';
@@ -29,6 +30,7 @@ const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
   { icon: MessageSquare, label: 'Intake', path: '/dashboard/chat' },
   { icon: BookOpen, label: 'Journal', path: '/dashboard/journal' },
+  { icon: Timer, label: 'Focus', path: '/dashboard/timer' },
   { icon: Zap, label: 'Habits', path: '/dashboard/habits' },
   { icon: ClipboardCheck, label: 'Metrics', path: '/dashboard/assessments' },
   { icon: BarChart2, label: 'Analytics', path: '/dashboard/mood' },
