@@ -39,6 +39,7 @@ import { collection, query, orderBy, limit, onSnapshot, getDocs, where, doc, get
 import { cn } from '../lib/utils';
 
 import DailyInspiration from './DailyInspiration';
+import DashboardReviews from './DashboardReviews';
 
 const weeklyData = [
   { day: 'MON', activity: 40, mood: 30 },
@@ -662,6 +663,16 @@ export default function Overview() {
               </div>
             )}
           </div>
+        </motion.div>
+
+        {/* Community Reviews */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="bg-white rounded-[40px] border border-[#e0dbd0] shadow-sm flex flex-col"
+        >
+          <DashboardReviews />
         </motion.div>
       </div>
 
