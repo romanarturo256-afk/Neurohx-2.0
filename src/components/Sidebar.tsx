@@ -179,6 +179,52 @@ export default function Sidebar() {
           </button>
 
           <div className="pt-6 mt-6 border-t border-[#1a2b27]/5">
+            <div className="flex items-center justify-center gap-4 px-2 mb-6">
+              <a 
+                href="https://www.instagram.com/neurohx_?igsh=MXh4ZjdveWwwcGs2eg==" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-xl bg-white border border-[#1a2b27]/10 flex items-center justify-center text-[#4a5a57] hover:text-[#E4405F] hover:border-[#E4405F]/30 hover:shadow-lg transition-all"
+                title="Instagram"
+              >
+                <div className="flex items-center justify-center relative">
+                  <span className="text-[10px] font-bold">IG</span>
+                </div>
+              </a>
+              <a 
+                href="https://www.facebook.com/share/1Cdf4hjnCW/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-xl bg-white border border-[#1a2b27]/10 flex items-center justify-center text-[#4a5a57] hover:text-[#1877F2] hover:border-[#1877F2]/30 hover:shadow-lg transition-all"
+                title="Facebook"
+              >
+                <div className="flex items-center justify-center">
+                  <span className="text-[10px] font-bold">FB</span>
+                </div>
+              </a>
+              <a 
+                href="https://www.threads.net/@neurohx_" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-xl bg-white border border-[#1a2b27]/10 flex items-center justify-center text-[#4a5a57] hover:text-black hover:border-black/30 hover:shadow-lg transition-all"
+                title="Threads"
+              >
+                <div className="flex items-center justify-center">
+                  <span className="text-[10px] font-bold">TH</span>
+                </div>
+              </a>
+              <a 
+                href="https://x.com/hineurohx" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-xl bg-white border border-[#1a2b27]/10 flex items-center justify-center text-[#4a5a57] hover:text-black hover:border-black/30 hover:shadow-lg transition-all"
+                title="X (Twitter)"
+              >
+                <div className="flex items-center justify-center">
+                  <span className="text-[10px] font-bold">X</span>
+                </div>
+              </a>
+            </div>
             <div className="flex items-center gap-4 px-4 py-4 bg-white/50 rounded-3xl border border-[#1a2b27]/5 hover:border-[#1a2b27]/20 transition-all group">
               <div className="w-12 h-12 rounded-[18px] bg-[#1a2b27] flex items-center justify-center text-white font-bold shadow-lg overflow-hidden shrink-0">
                 {profile?.photoURL ? (

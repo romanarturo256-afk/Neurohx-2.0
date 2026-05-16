@@ -674,6 +674,69 @@ export default function Overview() {
         >
           <DashboardReviews />
         </motion.div>
+
+        {/* Social Presence */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45 }}
+          className="bg-[#111110] rounded-[40px] p-10 text-white flex flex-col justify-between relative overflow-hidden"
+        >
+          <div className="absolute top-0 right-0 p-10 opacity-10 pointer-events-none">
+            <Users size={80} />
+          </div>
+          
+          <div className="relative z-10">
+            <h3 className="font-['Syne'] text-2xl font-bold mb-2 uppercase tracking-tight">Join Our Community</h3>
+            <p className="text-white/60 text-xs font-medium leading-relaxed mb-8">
+              Stay connected with the Neurohx collective. Exclusive clinical insights, neural practices, and community updates across all platforms.
+            </p>
+
+            <div className="grid grid-cols-2 gap-3">
+              <a 
+                href="https://www.instagram.com/neurohx_?igsh=MXh4ZjdveWwwcGs2eg==" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all group"
+              >
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-xs font-bold group-hover:scale-110 transition-transform">IG</div>
+                <span className="text-[10px] font-bold uppercase tracking-widest">Instagram</span>
+              </a>
+              <a 
+                href="https://www.facebook.com/share/1Cdf4hjnCW/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all group"
+              >
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-xs font-bold group-hover:scale-110 transition-transform">FB</div>
+                <span className="text-[10px] font-bold uppercase tracking-widest">Facebook</span>
+              </a>
+              <a 
+                href="https://www.threads.net/@neurohx_" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all group"
+              >
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-xs font-bold group-hover:scale-110 transition-transform">TH</div>
+                <span className="text-[10px] font-bold uppercase tracking-widest">Threads</span>
+              </a>
+              <a 
+                href="https://x.com/hineurohx" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all group"
+              >
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-xs font-bold group-hover:scale-110 transition-transform">X</div>
+                <span className="text-[10px] font-bold uppercase tracking-widest">Twitter</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="mt-8 pt-6 border-t border-white/5 flex items-center gap-2">
+            <div className="w-1.5 h-1.5 bg-[#8b7cf6] rounded-full animate-pulse" />
+            <span className="text-[9px] font-bold text-white/40 uppercase tracking-[0.2em]">Verified Collective</span>
+          </div>
+        </motion.div>
       </div>
 
       {/* Weekly Clarity Chart */}
