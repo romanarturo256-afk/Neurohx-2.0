@@ -48,7 +48,7 @@ function AuthRedirect() {
       </div>
     );
   }
-  return profile ? <Navigate to="/dashboard/chat" replace /> : <Auth />;
+  return profile ? <Navigate to="/dashboard" replace /> : <Auth />;
 }
 
 function DashboardGuard() {

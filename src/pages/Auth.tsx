@@ -18,7 +18,7 @@ export default function Auth() {
     setLoading(true);
     try {
       await signInWithPopup(auth, provider);
-      navigate('/dashboard/chat');
+      navigate('/dashboard');
     } catch (err: any) {
       console.error('Google Sign In Error:', err);
       if (err.code === 'auth/unauthorized-domain') {

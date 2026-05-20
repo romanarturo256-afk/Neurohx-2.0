@@ -26,16 +26,23 @@ import { useUser } from '../contexts/UserContext';
 
 import RealTimeStatus from './RealTimeStatus';
 
-const navItems = [
+interface NavItem {
+  icon: React.ComponentType<any>;
+  label: string;
+  path: string;
+  action?: string;
+  isExternal?: boolean;
+}
+
+const navItems: NavItem[] = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-  { icon: MessageSquare, label: 'Intake', path: '/dashboard/chat' },
   { icon: BookOpen, label: 'Journal', path: '/dashboard/journal' },
   { icon: Timer, label: 'Focus', path: '/dashboard/timer' },
   { icon: Zap, label: 'Habits', path: '/dashboard/habits' },
   { icon: ClipboardCheck, label: 'Metrics', path: '/dashboard/assessments' },
   { icon: BarChart2, label: 'Analytics', path: '/dashboard/mood' },
   { icon: Wind, label: 'Pneuma', path: '#breathing', action: 'breathing' },
-  { icon: BookOpen, label: 'Articles', path: 'https://neurohx.blogspot.com/search', isExternal: true },
+  { icon: BookOpen, label: 'Blog', path: '/dashboard/blog' },
 ];
 
 export default function Sidebar() {
@@ -131,17 +138,6 @@ export default function Sidebar() {
         </nav>
 
         <div className="p-8 space-y-4">
-          <button 
-            onClick={() => {
-              window.dispatchEvent(new CustomEvent('new-chat'));
-              setIsOpen(false);
-            }}
-            className="w-full bg-[#2d7a36] text-white py-4 rounded-2xl font-bold text-xs uppercase tracking-[0.2em] shadow-xl shadow-[#2d7a36]/20 hover:opacity-90 transition-all flex items-center justify-center gap-3"
-          >
-            <Plus size={16} />
-            New Intake
-          </button>
-          
           <Link
             to="/dashboard/settings"
             onClick={() => setIsOpen(false)}

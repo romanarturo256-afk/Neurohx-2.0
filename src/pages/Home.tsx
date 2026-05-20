@@ -269,7 +269,7 @@ export default function Home() {
             rel="noopener noreferrer" 
             className="flex items-center gap-2 px-5 py-2 rounded-full bg-primary text-white text-[10px] font-bold uppercase tracking-widest hover:shadow-lg hover:shadow-primary/20 transition-all transform hover:-translate-y-0.5"
           >
-            Articles
+            Blog
             <motion.span 
               animate={{ opacity: [0.4, 1, 0.4] }}
               transition={{ duration: 2, repeat: Infinity }}
@@ -480,7 +480,7 @@ export default function Home() {
               <Link to="/legal#mood" className="hover:text-primary transition-colors">Mood Tracker</Link>
               <Link to="/legal#buddy" className="hover:text-primary transition-colors">AI Buddy</Link>
               <a href="https://neurohx.blogspot.com/search" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors flex items-center gap-1.5">
-                Articles
+                Blog
                 <span className="w-1 h-1 rounded-full bg-primary" />
               </a>
             </div>

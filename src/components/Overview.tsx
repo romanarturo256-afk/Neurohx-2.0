@@ -40,6 +40,7 @@ import { cn } from '../lib/utils';
 
 import DailyInspiration from './DailyInspiration';
 import DashboardReviews from './DashboardReviews';
+import DuolingoStreak from './DuolingoStreak';
 
 const weeklyData = [
   { day: 'MON', activity: 40, mood: 30 },
@@ -610,59 +611,14 @@ export default function Overview() {
           )}
         </motion.div>
 
-        {/* Recent Conversations */}
+        {/* Duolingo-style Streak System */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35 }}
-          className="bg-white rounded-[40px] p-10 border border-[#e0dbd0] shadow-sm flex flex-col gpu-accelerated"
+          transition={{ delay: 0.38 }}
+          className="lg:col-span-2 flex flex-col"
         >
-          <div className="flex justify-between items-center mb-8">
-            <h3 className="font-bold text-[#111110]">Recent Conversations</h3>
-            <button onClick={() => navigate('/dashboard/chat')}>
-              <MessageSquare size={20} className="text-[#888880] hover:text-[#8b7cf6]" />
-            </button>
-          </div>
-          
-          <div className="space-y-4 flex-1">
-            {recentChats.length > 0 ? (
-              recentChats.map((chat) => (
-                <button
-                  key={chat.id}
-                  onClick={() => navigate('/dashboard/chat')}
-                  className="w-full flex items-center justify-between p-4 rounded-2xl border border-[#f5f2eb] hover:border-[#8b7cf6]/30 hover:bg-[#fcfaf7] transition-all group"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-white border border-[#f5f2eb] flex items-center justify-center text-[#888880] group-hover:text-[#8b7cf6]">
-                      <MessageSquare size={14} />
-                    </div>
-                    <div className="text-left">
-                      <p className="text-xs font-bold text-[#111110] truncate max-w-[120px]">
-                        {chat.messages?.[0]?.content?.slice(0, 30) || 'New Conversation'}
-                      </p>
-                      <p className="text-[10px] text-[#888880]">
-                        {chat.updatedAt?.toDate ? chat.updatedAt.toDate().toLocaleDateString() : 'Just now'}
-                      </p>
-                    </div>
-                  </div>
-                  <ChevronRight size={14} className="text-[#e0dbd0] group-hover:text-[#8b7cf6]" />
-                </button>
-              ))
-            ) : (
-              <div className="flex flex-col items-center justify-center py-8 text-center space-y-4">
-                <div className="w-16 h-16 bg-[#f5f2eb] rounded-3xl flex items-center justify-center text-[#888880]">
-                  <MessageSquare size={32} />
-                </div>
-                <p className="text-sm text-[#888880] italic">No conversations yet.</p>
-                <button 
-                  onClick={() => navigate('/dashboard/chat')}
-                  className="text-xs font-bold text-[#8b7cf6] uppercase tracking-widest hover:underline"
-                >
-                  Start a session
-                </button>
-              </div>
-            )}
-          </div>
+          <DuolingoStreak />
         </motion.div>
 
         {/* Community Reviews */}

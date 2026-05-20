@@ -43,6 +43,8 @@ interface UserProfile {
     lastLoginDate: string;
     lastFreezeUsed?: string;
   };
+  xp?: number;
+  streakFreezes?: number;
 }
 
 interface UserContextType {

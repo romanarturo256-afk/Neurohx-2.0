@@ -235,23 +235,9 @@ export default function AssessmentTake({ assessment, onBack }: Props) {
                       </div>
                     )}
 
-                    {aiAnalysis ? (
-                      <button
-                        onClick={() => navigate('/dashboard/chat', { 
-                          state: { 
-                            context: `I just completed the ${assessment.title} assessment. My score was ${completedResult.score} (${completedResult.label}). Analysis: "${aiAnalysis.slice(0, 500)}..."` 
-                          } 
-                        })}
-                        className="w-full py-4 bg-white text-[#8b7cf6] rounded-2xl font-bold text-sm shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-2"
-                      >
-                        Deepen via AI Chat
-                        <Brain size={18} />
-                      </button>
-                    ) : (
-                      <div className="pt-4 text-center">
-                        <p className="text-[10px] text-white/40 uppercase tracking-widest">AI Connection Offline</p>
-                      </div>
-                    )}
+                    <div className="pt-4 text-center">
+                      <p className="text-[10px] text-white/40 uppercase tracking-widest">Analysis Completed</p>
+                    </div>
                   </div>
                 )}
               </div>
