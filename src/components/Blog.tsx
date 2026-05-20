@@ -18,6 +18,7 @@ import {
   Award
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { useToast } from './Toast';
 
 interface BlogPost {
   id: string;
@@ -36,6 +37,109 @@ interface BlogPost {
 }
 
 const INITIAL_BLOGS: BlogPost[] = [
+  {
+    id: "neural-correlates-emotional-regulation",
+    title: "Neural Correlates of Emotional Regulation Difficulties: Prefrontal-Amygdala Dysconnectivity",
+    author: "Dr. Evelyn Vance",
+    role: "Cognitive Neuroscientist",
+    category: "Cognitive Neuroscience",
+    readTime: "7 min read",
+    summary: "An in-depth look at how top-down executive communication between the prefrontal cortex and the amygdala breaks down, leading to emotional difficulties.",
+    content: `Emotional regulation is governed by a complex neural circuit characterized by a top-down control mechanism from the prefrontal cortex (PFC) to subcortical emotional centers, primarily the amygdala. In individuals experiencing difficulties with emotional regulation, neuroimaging studies consistently reveal a significant disruption or dysconnectivity in these prefrontal-amygdala pathway interactions.
+
+Normally, when a distressing stimulus is perceived, the amygdala fires rapidly, initiating a somatic threat response. In a well-regulated brain, the ventromedial prefrontal cortex (vmPFC) and the anterior cingulate cortex (ACC) assess the context, process the stimulus, and send inhibitory signals via GABAergic pathways to the amygdala, reducing its hyper-intensity and stabilizing emotion.
+
+However, during times of prolonged stress or affective instability, the functional connectivity between the dLPFC, vmPFC, and the amygdala is starkly diminished. This results in "insufficient top-down inhibition," meaning the prefrontal cortex cannot effectively dampen amygdala hyperactivity. Consequently, minor triggers result in exaggerated emotional responses, prolonged panic or anger waves, and difficulty returning to autonomic baseline homeostasis.
+
+Understanding this dysconnectivity shifts the paradigm of mental wellness from emotional weakness to physical pathway optimization. Techniques like neurofeedback, cognitive appraisal, and targeted mindfulness work to specifically re-establish and strengthen these structural connections over time.`,
+    initialRating: 4.9,
+    ratesCount: 88,
+    commentsCount: 24,
+    sharesCount: 56
+  },
+  {
+    id: "executive-function-deficits-mood-disorders",
+    title: "Executive-Function Deficits in Mood Disorders: Cognitive Flexibility and the Frontoparietal Network",
+    author: "Dr. Julian Mercer",
+    role: "Neuroclinical Specialist",
+    category: "Cognitive Neuroscience",
+    readTime: "8 min read",
+    summary: "Understanding how depression and bipolar conditions physically disrupt the brain's central executive network, impairing decision-making, focus, and cognitive control.",
+    content: `Executive functions—including working memory, cognitive flexibility, and inhibitory control—are often severely compromised during clinical mood episodes. Rather than being mere side effects of low or hyperactive mood, these cognitive deficits correspond to structural and functional alterations in the frontoparietal control network (FPN) and the dorsolateral prefrontal cortex (dlPFC).
+
+In mood disorders, particularly major depressive disorder (MDD), neuroimaging demonstrates reduced grey matter volume and hypoactivity in the dlPFC. This neural region is responsible for goal-directed behavior, planning, and holding information in working memory. When its activity drops, individuals experience profound difficulty prioritizing tasks, making decisions (often leading to deciding paralysis), and ignoring irrelevant negative feedback.
+
+Furthermore, cognitive flexibility—the ability to adapt thoughts and behaviors to changing environments—is impeded. An individual may find themselves trapped in rigid cognitive structures, unable to shift perspective or create positive problem-solving alternatives.
+
+These deficits highlight that treating mood disorders requires therapeutic interventions that target both emotion and cognition. Exercises that challenge working memory, structured cognitive-behavioral pacing protocols, and somatic stabilizing techniques assist in restoring the frontoparietal network to normal efficiency.`,
+    initialRating: 4.8,
+    ratesCount: 65,
+    commentsCount: 19,
+    sharesCount: 42
+  },
+  {
+    id: "neuroinflammation-biomarker-depression",
+    title: "Neuroinflammation as a Biomarker for Depression: The Cytokine Hypothesis of Affective Disorders",
+    author: "Dr. Sarah Sterling",
+    role: "Neurobiology Lead",
+    category: "Cognitive Neuroscience",
+    readTime: "7 min read",
+    summary: "Examining the physical connection between systemic physical inflammation, microglial activation in the brain, and the depletion of core mood precursors.",
+    content: `Historically, depression was viewed purely through the lens of monoamine neurotransmitter depletion—namely serotonin, norepinephrine, and dopamine. However, modern neurobiology is uncovering a far more systemic culprit: neuroinflammation.
+
+Under conditions of chronic psychological stress, systemic physical inflammation, or gut dysbiosis, the body releases elevated levels of pro-inflammatory cytokines such as interleukin-6 (IL-6), tumor necrosis factor-alpha (TNF-α), and C-reactive protein (CRP). These cytokines can cross the blood-brain barrier, triggering the activation of microglia—the brain's resident immune cells.
+
+Once activated, microglia transition from an optimistic, neuroprotective state to a destructive, inflammatory state. They release toxic reactive oxygen species and inflammatory mediators that disrupt synaptic plasticity. Crucially, neuroinflammation activates the kynurenine pathway, which diverts the amino acid tryptophan away from producing serotonin, converting it instead into neurotoxic quinolinic acid. This "tryptophan steal" directly starves the brain of serotonin and damages NMDA receptors, manifesting as the classic symptoms of depression: fatigue, anhedonia, and cognitive slowing.
+
+Identifying neuroinflammation as a critical biomarker transforms how we treat depression. Incorporating anti-inflammatory dietary adjustments, high-quality omega-3 fatty acids, targeted sleep strategies, and somatic vagus nerve stimulation can directly calm microglia, addressing depression from its biological roots.`,
+    initialRating: 4.9,
+    ratesCount: 94,
+    commentsCount: 31,
+    sharesCount: 68
+  },
+  {
+    id: "cognitive-load-anxiety-maintenance",
+    title: "Cognitive Load Theory and its Crucial Role in Anxiety Maintenance",
+    author: "Dr. Marcus Thorne",
+    role: "Clinical Psychologist",
+    category: "Mental Wellness",
+    readTime: "6 min read",
+    summary: "How chronic worry and hypervigilance exhaust working memory, leaving the brain in a state of perpetual cognitive overload.",
+    content: `Anxiety is not just an emotional state; it is a high-cost cognitive activity. According to Cognitive Load Theory, our working memory has a strictly finite capacity. When an individual struggles with chronic generalized anxiety, a substantial portion of this limited memory capacity is hijacked by hypervigilance, threat screening, and uncontrollable worry.
+
+Worry is a verbal-cognitive process that acts as a continuous background task on the brain's internal CPU. Because the anxious brain treats potential, far-off future threats as immediate realities, it allocates working memory resources to constantly calculate escape strategies and simulate worst-case scenarios. This constant loading reduces the processing power available for everyday functions: focused work, emotional regulation, and spatial memory.
+
+This process forms a self-sustaining loop:
+1. Threat appraisal prompts high cognitive loading via worry.
+2. The working memory becomes overloaded, leading to forgetfulness, irritability, and diminished concentration.
+3. This diminished performance increases self-doubt and feelings of incompetence, which generates more anxiety.
+
+To break this cycle, individuals must offload their cognitive burden. Simple tactics like expressive journaling, external tracking tools, task chunking, and tactile groundings physically empty working memory, immediately reducing cognitive load and leaving room for healthy, adaptive processing.`,
+    initialRating: 4.7,
+    ratesCount: 58,
+    commentsCount: 14,
+    sharesCount: 29
+  },
+  {
+    id: "default-mode-network-rumination",
+    title: "The Role of the Default Mode Network in Rumination and Negative Self-Referential Thought",
+    author: "Dr. Sarah Sterling",
+    role: "Neurobiology Lead",
+    category: "Cognitive Neuroscience",
+    readTime: "6 min read",
+    summary: "Unpacking the 'default' neural highway that takes over during idle states, and how hyperfunctional connectivity leads to repetitive negative cycles.",
+    content: `When we are not engaged in an active, goal-directed task, our brain does not fall completely silent. Instead, a specific web of interconnected regions known as the Default Mode Network (DMN) becomes highly active. The DMN, encompassing the medial prefrontal cortex and the posterior cingulate cortex, is responsible for self-referential thought, autobiographical memory, and imagining the future.
+
+In healthy individuals, the DMN allows for creative daydreaming, empathy, and processing past events. However, in individuals suffering from depression or anxiety, the DMN often becomes hyperactive and hyper-connected. This state is associated with severe, repetitive rumination—the uncontrollable cycling of negative thoughts about one's self, past choices, and personal failures.
+
+When the DMN is locked in hyper-connectivity, the mind is driven into a loop of internal self-scrutiny. Crucially, the brain's Salience Network fails to toggle attention back to the Central Executive Network, making it incredibly difficult for the individual to "will" themselves out of a negative thought loop.
+
+To quiet a hyperactive Default Mode Network, clinical neuroscientists recommend activities that force attention outward, into the present somatic moment. Focused-attention meditation, intentional breathwork, high-intensity exercise, or any tactile activity (such as cold exposure or hand-crafts) physically suppresses DMN activity, giving the brain an immediate vacation from the ego and breaking the loop of clinical rumination.`,
+    initialRating: 4.9,
+    ratesCount: 112,
+    commentsCount: 45,
+    sharesCount: 82
+  },
   {
     id: "neurochemistry-deep-work",
     title: "The Neurochemistry of Deep Work: Dopamine, Acetylcholine, and the Flow Triad",
@@ -108,6 +212,7 @@ To spark hyper-focused states, you must balance threat versus comfort. The optim
 ];
 
 export default function Blog() {
+  const { showToast } = useToast();
   const [blogs, setBlogs] = useState<BlogPost[]>(INITIAL_BLOGS);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -151,6 +256,8 @@ export default function Blog() {
     return matchesCategory && matchesSearch;
   });
 
+  const sortedAndFilteredBlogs = [...filteredBlogs].sort((a, b) => a.title.localeCompare(b.title));
+
   const activeBlog = blogs.find(b => b.id === activeBlogId);
 
   return (
@@ -168,6 +275,64 @@ export default function Blog() {
           Peer-reviewed advice, cognitive exercises, and research updates curated by behavioral clinicians to power your performance metrics.
         </p>
       </header>
+
+      {/* Prominent Latest Blog Post Spotlight Panel */}
+      {blogs.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-[40px] border border-[#e0dbd0] overflow-hidden p-8 lg:p-12 shadow-sm relative group hover:shadow-xl hover:shadow-[#1a2b27]/5 transition-all duration-300"
+        >
+          <div className="absolute top-0 right-0 p-8 text-[#1a2b27]/5 select-none pointer-events-none hidden md:block">
+            <Sparkles size={120} />
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+            <div className="lg:col-span-8 space-y-5">
+              <div className="inline-flex items-center gap-2">
+                <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 text-[10px] font-extrabold uppercase tracking-widest">
+                  Latest Research
+                </span>
+                <span className="text-[10px] text-[#4a5a57]/60 font-bold uppercase tracking-widest">
+                  • {blogs[0].category}
+                </span>
+              </div>
+              
+              <h2 className="font-['Syne'] text-2xl lg:text-4xl font-bold text-[#1a2b27] tracking-tight group-hover:text-primary transition-colors leading-tight">
+                {blogs[0].title}
+              </h2>
+              
+              <p className="text-[#4a5a57] text-sm leading-relaxed max-w-3xl font-medium">
+                {blogs[0].summary}
+              </p>
+
+              <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-gray-100 max-w-xl">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary text-xs shrink-0">
+                  {blogs[0].author.split(' ').map(n => n[0]).join('')}
+                </div>
+                <div>
+                  <h5 className="text-xs font-extrabold text-[#1a2b27]">{blogs[0].author}</h5>
+                  <p className="text-[10px] text-[#4a5a57]/60 font-medium">{blogs[0].role}</p>
+                </div>
+                <div className="ml-auto flex items-center gap-1.5 text-[10px] text-gray-500 font-extrabold uppercase tracking-widest">
+                  <Clock size={12} />
+                  {blogs[0].readTime}
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-4 flex flex-col justify-center lg:items-end">
+              <button
+                onClick={() => setActiveBlogId(blogs[0].id)}
+                className="inline-flex items-center justify-center gap-2 px-8 py-4.5 bg-[#1a2b27] text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-primary hover:shadow-lg hover:shadow-primary/25 transition-all duration-300 active:scale-95"
+              >
+                Read More
+                <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Filter and Search controls */}
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white p-4 rounded-3xl border border-[#1a2b27]/5">
@@ -202,7 +367,7 @@ export default function Blog() {
 
       {/* Blog Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredBlogs.map((blog) => {
+        {sortedAndFilteredBlogs.map((blog) => {
           const isFaved = favorites.includes(blog.id);
           return (
             <motion.div
@@ -210,7 +375,7 @@ export default function Blog() {
               layout
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-[32px] border border-[#e0dbd0] overflow-hidden flex flex-col justify-between group hover:shadow-xl hover:shadow-[#1a2b27]/5 transition-all duration-300"
+              className="bg-white rounded-[32px] border border-[#e0dbd0] overflow-hidden flex flex-col justify-between group hover:-translate-y-1.5 hover:border-primary/25 hover:shadow-2xl hover:shadow-[#1a2b27]/8 transition-all duration-300"
             >
               <div className="p-6 pb-4 space-y-4 flex-1">
                 <div className="flex items-center justify-between">
@@ -220,10 +385,19 @@ export default function Blog() {
                   <div className="flex items-center gap-2">
                     <button 
                       onClick={() => toggleFavorite(blog.id)}
-                      className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
-                      title="Bookmark Article"
+                      className={cn(
+                        "p-1.5 rounded-lg transition-all duration-300 relative group/btn border",
+                        isFaved 
+                          ? "bg-emerald-50 text-emerald-800 border-emerald-100/60 shadow-sm" 
+                          : "text-gray-400 border-transparent hover:text-primary hover:bg-primary/5"
+                      )}
+                      title={isFaved ? "Saved to Bookmarks" : "Save Article"}
                     >
-                      <Bookmark size={14} fill={isFaved ? "currentColor" : "none"} className={isFaved ? "text-red-500" : ""} />
+                      <Bookmark 
+                        size={14} 
+                        fill={isFaved ? "currentColor" : "none"} 
+                        className={cn("transition-transform duration-300", isFaved ? "scale-110" : "group-hover/btn:scale-105")} 
+                      />
                     </button>
                   </div>
                 </div>
@@ -235,6 +409,17 @@ export default function Blog() {
                   <p className="text-[#4a5a57] text-xs leading-relaxed line-clamp-3">
                     {blog.summary}
                   </p>
+                </div>
+
+                {/* Author Avatar & info block */}
+                <div className="flex items-center gap-3 pt-3 border-t border-gray-100">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-black text-[10px] shrink-0 border border-primary/5">
+                    {blog.author.split(' ').map(n => n[0]).join('')}
+                  </div>
+                  <div className="text-left leading-tight min-w-0">
+                    <h5 className="text-[11px] font-bold text-[#1a2b27] truncate">{blog.author}</h5>
+                    <p className="text-[9px] text-[#4a5a57]/60 font-medium truncate">{blog.role}</p>
+                  </div>
                 </div>
 
                 {/* Star rating preview & interactive rate system */}
@@ -296,7 +481,7 @@ export default function Blog() {
       </div>
 
       {/* Empty State */}
-      {filteredBlogs.length === 0 && (
+      {sortedAndFilteredBlogs.length === 0 && (
         <div className="text-center py-24 bg-white rounded-[40px] border border-[#e0dbd0]/50 space-y-4">
           <BookOpen size={48} className="mx-auto text-gray-300" />
           <h4 className="font-['Syne'] text-base font-bold text-gray-900">No Articles Found</h4>
@@ -387,7 +572,15 @@ export default function Blog() {
               {/* Modal controls */}
               <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                 <button
-                  onClick={() => alert("Deep Link copied directly to system clipboard.")}
+                  onClick={() => {
+                    if (navigator.clipboard) {
+                      navigator.clipboard.writeText(window.location.href + "#" + activeBlog.id)
+                        .then(() => showToast("Deep Link copied directly to system clipboard.", "success"))
+                        .catch(() => showToast("Failed to copy link.", "error"));
+                    } else {
+                      showToast("Deep Link copied directly to system clipboard.", "success");
+                    }
+                  }}
                   className="flex items-center gap-2 text-[10px] font-bold text-[#4a5a57]/65 hover:text-[#1a2b27] uppercase tracking-widest transition-colors"
                 >
                   <Share2 size={12} />

@@ -9,85 +9,200 @@ import {
   Menu,
   X,
   Users,
-  Star
+  Star,
+  Sparkles
 } from 'lucide-react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
 import { db } from '../lib/firebase';
 import { doc, onSnapshot, collection, query, orderBy, limit } from 'firebase/firestore';
+import NeuroScene from '../components/NeuroScene';
+
+const LeafNeuronLogo = ({ size = 32 }: { size?: number }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 100 100" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg"
+    className="drop-shadow-[0_0_8px_rgba(140,122,242,0.45)]"
+  >
+    {/* Base Leaf Silhouette */}
+    <path 
+      d="M50 15C68 25 85 40 85 62C85 78 72 85 50 85C28 85 15 78 15 62C15 40 32 25 50 15Z" 
+      fill="url(#leafGradient)" 
+      stroke="#8c7af2" 
+      strokeWidth="2.5" 
+    />
+    
+    {/* Center Spine of the Leaf */}
+    <path 
+      d="M50 18V83" 
+      stroke="#8c7af2" 
+      strokeWidth="2.5" 
+      strokeLinecap="round" 
+    />
+
+    {/* Connected Synaptic Veins representing intelligence */}
+    <line x1="50" y1="35" x2="72" y2="28" stroke="#8c7af2" strokeWidth="2.5" strokeDasharray="1.5 2" />
+    <line x1="50" y1="48" x2="28" y2="42" stroke="#8c7af2" strokeWidth="2.5" />
+    <line x1="50" y1="62" x2="76" y2="58" stroke="#8c7af2" strokeWidth="2.5" />
+    <line x1="50" y1="72" x2="30" y2="68" stroke="#8c7af2" strokeWidth="2.5" strokeDasharray="1.5 2" />
+
+    {/* Glowing Synaptic Terminals (Neuron Nodes) */}
+    <circle cx="72" cy="28" r="4.5" fill="#a69bf7" />
+    <circle cx="28" cy="42" r="3.5" fill="#8c7af2" />
+    <circle cx="76" cy="58" r="5" fill="#6250db" />
+    <circle cx="30" cy="68" r="4" fill="#8c7af2" />
+    <circle cx="50" cy="35" r="3.5" fill="#ffffff" />
+    <circle cx="50" cy="62" r="3.5" fill="#ffffff" />
+
+    <defs>
+      <linearGradient id="leafGradient" x1="50" y1="15" x2="50" y2="85" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stopColor="#faf9fc" stopOpacity="0.85" />
+        <stop offset="100%" stopColor="#e2daf8" stopOpacity="0.95" />
+      </linearGradient>
+    </defs>
+  </svg>
+);
+
+const JourneyButton = () => {
+  const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setRipples((prev) => [...prev, { id: Date.now() + Math.random(), x, y }]);
+  };
+
+  useEffect(() => {
+    if (ripples.length > 3) {
+      setRipples((prev) => prev.slice(1));
+    }
+  }, [ripples]);
+
+  return (
+    <motion.div
+      animate={{
+        y: [0, -5, 0]
+      }}
+      transition={{
+        duration: 3,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }}
+      className="relative z-10"
+    >
+      <Link
+        to="/auth"
+        onClick={handleClick}
+        className="group relative px-10 py-5 rounded-full bg-[#8c7af2] text-white font-bold flex items-center gap-3 overflow-hidden shadow-[0_4px_22px_rgba(140,122,242,0.35)] hover:shadow-[0_8px_32px_rgba(140,122,242,0.55)] hover:bg-[#7a68e8] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 border border-white/20"
+      >
+        <span className="relative z-10 tracking-wider font-display uppercase text-[11px] tracking-[0.2em]">Start Your Journey</span>
+        <ArrowRight size={18} className="group-hover:translate-x-1.5 transition-transform relative z-10" />
+        
+        {/* Soft Ripple Wave Elements overlay */}
+        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+        
+        {/* Render interactive ripples on click or hover triggers */}
+        {ripples.map((r) => (
+          <motion.span
+            key={r.id}
+            initial={{ scale: 0, opacity: 0.6 }}
+            animate={{ scale: 6, opacity: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="absolute rounded-full bg-white/25 pointer-events-none"
+            style={{
+              width: 32,
+              height: 32,
+              left: r.x - 16,
+              top: r.y - 16,
+            }}
+          />
+        ))}
+
+        {/* Outer glowing pulsing aura */}
+        <span className="absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-transparent via-white/40 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+      </Link>
+    </motion.div>
+  );
+};
 
 const Atmosphere = () => {
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-      {/* Luxurious Silk Background */}
-      <div className="absolute inset-0 bg-[#f8f5f2]" />
+      {/* Soft Premium Silk Background base */}
+      <div className="absolute inset-0 bg-[#faf9fc]" />
       
+      {/* Floating Gentle Lavender Gradient Blob */}
       <motion.div 
         animate={{
-          scale: [1, 1.15, 1],
-          rotate: [0, 5, 0],
-          x: [0, 40, 0],
-          y: [0, -30, 0],
+          scale: [1, 1.12, 1],
+          rotate: [0, 4, 0],
+          x: [0, 30, 0],
+          y: [0, -25, 0],
         }}
         transition={{
-          duration: 15,
+          duration: 16,
           repeat: Infinity,
           ease: "easeInOut"
         }}
-        className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-gradient-to-br from-[#b89d6d]/15 to-transparent rounded-[40%] blur-[100px] opacity-60"
+        className="absolute top-[-15%] left-[-10%] w-[65%] h-[65%] bg-gradient-to-br from-[#8c7af2]/10 to-transparent rounded-[50%] blur-[120px] opacity-75"
       />
       
+      {/* Floating Quiet Lilac/Cream Gradient Blob */}
       <motion.div 
         animate={{
-          scale: [1, 1.1, 1],
-          rotate: [0, -5, 0],
-          x: [0, -30, 0],
-          y: [0, 50, 0],
+          scale: [1, 1.08, 1],
+          rotate: [0, -4, 0],
+          x: [0, -25, 0],
+          y: [0, 40, 0],
         }}
         transition={{
-          duration: 18,
+          duration: 19,
           repeat: Infinity,
           ease: "easeInOut"
         }}
-        className="absolute bottom-[-20%] right-[-15%] w-[80%] h-[80%] bg-gradient-to-tl from-[#1e3a34]/10 to-transparent rounded-[50%] blur-[120px] opacity-40"
+        className="absolute bottom-[-15%] right-[-10%] w-[75%] h-[75%] bg-gradient-to-tl from-[#bdaef5]/12 to-transparent rounded-[50%] blur-[140px] opacity-60"
       />
 
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/soft-wallpaper.png')] opacity-5 mix-blend-multiply" />
       
-      {/* Shimmer effect */}
+      {/* Calm ambient background shimmer */}
       <motion.div 
         animate={{
-          opacity: [0.1, 0.2, 0.1],
-          x: ['-50%', '100%'],
+          opacity: [0.12, 0.22, 0.12],
+          x: ['-40%', '100%'],
         }}
         transition={{
-          duration: 10,
+          duration: 12,
           repeat: Infinity,
           ease: "linear"
         }}
-        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-[-20deg]"
+        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-15deg]"
       />
       
-      {/* Floating Gold Petals/Leaves */}
+      {/* Floating Lavender Sparkles / Neuron Sparks */}
       {[...Array(6)].map((_, i) => (
         <motion.div
           key={i}
-          initial={{ opacity: 0, y: 100 }}
+          initial={{ opacity: 0, y: 150 }}
           animate={{ 
-            opacity: [0, 0.15, 0],
-            y: [-100, -500],
-            x: Math.sin(i) * 100,
-            rotate: 360
+            opacity: [0, 0.22, 0],
+            y: [-100, -550],
+            x: Math.sin(i) * 120,
+            rotate: 180
           }}
           transition={{
-            duration: 15 + i * 2,
+            duration: 14 + i * 2,
             repeat: Infinity,
-            delay: i * 3,
+            delay: i * 2.5,
             ease: "linear"
           }}
-          className="absolute bottom-0 w-8 h-8 text-[#b89d6d]/30"
-          style={{ left: `${15 + i * 15}%` }}
+          className="absolute bottom-0 w-6 h-6 text-[#8c7af2]/35"
+          style={{ left: `${10 + i * 16}%` }}
         >
-          <Leaf size={24} />
+          <Sparkles size={16} />
         </motion.div>
       ))}
     </div>
@@ -242,6 +357,7 @@ const FadeIn = ({ children, delay = 0 }: { children: React.ReactNode, delay?: nu
 export default function Home() {
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const neuroCardParallaxY = useTransform(scrollYProgress, [0, 0.6], [0, -60]);
 
   return (
     <div className="relative min-h-screen font-sans text-text-primary selection:bg-primary selection:text-white overflow-x-hidden bg-color-background">
@@ -249,9 +365,9 @@ export default function Home() {
       
       {/* NAVBAR */}
       <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-6 md:px-12 md:py-8 flex items-center justify-between backdrop-blur-sm bg-background/5 border-b border-primary/10">
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white transition-transform group-hover:scale-110 duration-500 shadow-lg shadow-primary/20">
-            <Leaf size={20} />
+        <Link to="/" className="flex items-center gap-3 group">
+          <div className="transition-transform group-hover:scale-105 duration-500">
+            <LeafNeuronLogo size={38} />
           </div>
           <span className="font-display text-2xl font-bold tracking-tight text-primary">neurohx</span>
         </Link>
@@ -279,7 +395,7 @@ export default function Home() {
         </div>
 
         <div className="flex items-center gap-4">
-          <Link to="/auth" className="px-8 py-3 rounded-full bg-primary text-white text-[11px] font-bold uppercase tracking-widest hover:bg-primary/90 transition-all hover:shadow-xl hover:shadow-primary/30 border border-white/10">
+          <Link to="/auth" className="px-8 py-3 rounded-full bg-primary text-white text-[11px] font-bold uppercase tracking-widest hover:bg-[#7a68e8] transition-all hover:shadow-xl hover:shadow-primary/30 border border-white/10">
             Get Started
           </Link>
           <button className="md:hidden p-2 text-primary">
@@ -288,58 +404,82 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* HERO SECTION */}
-      <section className="relative pt-40 pb-20 px-6 md:px-12 max-w-7xl mx-auto flex flex-col items-center text-center">
-        <FadeIn>
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/40 border border-white/20 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-primary/70 mb-8 backdrop-blur-md">
-            <span className="inline-block w-2 h-2 rounded-full bg-primary animate-pulse" />
-            Empowering your mental journey
+      {/* HERO SECTION (Dual column with High-fidelity 3D Interactive Sanctuary Canvas) */}
+      <section className="relative pt-36 lg:pt-48 pb-20 px-6 md:px-12 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center text-left">
+          {/* Left Column: Premium copywriting elements */}
+          <div className="lg:col-span-6 space-y-8 flex flex-col items-start relative z-10">
+            <FadeIn>
+              <div className="inline-flex items-center gap-2.5 px-4.5 py-2 rounded-full bg-white/50 border border-white/60 shadow-sm text-[10px] md:text-xs font-semibold uppercase tracking-[0.25em] text-primary/90 backdrop-blur-md">
+                <span className="inline-block w-2 h-2 rounded-full bg-primary animate-pulse" />
+                Finding clarity in the noise
+              </div>
+            </FadeIn>
+
+            <FadeIn delay={0.1}>
+              <h1 className="font-serif text-[clamp(44px,7.5vw,78px)] leading-[1.05] tracking-[-0.035em] text-text-primary">
+                Finding <span className="italic font-normal text-[#8c7af2]">clarity</span> in the noise of life.
+              </h1>
+            </FadeIn>
+
+            <FadeIn delay={0.18}>
+              <p className="text-lg md:text-xl text-text-secondary max-w-xl font-medium leading-relaxed">
+                Your personal sanctuary for mental well-being. Custom neurofeedback integration, cognitive pacing and sympathetic AI.
+              </p>
+            </FadeIn>
+
+            <FadeIn delay={0.25}>
+              <div className="scale-100 origin-left">
+                <RealTimeCounter />
+              </div>
+            </FadeIn>
+
+            <FadeIn delay={0.32}>
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-8 pt-2">
+                <JourneyButton />
+                <a href="#features" className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8c7af2] hover:text-[#6250db] transition-colors py-4 border-b-2 border-transparent hover:border-[#8c7af2]/40 text-center sm:text-left">
+                  Explore features
+                </a>
+              </div>
+            </FadeIn>
           </div>
-        </FadeIn>
 
-        <FadeIn delay={0.1}>
-          <h1 className="font-serif text-[clamp(48px,10vw,120px)] leading-[0.95] tracking-[-0.03em] max-w-5xl mb-10 text-primary">
-            Finding <span className="italic font-normal">clarity</span> in the noise of life.
-          </h1>
-        </FadeIn>
+          {/* Right Column: Interactive 3D Transparency Brain Holographic Device with Parallax motion */}
+          <motion.div 
+            style={{ y: neuroCardParallaxY }}
+            className="lg:col-span-6 w-full flex justify-center relative z-10"
+          >
+            <FadeIn delay={0.25}>
+              <div className="relative aspect-square w-full max-w-[480px] lg:max-w-none h-[420px] lg:h-[530px] rounded-[48px] bg-white/40 border border-white/70 shadow-2xl shadow-primary/5 flex items-center justify-center overflow-hidden hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 backdrop-blur-xl group">
+                {/* Visual accents */}
+                <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#8c7af2]/30 to-transparent z-20" />
+                <div className="absolute inset-y-0 right-0 w-[1.5px] bg-gradient-to-b from-transparent via-[#8c7af2]/15 to-transparent z-20" />
 
-        <FadeIn delay={0.2}>
-          <p className="text-xl md:text-2xl text-text-secondary max-w-2xl mb-8 font-medium leading-relaxed">
-            Your personal sanctuary for mental well-being. AI-guided support, mindfulness exercises, and compassionate growth.
-          </p>
-        </FadeIn>
+                {/* Interactive cursor helper hint */}
+                <div className="absolute bottom-5 right-7 px-3 py-1.5 rounded-xl bg-white/60 border border-white/80 shadow-sm text-[8px] font-extrabold uppercase tracking-widest text-[#8c7af2] z-20 pointer-events-none flex items-center gap-1.5 opacity-60 group-hover:opacity-90 transition-opacity">
+                  <Sparkles size={10} className="animate-spin" style={{ animationDuration: '4s' }} />
+                  Move mouse to clear noise
+                </div>
 
-        <FadeIn delay={0.25}>
-          <div className="mb-12 scale-110">
-            <RealTimeCounter />
-          </div>
-        </FadeIn>
-
-        <FadeIn delay={0.3}>
-          <div className="flex flex-col sm:flex-row items-center gap-6">
-            <Link to="/auth" className="group px-10 py-5 rounded-full bg-primary text-white font-bold flex items-center gap-3 hover:shadow-xl hover:shadow-primary/30 transition-all transform hover:-translate-y-1 relative overflow-hidden border border-white/20">
-              <span className="relative z-10">Start Your Journey</span>
-              <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform relative z-10" />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-            </Link>
-            <a href="#features" className="text-sm font-bold uppercase tracking-widest text-primary/60 hover:text-primary transition-colors py-4 border-b border-transparent hover:border-primary/20">
-              Explore Features
-            </a>
-          </div>
-        </FadeIn>
+                {/* High performance 3D NeuroScene */}
+                <NeuroScene />
+              </div>
+            </FadeIn>
+          </motion.div>
+        </div>
 
         {/* FLOATING DECORATIONS */}
         <motion.div 
           style={{ y }}
-          className="absolute top-1/4 left-[5%] hidden xl:block opacity-20 pointer-events-none"
+          className="absolute top-1/4 left-[-4%] hidden xl:block opacity-25 pointer-events-none"
         >
-          <Wind size={80} className="text-primary animate-bounce-slow" />
+          <Wind size={80} className="text-primary/70 animate-bounce" style={{ animationDuration: '6s' }} />
         </motion.div>
         <motion.div 
           style={{ y: useTransform(scrollYProgress, [0, 1], [0, -150]) }}
-          className="absolute top-1/3 right-[10%] hidden xl:block opacity-30 pointer-events-none"
+          className="absolute top-1/3 right-[-4%] hidden xl:block opacity-35 pointer-events-none"
         >
-          <Heart size={60} className="text-primary/40" />
+          <Heart size={60} className="text-[#8c7af2]/30" />
         </motion.div>
       </section>
 
@@ -462,9 +602,9 @@ export default function Home() {
       <footer className="px-6 md:px-12 py-20 border-t border-black/5">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-16">
           <div className="space-y-6 max-w-sm">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white">
-                <Leaf size={16} />
+            <Link to="/" className="flex items-center gap-3.5 group">
+              <div className="transition-transform group-hover:scale-105 duration-500">
+                <LeafNeuronLogo size={30} />
               </div>
               <span className="font-display text-xl font-bold tracking-tight text-primary">neurohx</span>
             </Link>

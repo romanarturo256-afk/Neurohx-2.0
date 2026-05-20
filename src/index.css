@@ -3,12 +3,12 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --color-primary: #b89d6d;
-  --color-secondary: #fdfaf5;
-  --color-background: #f8f5f2;
-  --color-accent: #1e3a34;
-  --text-primary: #1a1a1a;
-  --text-secondary: #4a4a4a;
+  --color-primary: #8c7af2; /* Elegant soft lavender-indigo brand color */
+  --color-secondary: #f8f6fc; /* Warm luxurious cream with subtle lavender tint */
+  --color-background: #faf9fc; /* Soft cream sanctuary background */
+  --color-accent: #6250db; /* Deep pastel violet accent */
+  --text-primary: #1d1730; /* High-contrast charcoal with royal-purple tone */
+  --text-secondary: #5a546c; /* Elegant slate-violet for supporting microcopy */
   
   --font-serif: "Playfair Display", serif;
   --font-sans: "Inter", sans-serif;
@@ -16,12 +16,12 @@
 }
 
 .dark {
-  --color-primary: #d4af37;
-  --color-secondary: #1a2f2b;
-  --color-background: #0d1412;
-  --color-accent: #1e3a34;
-  --text-primary: #f8f5f2;
-  --text-secondary: #a8b2af;
+  --color-primary: #a69bf7;
+  --color-secondary: #211c33;
+  --color-background: #0e0a1a;
+  --color-accent: #8c7af2;
+  --text-primary: #f8f6fc;
+  --text-secondary: #9a95ad;
 }
 
 @theme {

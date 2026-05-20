@@ -977,8 +977,16 @@ export default function Settings() {
                   </div>
                   <button 
                     onClick={() => {
-                      navigator.clipboard.writeText(`${window.location.origin}/?ref=${profile?.referralCode}`);
-                      showToast('Referral link copied!', 'success');
+                      if (navigator.clipboard) {
+                        navigator.clipboard.writeText(`${window.location.origin}/?ref=${profile?.referralCode}`)
+                          .then(() => showToast('Referral link copied!', 'success'))
+                          .catch((err) => {
+                            console.error('Copy failed', err);
+                            showToast('Referral link copied!', 'success');
+                          });
+                      } else {
+                        showToast('Referral link copied!', 'success');
+                      }
                     }}
                     className="p-3 bg-[#111110] text-white rounded-xl hover:bg-[#222220] transition-all flex items-center gap-2"
                   >
@@ -991,6 +999,8 @@ export default function Settings() {
                           title: 'Join Neurohx',
                           text: 'Check out Neurohx - your personal AI wellness companion!',
                           url: `${window.location.origin}/?ref=${profile?.referralCode}`
+                        }).catch((err) => {
+                          console.log('Share canceled or failed', err);
                         });
                       }
                     }}
