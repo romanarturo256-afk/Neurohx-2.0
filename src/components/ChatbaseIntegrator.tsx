@@ -21,13 +21,8 @@ export function ChatbaseIntegrator() {
   const { profile } = useUser();
 
   useEffect(() => {
-    const chatbotId = import.meta.env.VITE_CHATBOT_ID;
-    
-    // Check if configuration exists
-    if (!chatbotId || chatbotId === "your_chatbase_chatbot_id" || chatbotId === "") {
-      console.warn("⚠️ [Chatbase] VITE_CHATBOT_ID is not configured in your environment.");
-      return;
-    }
+    // Hardcoded production Chatbase Chatbot ID to ensure it loads reliably everywhere (local & cloud environments)
+    const chatbotId = '5JOOwWNnVKPkqPAptOs5t';
 
     // Initialize window.chatbase if not already present
     if (!window.chatbase) {
