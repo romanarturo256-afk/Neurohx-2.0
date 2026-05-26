@@ -21,69 +21,47 @@ export function ChatbaseIntegrator() {
   const { profile } = useUser();
 
   useEffect(() => {
-    // Hardcoded production Chatbase Chatbot ID to ensure it loads reliably everywhere (local & cloud environments)
+    // Chatbot is stopped and disabled by user request.
+    console.log("🛑 [Chatbase] Chatbot has been stopped and disabled.");
+
+    // Proactively clean up any chatbot elements, if they were previously injected or cached
     const chatbotId = '5JOOwWNnVKPkqPAptOs5t';
-
-    // Initialize window.chatbase if not already present
-    if (!window.chatbase) {
-      const cb: ChatbaseFunction = function (...args: any[]) {
-        cb.q = cb.q || [];
-        cb.q.push(args);
-      };
-      window.chatbase = cb;
+    
+    // Remove Chatbase script
+    const script = document.getElementById(chatbotId);
+    if (script) {
+      script.remove();
     }
 
-    // Configure window.chatbaseConfig before the library loads
-    window.chatbaseConfig = {
-      chatbotId: chatbotId
-    };
-
-    // Dynamically append the embed script if not already present
-    let script = document.getElementById(chatbotId) as HTMLScriptElement;
-    if (!script) {
-      script = document.createElement("script");
-      script.src = "https://www.chatbase.co/embed.min.js";
-      script.id = chatbotId;
-      script.defer = true;
-      document.body.appendChild(script);
-      console.log("✨ [Chatbase] Embed script injected dynamically with ID:", chatbotId);
+    // Remove Chatbase bubble button and message container if injected by their library
+    const bubbleButton = document.getElementById('chatbase-bubble-button');
+    if (bubbleButton) {
+      bubbleButton.remove();
     }
 
-    async function getUserTokenAndIdentify() {
-      if (!profile || !profile.uid) {
-        return;
+    const messageContainer = document.getElementById('chatbase-message-container');
+    if (messageContainer) {
+      messageContainer.remove();
+    }
+
+    // Remove any iframe or div that contains 'chatbase' in its id or src as a fallback
+    document.querySelectorAll('iframe, div, script').forEach((el) => {
+      if (
+        el.id && el.id.toLowerCase().includes('chatbase') ||
+        (el instanceof HTMLIFrameElement && el.src && el.src.toLowerCase().includes('chatbase')) ||
+        (el instanceof HTMLScriptElement && el.src && el.src.toLowerCase().includes('chatbase'))
+      ) {
+        el.remove();
       }
+    });
 
-      try {
-        const response = await fetch('/api/chatbase-token', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            userId: profile.uid,
-            email: profile.email,
-            stripe_accounts: [],
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error(`Token generation failed with status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        if (data?.token) {
-          if (typeof window.chatbase === 'function') {
-            window.chatbase('identify', { token: data.token });
-            console.log('✨ [Chatbase] User identified securely with verified token.');
-          }
-        }
-      } catch (error) {
-        console.error('❌ [Chatbase] Error fetching verification token:', error);
-      }
+    // Clean up window variables
+    if (window.chatbase) {
+      delete window.chatbase;
     }
-
-    getUserTokenAndIdentify();
+    if (window.chatbaseConfig) {
+      delete window.chatbaseConfig;
+    }
   }, [profile]);
 
   return null;
