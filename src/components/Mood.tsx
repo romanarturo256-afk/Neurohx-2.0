@@ -180,10 +180,10 @@ export default function Mood() {
   })).filter(m => m.value > 0);
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-8 pb-12 text-[#F0F4FF]">
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <p className="text-[10px] font-bold text-[#8b7cf6] uppercase tracking-[0.2em] mb-1">Emotional Intelligence</p>
-        <h1 className="font-['Syne'] text-4xl font-bold text-[#111110]">Mood Analytics</h1>
+        <p className="text-[10px] font-bold text-[#00D4C8] uppercase tracking-[0.2em] mb-1">Emotional Intelligence</p>
+        <h1 className="font-['Syne'] text-4xl font-bold text-white">Mood Analytics</h1>
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -192,19 +192,19 @@ export default function Mood() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white p-10 rounded-[40px] border border-[#e0dbd0] shadow-sm relative overflow-hidden"
+            className="bg-white/[0.05] p-10 rounded-[40px] border border-white/10 shadow-sm relative overflow-hidden backdrop-blur-xl"
           >
             {!canSeeCharts && (
-              <div className="absolute inset-0 z-20 bg-white/60 backdrop-blur-[4px] flex items-center justify-center p-8 text-center">
+              <div className="absolute inset-0 z-20 bg-[#0A0F2C]/80 backdrop-blur-[4px] flex items-center justify-center p-8 text-center">
                 <div className="max-w-xs space-y-4">
-                  <div className="w-16 h-16 bg-[#f0eeff] rounded-3xl flex items-center justify-center text-[#8b7cf6] mx-auto">
+                  <div className="w-16 h-16 bg-white/[0.05] border border-white/10 rounded-3xl flex items-center justify-center text-[#9B8EC4] mx-auto">
                     <Lock size={32} />
                   </div>
-                  <h4 className="font-['Syne'] text-2xl font-bold text-[#111110]">Mood Charts are Locked</h4>
-                  <p className="text-sm text-[#888880] leading-relaxed">Upgrade to the <span className="font-bold">Pro</span> plan to visualize your emotional trends over time.</p>
+                  <h4 className="font-['Syne'] text-2xl font-bold text-white">Mood Charts are Locked</h4>
+                  <p className="text-sm text-[#A0A5C0] leading-relaxed">Upgrade to the <span className="font-bold text-white">Pro</span> plan to visualize your emotional trends over time.</p>
                   <button
                     onClick={() => navigate('/dashboard/settings')}
-                    className="px-8 py-3 bg-[#8b7cf6] text-white rounded-full font-bold hover:bg-[#7c6df0] transition-all shadow-lg shadow-[#8b7cf6]/20"
+                    className="px-8 py-3 bg-[#00D4C8] text-[#0A0F2C] rounded-full font-bold hover:bg-[#00C4B8] transition-all shadow-lg shadow-[#00D4C8]/10 cursor-pointer"
                   >
                     Upgrade to Pro
                   </button>
@@ -213,15 +213,15 @@ export default function Mood() {
             )}
             <div className="flex justify-between items-center mb-10">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#f0eeff] rounded-2xl flex items-center justify-center text-[#8b7cf6]">
+                <div className="w-10 h-10 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-[#00D4C8]">
                   <TrendingUp size={20} />
                 </div>
-                <h3 className="font-bold text-[#111110]">Mood Trends (Last 30 Days)</h3>
+                <h3 className="font-bold text-white">Mood Trends (Last 30 Days)</h3>
               </div>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-[#8b7cf6] rounded-full"></div>
-                  <span className="text-[10px] font-bold text-[#888880] uppercase tracking-widest">Mood Level</span>
+                  <div className="w-3 h-3 bg-[#00D4C8] rounded-full"></div>
+                  <span className="text-[10px] font-bold text-[#A0A5C0] uppercase tracking-widest">Mood Level</span>
                 </div>
               </div>
             </div>
@@ -230,16 +230,16 @@ export default function Mood() {
                 <AreaChart data={canSeeCharts ? chartData : []}>
                   <defs>
                     <linearGradient id="moodTrendGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#8b7cf6" stopOpacity={0.1}/>
-                      <stop offset="95%" stopColor="#8b7cf6" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#00D4C8" stopOpacity={0.15}/>
+                      <stop offset="95%" stopColor="#00D4C8" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f5f2eb" />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
                   <XAxis 
                     dataKey="displayDate" 
                     axisLine={false} 
                     tickLine={false} 
-                    tick={{ fontSize: 10, fill: '#888880', fontWeight: 'bold' }}
+                    tick={{ fontSize: 10, fill: '#A0A5C0', fontWeight: 'bold' }}
                     dy={10}
                   />
                   <YAxis 
@@ -247,21 +247,23 @@ export default function Mood() {
                     ticks={[1, 2, 3, 4, 5]} 
                     axisLine={false} 
                     tickLine={false}
-                    tick={{ fontSize: 10, fill: '#888880', fontWeight: 'bold' }}
+                    tick={{ fontSize: 10, fill: '#A0A5C0', fontWeight: 'bold' }}
                   />
                   <Tooltip 
                     contentStyle={{ 
                       borderRadius: '24px', 
-                      border: '1px solid #e0dbd0',
-                      boxShadow: '0 10px 40px rgba(0,0,0,0.05)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      backgroundColor: '#0D1B4B',
+                      boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
                       fontSize: '12px',
+                      color: 'white',
                       fontWeight: 'bold'
                     }}
                   />
                   <Area 
                     type="monotone" 
                     dataKey="value" 
-                    stroke="#8b7cf6" 
+                    stroke="#00D4C8" 
                     strokeWidth={4}
                     fillOpacity={1} 
                     fill="url(#moodTrendGradient)" 
@@ -277,14 +279,14 @@ export default function Mood() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-white p-10 rounded-[40px] border border-[#e0dbd0] shadow-sm"
+              className="bg-white/[0.05] p-10 rounded-[40px] border border-white/10 shadow-sm backdrop-blur-xl"
             >
-              <h3 className="font-bold text-[#111110] mb-8">Mood Distribution</h3>
+              <h3 className="font-bold text-white mb-8">Mood Distribution</h3>
               <div className="h-[200px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
-                      data={moodDistribution.length > 0 ? moodDistribution : [{ name: 'Empty', value: 1, color: '#f5f2eb' }]}
+                      data={moodDistribution.length > 0 ? moodDistribution : [{ name: 'Empty', value: 1, color: 'rgba(255,255,255,0.05)' }]}
                       cx="50%"
                       cy="50%"
                       innerRadius={60}
@@ -292,7 +294,7 @@ export default function Mood() {
                       paddingAngle={5}
                       dataKey="value"
                     >
-                      {(moodDistribution.length > 0 ? moodDistribution : [{ color: '#f5f2eb' }]).map((entry: any, index) => (
+                      {(moodDistribution.length > 0 ? moodDistribution : [{ color: 'rgba(255,255,255,0.05)' }]).map((entry: any, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
@@ -304,7 +306,7 @@ export default function Mood() {
                 {moods.map((m, i) => (
                   <div key={m.value} className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[i] }} />
-                    <span className="text-[10px] font-bold text-[#888880] uppercase tracking-widest">{m.label}</span>
+                    <span className="text-[10px] font-bold text-[#A0A5C0] uppercase tracking-widest">{m.label}</span>
                   </div>
                 ))}
               </div>
@@ -314,14 +316,14 @@ export default function Mood() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-[#111110] p-10 rounded-[40px] text-white relative overflow-hidden"
+              className="bg-white/[0.05] p-10 rounded-[40px] border border-white/10 text-white relative overflow-hidden backdrop-blur-xl"
             >
               <div className="relative z-10 space-y-6">
-                <div className="flex items-center gap-2 text-[#8b7cf6]">
+                <div className="flex items-center gap-2 text-[#00D4C8]">
                   <Sparkles size={20} />
                   <span className="text-[10px] font-bold uppercase tracking-[0.2em]">AI Insight</span>
                 </div>
-                <p className="text-xl font-['Syne'] font-bold leading-relaxed">
+                <p className="text-xl font-['Syne'] font-bold leading-relaxed text-white">
                   {history.length < 5 
                     ? "Log your mood for 5 more days to unlock personalized AI emotional insights."
                     : aiInsight || "Analyzing your emotional resilience..."}
@@ -329,15 +331,15 @@ export default function Mood() {
                 <div className="pt-4 flex items-center gap-4">
                   <div className="flex -space-x-2">
                     {[1, 2, 3].map(i => (
-                      <div key={i} className="w-8 h-8 rounded-full border-2 border-[#111110] bg-[#8b7cf6] flex items-center justify-center text-[10px] font-bold">
+                      <div key={i} className="w-8 h-8 rounded-full border-2 border-[#0A0F2C] bg-[#9B8EC4] flex items-center justify-center text-[10px] font-bold text-[#0A0F2C]">
                         {i}
                       </div>
                     ))}
                   </div>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Shared by 2k+ users</span>
+                  <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Shared by 2k+ users</span>
                 </div>
               </div>
-              <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-[#8b7cf6] rounded-full blur-3xl opacity-20" />
+              <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-[#00D4C8] rounded-full blur-3xl opacity-10" />
             </motion.div>
           </div>
         </div>
@@ -347,23 +349,23 @@ export default function Mood() {
           <motion.div 
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-white p-10 rounded-[40px] border border-[#e0dbd0] shadow-sm"
+            className="bg-white/[0.05] p-10 rounded-[40px] border border-white/10 shadow-sm backdrop-blur-xl"
           >
-            <h3 className="font-['Syne'] text-2xl font-bold text-[#111110] mb-8">How are you now?</h3>
+            <h3 className="font-['Syne'] text-2xl font-bold text-white mb-8">How are you now?</h3>
             <div className="grid grid-cols-5 gap-3 mb-8">
               {moods.map((m) => (
                 <button
                   key={m.value}
                   onClick={() => setSelectedMood(m.value)}
                   className={cn(
-                    "flex flex-col items-center gap-2 p-4 rounded-3xl transition-all duration-300",
+                    "flex flex-col items-center gap-2 p-4 rounded-3xl transition-all duration-300 cursor-pointer border-2",
                     selectedMood === m.value 
-                      ? "bg-[#f0eeff] border-[#8b7cf6] border-2 scale-110 shadow-xl shadow-[#8b7cf6]/10" 
-                      : "bg-[#fcfaf7] border-transparent border-2 hover:border-[#e0dbd0]"
+                      ? "bg-white/10 border-[#00D4C8] scale-105 shadow-xl shadow-[#00D4C8]/10" 
+                      : "bg-white/5 border-transparent hover:border-white/10"
                   )}
                 >
                   <span className="text-3xl">{m.emoji}</span>
-                  <span className="text-[8px] font-bold uppercase tracking-tighter text-[#888880]">{m.label}</span>
+                  <span className="text-[8px] font-bold uppercase tracking-tighter text-white/60">{m.label}</span>
                 </button>
               ))}
             </div>
@@ -371,12 +373,12 @@ export default function Mood() {
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="Any specific reason? (Optional)"
-              className="w-full p-6 bg-[#fcfaf7] border-none rounded-[32px] text-sm focus:ring-2 focus:ring-[#8b7cf6] outline-none transition-all resize-none h-32 mb-8 placeholder:text-[#e0dbd0]"
+              className="w-full p-6 bg-white/5 border-none rounded-[32px] text-sm text-white focus:ring-2 focus:ring-[#00D4C8] outline-none transition-all resize-none h-32 mb-8 placeholder:text-white/20"
             />
             <button
               onClick={saveMood}
               disabled={!selectedMood || loading}
-              className="w-full bg-[#8b7cf6] text-white py-5 rounded-[32px] font-bold text-sm uppercase tracking-widest hover:bg-[#7c6df0] transition-all disabled:opacity-50 shadow-xl shadow-[#8b7cf6]/20 flex items-center justify-center gap-3"
+              className="w-full bg-[#00D4C8] text-[#0A0F2C] py-5 rounded-[32px] font-bold text-sm uppercase tracking-widest hover:bg-[#00bdae] transition-all disabled:opacity-50 shadow-xl shadow-[#00D4C8]/10 flex items-center justify-center gap-3 cursor-pointer"
             >
               {!canUseMood && <Lock size={18} />}
               {loading ? 'Logging...' : 'Log Mood'}
@@ -388,24 +390,24 @@ export default function Mood() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white p-10 rounded-[40px] border border-[#e0dbd0] shadow-sm space-y-8"
+            className="bg-white/[0.05] p-10 rounded-[40px] border border-white/10 shadow-sm space-y-8 backdrop-blur-xl"
           >
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-[#f0eeff] rounded-[24px] flex items-center justify-center text-[#8b7cf6]">
+              <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-[24px] flex items-center justify-center text-[#9B8EC4]">
                 <Heart size={28} />
               </div>
               <div>
-                <p className="text-[10px] font-bold text-[#888880] uppercase tracking-widest">Average Mood</p>
-                <p className="text-3xl font-bold font-['Syne'] text-[#111110]">{averageMood} / 5.0</p>
+                <p className="text-[10px] font-bold text-[#A0A5C0] uppercase tracking-widest">Average Mood</p>
+                <p className="text-3xl font-bold font-['Syne'] text-white">{averageMood} / 5.0</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-[#eaf4f0] rounded-[24px] flex items-center justify-center text-[#4ade80]">
+              <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-[24px] flex items-center justify-center text-[#00D4C8]">
                 <Calendar size={28} />
               </div>
               <div>
-                <p className="text-[10px] font-bold text-[#888880] uppercase tracking-widest">Total Logs</p>
-                <p className="text-3xl font-bold font-['Syne'] text-[#111110]">{history.length} Days</p>
+                <p className="text-[10px] font-bold text-[#A0A5C0] uppercase tracking-widest">Total Logs</p>
+                <p className="text-3xl font-bold font-['Syne'] text-white">{history.length} Days</p>
               </div>
             </div>
           </motion.div>

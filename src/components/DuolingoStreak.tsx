@@ -221,7 +221,7 @@ export default function DuolingoStreak() {
   ];
 
   return (
-    <div className="bg-white rounded-[40px] border border-[#e0dbd0] p-8 md:p-10 shadow-sm relative overflow-hidden flex flex-col justify-between h-full group">
+    <div className="bg-white rounded-[40px] border border-[#e0dbd0] p-5 sm:p-8 md:p-10 shadow-sm relative overflow-hidden flex flex-col justify-between h-full group">
       
       {/* Toast Notification Container */}
       <AnimatePresence>
@@ -238,26 +238,26 @@ export default function DuolingoStreak() {
         )}
       </AnimatePresence>
 
-      <div className="space-y-8">
+      <div className="space-y-6 sm:space-y-8">
         
         {/* Header containing metadata, XP indicator and sound controls */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] uppercase font-mono font-bold tracking-[0.2em] bg-red-500/10 text-red-600 px-3 py-1 rounded-full border border-red-500/15 flex items-center gap-1.5 animate-pulse">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 select-none">
+          <div className="flex items-center gap-2">
+            <span className="text-[9px] sm:text-[10px] uppercase font-mono font-bold tracking-[0.15em] bg-red-500/10 text-red-600 px-2.5 py-1 rounded-full border border-red-500/15 flex items-center gap-1.5 animate-pulse">
               <span className="w-1.5 h-1.5 bg-red-500 rounded-full" />
               Dynamic Streak Engine
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             {/* Mindful XP Counter */}
-            <div className="flex items-center gap-1.5 bg-amber-500/10 text-amber-600 border border-amber-500/15 px-3 py-1 rounded-full text-[10px] font-bold">
+            <div className="flex items-center gap-1.5 bg-amber-500/10 text-amber-600 border border-amber-500/15 px-2.5 py-1 rounded-full text-[9px] sm:text-[10px] font-bold whitespace-nowrap">
               <Zap size={10} fill="currentColor" />
               <span>{currentXP} XP</span>
             </div>
 
             {/* Frost Shield status indicator */}
-            <div className="flex items-center gap-1.5 bg-sky-500/10 text-sky-600 border border-sky-500/15 px-3 py-1 rounded-full text-[10px] font-bold">
+            <div className="flex items-center gap-1.5 bg-sky-500/10 text-sky-600 border border-sky-500/15 px-2.5 py-1 rounded-full text-[9px] sm:text-[10px] font-bold whitespace-nowrap">
               <Snowflake size={10} />
               <span>{freezesCount} Saved</span>
             </div>
@@ -265,7 +265,7 @@ export default function DuolingoStreak() {
             {/* Sound Effects Toggle Button */}
             <button 
               onClick={() => setSoundEnabled(!soundEnabled)}
-              className="p-1 rounded-lg text-gray-400 hover:bg-gray-100 transition-colors"
+              className="p-1 rounded-lg text-gray-400 hover:bg-gray-100 transition-colors cursor-pointer"
               title={soundEnabled ? "Mute sound effects" : "Unmute sound effects"}
             >
               {soundEnabled ? <Volume2 size={14} className="text-primary" /> : <VolumeX size={14} />}
@@ -274,11 +274,11 @@ export default function DuolingoStreak() {
         </div>
 
         {/* Section Tabs (Dashboard / Store / Badges) */}
-        <div className="flex items-center gap-1 bg-gray-100/70 p-1.5 rounded-[24px]">
+        <div className="flex items-center gap-1 bg-gray-100/70 p-1 rounded-[24px]">
           <button
             onClick={() => { playSound('click'); setActiveTab('tracker'); }}
             className={cn(
-              "flex-1 py-2.5 rounded-[18px] text-[10px] font-bold uppercase tracking-wider transition-all",
+              "flex-1 py-1.5 sm:py-2 px-1 rounded-[18px] text-[9px] sm:text-[10px] font-bold uppercase tracking-wider transition-all truncate cursor-pointer",
               activeTab === 'tracker' ? "bg-white text-gray-900 shadow-sm" : "text-gray-400 hover:text-gray-600"
             )}
           >
@@ -287,7 +287,7 @@ export default function DuolingoStreak() {
           <button
             onClick={() => { playSound('click'); setActiveTab('shop'); }}
             className={cn(
-              "flex-1 py-2.5 rounded-[18px] text-[10px] font-bold uppercase tracking-wider transition-all",
+              "flex-1 py-1.5 sm:py-2 px-1 rounded-[18px] text-[9px] sm:text-[10px] font-bold uppercase tracking-wider transition-all truncate cursor-pointer",
               activeTab === 'shop' ? "bg-white text-gray-900 shadow-sm" : "text-gray-400 hover:text-gray-600"
             )}
           >
@@ -296,7 +296,7 @@ export default function DuolingoStreak() {
           <button
             onClick={() => { playSound('click'); setActiveTab('badges'); }}
             className={cn(
-              "flex-1 py-2.5 rounded-[18px] text-[10px] font-bold uppercase tracking-wider transition-all",
+              "flex-1 py-1.5 sm:py-2 px-1 rounded-[18px] text-[9px] sm:text-[10px] font-bold uppercase tracking-wider transition-all truncate cursor-pointer",
               activeTab === 'badges' ? "bg-white text-gray-900 shadow-sm" : "text-gray-400 hover:text-gray-600"
             )}
           >

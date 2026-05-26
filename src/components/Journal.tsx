@@ -277,28 +277,28 @@ export default function Journal() {
   );
 
   return (
-    <div className="flex flex-col lg:flex-row h-[calc(100vh-12rem)] gap-8">
+    <div className="flex flex-col lg:flex-row h-[calc(100vh-12rem)] gap-8 text-[#F0F4FF]">
       {/* Sidebar */}
       <div className="w-full lg:w-80 flex flex-col gap-6">
         <div className="space-y-4">
-          <p className="text-[10px] font-bold text-[#8b7cf6] uppercase tracking-[0.2em]">Private Reflections</p>
-          <h1 className="font-['Syne'] text-4xl font-bold text-[#111110]">Your Journal.</h1>
+          <p className="text-[10px] font-bold text-[#00D4C8] uppercase tracking-[0.2em] shadow-[0_0_10px_rgba(0,212,200,0.1)]">Private Reflections</p>
+          <h1 className="font-['Syne'] text-4xl font-bold text-white">Your Journal.</h1>
         </div>
 
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#888880]" size={18} />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#A0A5C0]" size={18} />
           <input 
             type="text"
             placeholder="Search reflections..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-white border border-[#e0dbd0] rounded-2xl text-sm focus:ring-2 focus:ring-[#8b7cf6] outline-none transition-all shadow-sm"
+            className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-sm text-white focus:ring-2 focus:ring-[#00D4C8] focus:border-[#00D4C8] outline-none transition-all shadow-sm"
           />
         </div>
 
         <button 
           onClick={handleNewEntry}
-          className="w-full bg-[#111110] text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#222220] transition-all shadow-lg"
+          className="w-full bg-[#00D4C8] text-[#0A0F2C] py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#00bdae] transition-all shadow-lg shadow-[#00D4C8]/10 cursor-pointer"
         >
           {!canSave && <Lock size={16} />}
           <Plus size={18} />
@@ -306,9 +306,9 @@ export default function Journal() {
         </button>
 
         <div className="flex-1 overflow-y-auto space-y-4 pr-2">
-          <div className="flex justify-between items-center px-2">
-            <h3 className="text-xs font-bold text-[#111110] uppercase tracking-widest">Past Entries</h3>
-            <span className="text-[10px] font-bold text-[#888880] uppercase">{entries.length} Total</span>
+          <div className="flex justify-between items-center px-1">
+            <h3 className="text-xs font-bold text-white/60 uppercase tracking-widest">Past Entries</h3>
+            <span className="text-[10px] font-bold text-[#A0A5C0] uppercase">{entries.length} Total</span>
           </div>
           
           {filteredEntries.map((entry) => (
@@ -319,39 +319,39 @@ export default function Journal() {
                 setIsEditing(false);
               }}
               className={cn(
-                "w-full text-left p-6 rounded-[32px] border transition-all duration-300 relative group",
+                "w-full text-left p-6 rounded-[32px] border transition-all duration-300 relative group cursor-pointer",
                 selectedEntry?.id === entry.id 
-                  ? "bg-white border-[#8b7cf6] shadow-xl shadow-[#8b7cf6]/10 scale-[1.02]" 
-                  : "bg-white/50 border-[#e0dbd0] hover:border-[#8b7cf6] hover:bg-white"
+                  ? "bg-white/[0.08] border-[#00D4C8] shadow-xl shadow-[#00D4C8]/10 scale-[1.01]" 
+                  : "bg-white/[0.04] border-white/10 hover:border-[#00D4C8]/30 hover:bg-white/[0.06]"
               )}
             >
               <div className="flex justify-between items-start mb-3">
-                <p className="text-[10px] font-bold text-[#888880] uppercase tracking-widest">
+                <p className="text-[10px] font-bold text-[#A0A5C0] uppercase tracking-widest">
                   {new Date(entry.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 </p>
-                <div className="w-6 h-6 bg-[#f0eeff] rounded-lg flex items-center justify-center text-[#8b7cf6] opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="w-6 h-6 bg-white/5 rounded-lg flex items-center justify-center text-[#00D4C8] opacity-0 group-hover:opacity-100 transition-opacity">
                   <ChevronRight size={14} />
                 </div>
               </div>
-              <h4 className="font-bold text-[#111110] mb-2 line-clamp-1">{entry.title}</h4>
-              <p className="text-xs text-[#888880] line-clamp-2 leading-relaxed">{entry.content}</p>
+              <h4 className="font-bold text-white mb-2 line-clamp-1">{entry.title}</h4>
+              <p className="text-xs text-[#A0A5C0] line-clamp-2 leading-relaxed">{entry.content}</p>
             </button>
           ))}
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 bg-white rounded-[48px] border border-[#e0dbd0] shadow-sm overflow-hidden flex flex-col">
+      <div className="flex-1 bg-white/[0.05] border border-white/10 rounded-[48px] shadow-sm overflow-hidden flex flex-col backdrop-blur-xl">
         {showTemplates ? (
           <div className="flex-1 p-8 lg:p-12 overflow-y-auto">
             <div className="flex items-center justify-between mb-12">
               <div>
-                <h2 className="font-['Syne'] text-3xl font-bold text-[#111110] mb-2">Choose a Template</h2>
-                <p className="text-[#888880] text-sm italic">Select a ritual to guide your thoughts today.</p>
+                <h2 className="font-['Syne'] text-3xl font-bold text-white mb-2">Choose a Template</h2>
+                <p className="text-[#A0A5C0] text-sm italic">Select a ritual to guide your thoughts today.</p>
               </div>
               <button 
                 onClick={() => setShowTemplates(false)}
-                className="p-3 bg-[#f5f2eb] text-[#111110] rounded-2xl hover:bg-[#ede9df] transition-all"
+                className="p-3 bg-white/5 text-white rounded-2xl hover:bg-white/10 transition-all cursor-pointer"
               >
                 <X size={20} />
               </button>
@@ -362,14 +362,14 @@ export default function Journal() {
                 <button
                   key={template.id}
                   onClick={() => selectTemplate(template)}
-                  className="text-left p-8 rounded-[40px] border border-[#e0dbd0] hover:border-[#b89d6d] hover:bg-[#fcfaf5] transition-all group relative overflow-hidden"
+                  className="text-left p-8 rounded-[40px] border border-white/10 hover:border-[#00D4C8] hover:bg-white/[0.08] transition-all group relative overflow-hidden cursor-pointer"
                 >
                   <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
                     <BookOpen size={48} />
                   </div>
-                  <h4 className="font-serif text-xl text-primary mb-2 italic">{template.title}</h4>
-                  <p className="text-xs text-[#888880] leading-relaxed mb-4">{template.description}</p>
-                  <div className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary/60 group-hover:text-primary transition-colors">
+                  <h4 className="font-sans text-xl text-[#9B8EC4] mb-2 font-semibold">{template.title}</h4>
+                  <p className="text-xs text-[#A0A5C0] leading-relaxed mb-4">{template.description}</p>
+                  <div className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#00D4C8] transition-colors">
                     Start Reflection <ChevronRight size={12} />
                   </div>
                 </button>
@@ -377,31 +377,31 @@ export default function Journal() {
             </div>
           </div>
         ) : isEditing || (!selectedEntry && entries.length === 0) ? (
-          <div className="flex-1 flex flex-col p-8 lg:p-12 space-y-8">
+          <div className="flex-1 flex flex-col p-8 lg:p-12 space-y-8 h-full">
             <input 
               type="text"
               placeholder="Title of your reflection..."
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="font-['Syne'] text-3xl lg:text-4xl font-bold text-[#111110] border-none outline-none placeholder:text-[#e0dbd0]"
+              className="font-['Syne'] text-3xl lg:text-4xl font-bold text-white bg-transparent border-b border-white/10 focus:border-[#00D4C8] outline-none placeholder:text-white/20 pb-4"
             />
             <textarea 
               placeholder="Start writing your thoughts here..."
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="flex-1 text-base lg:text-lg text-[#111110] leading-relaxed border-none outline-none resize-none placeholder:text-[#e0dbd0]"
+              className="flex-1 text-base lg:text-lg text-white/90 bg-transparent leading-relaxed border-none outline-none resize-none placeholder:text-white/20"
             />
-            <div className="flex justify-end gap-4">
+            <div className="flex justify-end gap-4 min-h-[50px] items-center">
               <button 
                 onClick={() => setIsEditing(false)}
-                className="px-8 py-3 rounded-full text-sm font-bold text-[#888880] hover:bg-[#f5f2eb] transition-all"
+                className="px-8 py-3 rounded-full text-sm font-bold text-[#A0A5C0] hover:bg-white/5 transition-all cursor-pointer"
               >
                 Cancel
               </button>
               <button 
                 onClick={handleSave}
                 disabled={loading || !title.trim() || !content.trim()}
-                className="px-10 py-3 bg-[#8b7cf6] text-white rounded-full text-sm font-bold hover:bg-[#7c6df0] transition-all shadow-lg shadow-[#8b7cf6]/20 disabled:opacity-50"
+                className="px-10 py-3 bg-[#00D4C8] text-[#0A0F2C] rounded-full text-sm font-bold hover:bg-[#00bdae] transition-all shadow-lg shadow-[#00D4C8]/10 disabled:opacity-50 cursor-pointer"
               >
                 {loading ? 'Saving...' : 'Save Reflection'}
               </button>
@@ -411,15 +411,15 @@ export default function Journal() {
           <div className="flex-1 flex flex-col p-8 lg:p-12 overflow-y-auto">
             <div className="flex flex-col lg:flex-row justify-between items-start gap-6 mb-12">
               <div className="space-y-4">
-                <h2 className="font-['Syne'] text-4xl lg:text-5xl font-bold text-[#111110] leading-tight max-w-2xl">
+                <h2 className="font-['Syne'] text-4xl lg:text-5xl font-bold text-white leading-tight max-w-2xl">
                   {selectedEntry.title}
                 </h2>
-                <div className="flex items-center gap-4 text-[#888880]">
+                <div className="flex items-center gap-4 text-[#A0A5C0]">
                   <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest">
                     <Calendar size={14} />
                     {new Date(selectedEntry.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
                   </div>
-                  <div className="w-1 h-1 bg-[#e0dbd0] rounded-full" />
+                  <div className="w-1.5 h-1.5 bg-[#00D4C8] rounded-full" />
                   <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest">
                     <Clock size={14} />
                     09:42 AM
@@ -433,34 +433,36 @@ export default function Journal() {
                     setContent(selectedEntry.content);
                     setIsEditing(true);
                   }}
-                  className="p-3 bg-[#f5f2eb] text-[#111110] rounded-2xl hover:bg-[#ede9df] transition-all"
+                  className="p-3 bg-white/5 text-white rounded-2xl hover:bg-white/10 transition-all cursor-pointer border border-white/5"
+                  title="Edit Reflection"
                 >
                   <Edit3 size={18} />
                 </button>
                 <button 
                   onClick={() => handleDelete(selectedEntry.id)}
-                  className="p-3 bg-[#fef2f2] text-red-500 rounded-2xl hover:bg-red-100 transition-all"
+                  className="p-3 bg-red-500/20 text-red-300 border border-red-500/20 rounded-2xl hover:bg-red-500/30 transition-all cursor-pointer"
+                  title="Delete Reflection"
                 >
                   <Trash2 size={18} />
                 </button>
                 <button 
                   onClick={handleExportPDF}
-                  className="flex items-center gap-2 px-6 py-3 bg-[#f5f2eb] text-[#111110] rounded-2xl text-xs font-bold hover:bg-[#ede9df] transition-all relative"
+                  className="flex items-center gap-2 px-6 py-3 bg-white/5 text-white border border-white/10 rounded-2xl text-xs font-bold hover:bg-white/10 transition-all relative cursor-pointer"
                 >
-                  {!canExport && <Lock size={10} className="absolute -top-1 -right-1 text-[#8b7cf6]" />}
+                  {!canExport && <Lock size={10} className="absolute -top-1 -right-1 text-[#00D4C8]" />}
                   <FileDown size={16} />
                   Export as PDF
                 </button>
               </div>
             </div>
 
-            <div className="flex-1 text-base lg:text-lg text-[#111110] leading-[1.8] whitespace-pre-wrap mb-12">
+            <div className="flex-1 text-base lg:text-lg text-[#F0F4FF] leading-[1.8] whitespace-pre-wrap mb-12">
               {selectedEntry.content}
             </div>
 
-            <div className="pt-8 border-t border-[#f5f2eb] flex flex-wrap gap-3">
+            <div className="pt-8 border-t border-white/10 flex flex-wrap gap-3">
               {['#CLARITY', '#MEDITATION', '#GRATITUDE'].map(tag => (
-                <span key={tag} className="px-4 py-1.5 bg-[#f5f2eb] text-[#888880] text-[10px] font-bold rounded-full uppercase tracking-widest">
+                <span key={tag} className="px-4 py-1.5 bg-white/5 text-[#00D4C8] border border-[#00D4C8]/10 text-[10px] font-bold rounded-full uppercase tracking-widest">
                   {tag}
                 </span>
               ))}
@@ -468,18 +470,18 @@ export default function Journal() {
           </div>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center text-center p-12 space-y-6">
-            <div className="w-24 h-24 bg-[#f5f2eb] rounded-[40px] flex items-center justify-center text-[#888880]">
+            <div className="w-24 h-24 bg-white/5 border border-white/10 rounded-[40px] flex items-center justify-center text-[#00D4C8]">
               <BookOpen size={48} />
             </div>
             <div className="max-w-xs">
-              <h3 className="font-['Syne'] text-2xl font-bold text-[#111110] mb-2">No entry selected</h3>
-              <p className="text-[#888880] text-sm leading-relaxed">
+              <h3 className="font-['Syne'] text-2xl font-bold text-white mb-2">No entry selected</h3>
+              <p className="text-[#A0A5C0] text-sm leading-relaxed">
                 Select an entry from the list or create a new one to start reflecting.
               </p>
             </div>
             <button 
               onClick={handleNewEntry}
-              className="px-8 py-3 bg-[#8b7cf6] text-white rounded-full text-sm font-bold hover:bg-[#7c6df0] transition-all shadow-lg shadow-[#8b7cf6]/20"
+              className="px-8 py-3 bg-[#00D4C8] text-[#0A0F2C] rounded-full text-sm font-bold hover:bg-[#00bdae] transition-all shadow-lg shadow-[#00D4C8]/10 cursor-pointer"
             >
               Create New Entry
             </button>

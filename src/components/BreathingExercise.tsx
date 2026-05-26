@@ -253,40 +253,41 @@ export default function BreathingExercise({ onClose }: { onClose: () => void }) 
           </div>
 
           {/* Controls */}
-          <div className="flex items-center justify-between pt-4">
+          <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-4 pt-4 border-t border-[#f5f2eb]">
             <div className="flex gap-2">
               <button 
                 onClick={() => setIsMuted(!isMuted)}
-                className="p-4 bg-[#f5f2eb] text-[#888880] rounded-2xl hover:bg-[#ede9df] transition-all"
+                className="p-3 sm:p-4 bg-[#f5f2eb] text-[#888880] rounded-2xl hover:bg-[#ede9df] transition-all cursor-pointer"
                 title={isMuted ? "Unmute Tones" : "Mute Tones"}
               >
-                {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
               </button>
               <button 
                 onClick={() => setVoiceEnabled(!voiceEnabled)}
                 className={cn(
-                  "p-4 rounded-2xl transition-all",
+                  "p-3 sm:p-4 rounded-2xl transition-all cursor-pointer",
                   voiceEnabled ? "bg-[#f0eeff] text-[#8b7cf6]" : "bg-[#f5f2eb] text-[#888880]"
                 )}
                 title={voiceEnabled ? "Disable Voice Assistant" : "Enable Voice Assistant"}
               >
-                {voiceEnabled ? <Mic size={20} /> : <MicOff size={20} />}
+                {voiceEnabled ? <Mic size={18} /> : <MicOff size={18} />}
               </button>
             </div>
             
-            <div className="flex gap-4">
+            <div className="flex gap-3 items-center flex-1 sm:flex-initial justify-end">
               <button 
                 onClick={reset}
-                className="p-4 bg-[#f5f2eb] text-[#888880] rounded-2xl hover:bg-[#ede9df] transition-all"
+                className="p-3 sm:p-4 bg-[#f5f2eb] text-[#888880] rounded-2xl hover:bg-[#ede9df] transition-all cursor-pointer"
+                title="Reset Session"
               >
-                <RotateCcw size={20} />
+                <RotateCcw size={18} />
               </button>
               <button 
                 onClick={toggleStart}
-                className="px-12 py-4 bg-[#111110] text-white rounded-2xl font-bold flex items-center gap-3 hover:bg-[#222220] transition-all shadow-xl shadow-black/10"
+                className="flex-1 sm:flex-none px-6 sm:px-10 py-3 sm:py-4 bg-[#111110] text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-[#222220] transition-all shadow-xl shadow-black/10 text-xs sm:text-sm cursor-pointer whitespace-nowrap"
               >
-                {isActive ? <Pause size={20} /> : <Play size={20} />}
-                {isActive ? 'Pause' : 'Start Session'}
+                {isActive ? <Pause size={18} /> : <Play size={18} />}
+                <span>{isActive ? 'Pause' : 'Start Session'}</span>
               </button>
             </div>
           </div>

@@ -13,7 +13,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-background transition-colors duration-300">
+    <div className="flex min-h-screen bg-transparent transition-colors duration-300">
       <SmartReminders />
       <Sidebar />
       <main className="flex-1 p-4 md:p-8 pt-20 lg:pt-8 overflow-y-auto">

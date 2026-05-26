@@ -131,10 +131,10 @@ const JourneyButton = () => {
 const Atmosphere = () => {
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-      {/* Soft Premium Silk Background base */}
-      <div className="absolute inset-0 bg-[#faf9fc]" />
+      {/* Soft Premium Outer Space Background base */}
+      <div className="absolute inset-0 bg-transparent" />
       
-      {/* Floating Gentle Lavender Gradient Blob */}
+      {/* Floating Gentle Soft Purple Gradient Blob */}
       <motion.div 
         animate={{
           scale: [1, 1.12, 1],
@@ -147,10 +147,10 @@ const Atmosphere = () => {
           repeat: Infinity,
           ease: "easeInOut"
         }}
-        className="absolute top-[-15%] left-[-10%] w-[65%] h-[65%] bg-gradient-to-br from-[#8c7af2]/10 to-transparent rounded-[50%] blur-[120px] opacity-75"
+        className="absolute top-[-15%] left-[-10%] w-[65%] h-[65%] bg-gradient-to-br from-[#9B8EC4]/15 to-transparent rounded-[50%] blur-[120px] opacity-75"
       />
       
-      {/* Floating Quiet Lilac/Cream Gradient Blob */}
+      {/* Floating Sparkly Teal Glow Gradient Blob */}
       <motion.div 
         animate={{
           scale: [1, 1.08, 1],
@@ -163,7 +163,7 @@ const Atmosphere = () => {
           repeat: Infinity,
           ease: "easeInOut"
         }}
-        className="absolute bottom-[-15%] right-[-10%] w-[75%] h-[75%] bg-gradient-to-tl from-[#bdaef5]/12 to-transparent rounded-[50%] blur-[140px] opacity-60"
+        className="absolute bottom-[-15%] right-[-10%] w-[75%] h-[75%] bg-gradient-to-tl from-[#00D4C8]/12 to-transparent rounded-[50%] blur-[140px] opacity-60"
       />
 
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/soft-wallpaper.png')] opacity-5 mix-blend-multiply" />
@@ -307,12 +307,12 @@ const PublicReviews = () => {
             { id: 'p5', displayName: "Lydia H.", rating: 5, content: "Finally a wellness app that doesn't feel like a medical checklist. It feels like high-tier therapy." }
           ].map((r, i) => (
             <FadeIn key={r.id} delay={i * 0.1}>
-              <div className="break-inside-avoid bg-white/40 border border-white/40 p-8 rounded-[32px] backdrop-blur-md hover:bg-white transition-all duration-500 hover:shadow-xl hover:shadow-primary/5">
+              <div className="break-inside-avoid bg-white/[0.05] border border-white/10 p-8 rounded-[32px] backdrop-blur-md hover:bg-white/[0.08] transition-all duration-500 hover:shadow-xl hover:shadow-[#00D4C8]/5">
                 <div className="flex gap-1 mb-4">{renderStars(r.rating)}</div>
                 <p className="font-serif text-lg text-primary mb-6 italic leading-relaxed">"{r.content}"</p>
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center font-bold text-[10px] text-primary">{(r.displayName || 'U')[0]}</div>
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-primary/60">{r.displayName}</span>
+                  <span className="text-[11px] font-bold uppercase tracking-widest text-[#A0A5C0]">{r.displayName}</span>
                 </div>
               </div>
             </FadeIn>
@@ -320,12 +320,12 @@ const PublicReviews = () => {
         ) : (
           reviews.map((r, i) => (
             <FadeIn key={r.id} delay={i * 0.1}>
-              <div className="break-inside-avoid bg-white/40 border border-white/40 p-8 rounded-[32px] backdrop-blur-md hover:bg-white transition-all duration-500 hover:shadow-xl hover:shadow-primary/5">
+              <div className="break-inside-avoid bg-white/[0.05] border border-white/10 p-8 rounded-[32px] backdrop-blur-md hover:bg-white/[0.08] transition-all duration-500 hover:shadow-xl hover:shadow-[#00D4C8]/5">
                 <div className="flex gap-1 mb-4">{renderStars(r.rating)}</div>
                 <p className="font-serif text-lg text-primary mb-6 italic leading-relaxed">"{r.content}"</p>
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center font-bold text-[10px] text-primary">{(r.displayName || 'U')[0]}</div>
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-primary/60">{r.displayName || 'Verified User'}</span>
+                  <span className="text-[11px] font-bold uppercase tracking-widest text-[#A0A5C0]">{r.displayName || 'Verified User'}</span>
                 </div>
               </div>
             </FadeIn>
@@ -410,15 +410,15 @@ export default function Home() {
           {/* Left Column: Premium copywriting elements */}
           <div className="lg:col-span-6 space-y-8 flex flex-col items-start relative z-10">
             <FadeIn>
-              <div className="inline-flex items-center gap-2.5 px-4.5 py-2 rounded-full bg-white/50 border border-white/60 shadow-sm text-[10px] md:text-xs font-semibold uppercase tracking-[0.25em] text-primary/90 backdrop-blur-md">
-                <span className="inline-block w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <div className="inline-flex items-center gap-2.5 px-4.5 py-2 rounded-full bg-white/[0.05] border border-white/10 shadow-sm text-[10px] md:text-xs font-semibold uppercase tracking-[0.25em] text-primary/90 backdrop-blur-md">
+                <span className="inline-block w-2 h-2 rounded-full bg-[#00D4C8] shadow-[0_0_8px_#00D4C8] animate-pulse" />
                 Finding clarity in the noise
               </div>
             </FadeIn>
 
             <FadeIn delay={0.1}>
               <h1 className="font-serif text-[clamp(44px,7.5vw,78px)] leading-[1.05] tracking-[-0.035em] text-text-primary">
-                Finding <span className="italic font-normal text-[#8c7af2]">clarity</span> in the noise of life.
+                Finding <span className="italic font-normal text-[#00D4C8] text-glow-accent">clarity</span> in the noise of life.
               </h1>
             </FadeIn>
 
@@ -437,7 +437,7 @@ export default function Home() {
             <FadeIn delay={0.32}>
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-8 pt-2">
                 <JourneyButton />
-                <a href="#features" className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8c7af2] hover:text-[#6250db] transition-colors py-4 border-b-2 border-transparent hover:border-[#8c7af2]/40 text-center sm:text-left">
+                <a href="#features" className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#00D4C8] hover:text-[#00D4C8]/80 transition-colors py-4 border-b-2 border-transparent hover:border-[#00D4C8]/40 text-center sm:text-left">
                   Explore features
                 </a>
               </div>
@@ -450,14 +450,14 @@ export default function Home() {
             className="lg:col-span-6 w-full flex justify-center relative z-10"
           >
             <FadeIn delay={0.25}>
-              <div className="relative aspect-square w-full max-w-[480px] lg:max-w-none h-[420px] lg:h-[530px] rounded-[48px] bg-white/40 border border-white/70 shadow-2xl shadow-primary/5 flex items-center justify-center overflow-hidden hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 backdrop-blur-xl group">
+              <div className="relative aspect-square w-full max-w-[480px] lg:max-w-none h-[420px] lg:h-[530px] rounded-[48px] bg-white/[0.05] border border-white/10 shadow-2xl shadow-primary/5 flex items-center justify-center overflow-hidden hover:shadow-2xl hover:shadow-[#00D4C8]/10 transition-all duration-500 backdrop-blur-xl group">
                 {/* Visual accents */}
-                <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#8c7af2]/30 to-transparent z-20" />
-                <div className="absolute inset-y-0 right-0 w-[1.5px] bg-gradient-to-b from-transparent via-[#8c7af2]/15 to-transparent z-20" />
+                <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#00D4C8]/30 to-transparent z-20" />
+                <div className="absolute inset-y-0 right-0 w-[1.5px] bg-gradient-to-b from-transparent via-[#00D4C8]/15 to-transparent z-20" />
 
                 {/* Interactive cursor helper hint */}
-                <div className="absolute bottom-5 right-7 px-3 py-1.5 rounded-xl bg-white/60 border border-white/80 shadow-sm text-[8px] font-extrabold uppercase tracking-widest text-[#8c7af2] z-20 pointer-events-none flex items-center gap-1.5 opacity-60 group-hover:opacity-90 transition-opacity">
-                  <Sparkles size={10} className="animate-spin" style={{ animationDuration: '4s' }} />
+                <div className="absolute bottom-5 right-7 px-3 py-1.5 rounded-xl bg-white/[0.05] border border-white/10 shadow-sm text-[8px] font-extrabold uppercase tracking-widest text-[#00D4C8] z-20 pointer-events-none flex items-center gap-1.5 opacity-80 group-hover:opacity-100 transition-opacity">
+                  <Sparkles size={10} className="animate-spin text-glow-accent text-[#00D4C8]" style={{ animationDuration: '4s' }} />
                   Move mouse to clear noise
                 </div>
 
@@ -546,7 +546,7 @@ export default function Home() {
             }
           ].map((feature, i) => (
             <FadeIn key={i} delay={i * 0.1}>
-              <div className="group bg-white/40 border border-white/40 p-10 rounded-[48px] hover:bg-white hover:shadow-xl transition-all duration-500 h-full">
+              <div className="group bg-white/[0.05] border border-white/10 p-10 rounded-[48px] hover:bg-white/[0.08] hover:shadow-xl hover:shadow-[#00D4C8]/5 transition-all duration-500 h-full">
                 <div className="w-16 h-16 rounded-3xl bg-primary/10 flex items-center justify-center mb-8 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500">
                   <feature.icon size={32} className="text-primary" />
                 </div>

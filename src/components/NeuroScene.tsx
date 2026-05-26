@@ -327,7 +327,7 @@ export default function NeuroScene() {
         const rotX_z = finalY * sinX + rotY_z * cosX;
 
         // Apply perspective sizing scale
-        const scaleFactor = fov / (fov + rotX_z);
+        const scaleFactor = fov / Math.max(10, fov + rotX_z);
         const drawX = rotY_x * scaleFactor + screenCenterX;
         const drawY = rotX_y * scaleFactor + screenCenterY;
 
@@ -339,7 +339,7 @@ export default function NeuroScene() {
             ? `rgba(163, 142, 235, ${opacity * 0.85})` 
             : `rgba(180, 175, 195, ${opacity * 0.6})`;
           
-          ctx.arc(drawX, drawY, p.size * scaleFactor * (1.0 + scrollProgress * 0.5), 0, Math.PI * 2);
+          ctx.arc(drawX, drawY, Math.max(0, p.size * scaleFactor * (1.0 + scrollProgress * 0.5)), 0, Math.PI * 2);
           ctx.fill();
         }
       });
@@ -376,7 +376,7 @@ export default function NeuroScene() {
         y3 *= breathe;
         z3: y2;
 
-        const scale = fov / (fov + z2);
+        const scale = fov / Math.max(10, fov + z2);
         // Project center coordinate with subtle visual parallax drift downwards inside the canvas frame
         const scrollParallaxY = scrollProgress * (height * 0.08);
         const px = x3 * scale + width / 2;
@@ -407,7 +407,7 @@ export default function NeuroScene() {
         const p2 = projectedNodes[c.to];
 
         const avgDepth = (p1.pz + p2.pz) / 2;
-        const scale = fov / (fov + avgDepth);
+        const scale = fov / Math.max(10, fov + avgDepth);
         
         // Base synapse visibility: increases during scroll or during mouse hover proximity
         const baseVisibility = 0.06 + scrollProgress * 0.12;
@@ -466,7 +466,7 @@ export default function NeuroScene() {
           const sparkScale = pStart.scale + (pEnd.scale - pStart.scale) * s.progress;
 
           ctx.beginPath();
-          ctx.arc(sparkX, sparkY, 2.5 * sparkScale * (1.0 + scrollProgress * 0.4), 0, Math.PI * 2);
+          ctx.arc(sparkX, sparkY, Math.max(0, 2.5 * sparkScale * (1.0 + scrollProgress * 0.4)), 0, Math.PI * 2);
           
           // Outer neon glow styling
           ctx.shadowColor = '#D2D7F9';
@@ -485,7 +485,7 @@ export default function NeuroScene() {
         const nodeOpacity = Math.max(0.08, (0.28 + glowCoeff * 0.65) * pn.scale);
 
         ctx.beginPath();
-        ctx.arc(pn.px, pn.py, nodeSize, 0, Math.PI * 2);
+        ctx.arc(pn.px, pn.py, Math.max(0, nodeSize), 0, Math.PI * 2);
 
         if (glowCoeff > 0.4) {
           // Glowing neurotransmitter emission

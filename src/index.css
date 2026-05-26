@@ -2,26 +2,17 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-:root {
-  --color-primary: #8c7af2; /* Elegant soft lavender-indigo brand color */
-  --color-secondary: #f8f6fc; /* Warm luxurious cream with subtle lavender tint */
-  --color-background: #faf9fc; /* Soft cream sanctuary background */
-  --color-accent: #6250db; /* Deep pastel violet accent */
-  --text-primary: #1d1730; /* High-contrast charcoal with royal-purple tone */
-  --text-secondary: #5a546c; /* Elegant slate-violet for supporting microcopy */
+:root, .dark {
+  --color-primary: #9B8EC4; /* Soft purple */
+  --color-secondary: rgba(255, 255, 255, 0.05); /* Dark glass effect */
+  --color-background: #0A0F2C; /* Deep navy */
+  --color-accent: #00D4C8; /* Teal glow */
+  --text-primary: #F0F4FF; /* Soft white */
+  --text-secondary: #A0A5C0; /* Soft supportive light lavender-slate */
   
   --font-serif: "Playfair Display", serif;
   --font-sans: "Inter", sans-serif;
   --font-display: "Syne", sans-serif;
-}
-
-.dark {
-  --color-primary: #a69bf7;
-  --color-secondary: #211c33;
-  --color-background: #0e0a1a;
-  --color-accent: #8c7af2;
-  --text-primary: #f8f6fc;
-  --text-secondary: #9a95ad;
 }
 
 @theme {
@@ -67,3 +58,24 @@
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
 }
+
+body {
+  background-color: #0A0F2C;
+  background-image: radial-gradient(circle at 50% 0%, #0D1B4B 0%, #0A0F2C 100%);
+  background-attachment: fixed;
+  color: #F0F4FF;
+  min-height: 100vh;
+}
+
+/* Glassmorphism custom glow utilities */
+.dark-glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.text-glow-accent {
+  text-shadow: 0 0 10px rgba(0, 212, 200, 0.4);
+}
+

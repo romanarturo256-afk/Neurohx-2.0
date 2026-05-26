@@ -195,27 +195,27 @@ export default function HabitTracker() {
 
   if (loading) return (
     <div className="flex items-center justify-center h-full">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1a2b27]" />
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00D4C8]" />
     </div>
   );
 
   return (
-    <div className="max-w-6xl mx-auto p-4 lg:p-10 space-y-12">
+    <div className="max-w-6xl mx-auto p-4 lg:p-10 space-y-12 text-[#F0F4FF]">
       {/* Header Section */}
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#1a2b27] rounded-2xl flex items-center justify-center text-white p-2">
+            <div className="w-10 h-10 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-[#00D4C8] p-2">
               <RotateCcw size={20} />
             </div>
-            <h1 className="font-['Syne'] text-4xl font-bold text-[#1a2b27] uppercase italic">Habit Matrix</h1>
+            <h1 className="font-['Syne'] text-4xl font-bold text-white uppercase italic">Habit Matrix</h1>
           </div>
-          <p className="text-[#4a5a57] font-medium max-w-md">Precision tracking for cognitive and physiological optimization. Consistency is the primary marker of mental resilience.</p>
+          <p className="text-[#A0A5C0] font-medium max-w-md">Precision tracking for cognitive and physiological optimization. Consistency is the primary marker of mental resilience.</p>
         </div>
         
         <button 
           onClick={() => setIsAdding(true)}
-          className="bg-[#2d7a36] text-white px-8 py-4 rounded-2xl font-bold text-xs uppercase tracking-[0.2em] shadow-xl shadow-[#2d7a36]/20 hover:opacity-90 transition-all flex items-center justify-center gap-3"
+          className="bg-[#00D4C8] text-[#0A0F2C] px-8 py-4 rounded-2xl font-bold text-xs uppercase tracking-[0.2em] shadow-xl shadow-[#00D4C8]/10 hover:bg-[#00bdae] transition-all flex items-center justify-center gap-3 cursor-pointer"
         >
           <Plus size={16} />
           Protocol Initialized
@@ -224,22 +224,23 @@ export default function HabitTracker() {
 
       {/* Progress Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-[40px] p-8 border border-[#1a2b27]/5 shadow-sm space-y-2">
-          <p className="text-[10px] font-bold text-[#4a5a57] uppercase tracking-[0.2em]">Active Protocols</p>
-          <h3 className="text-5xl font-['Playfair_Display'] font-black text-[#1a2b27]">{habits.length}</h3>
+        <div className="bg-white/[0.05] rounded-[40px] p-8 border border-white/10 shadow-sm space-y-2 backdrop-blur-xl">
+          <p className="text-[10px] font-bold text-[#A0A5C0] uppercase tracking-[0.2em]">Active Protocols</p>
+          <h3 className="text-5xl font-['Syne'] font-black text-white">{habits.length}</h3>
         </div>
-        <div className="bg-[#1a2b27] rounded-[40px] p-8 text-white space-y-2 shadow-xl shadow-[#1a2b27]/20">
-          <p className="text-[10px] font-bold text-white/50 uppercase tracking-[0.2em]">Efficiency Rating</p>
-          <h3 className="text-5xl font-['Playfair_Display'] font-black">
+        <div className="bg-gradient-to-br from-[#0D1B4B] to-[#0A0F2C] rounded-[40px] p-8 border border-[#00D4C8]/20 text-white space-y-2 shadow-xl shadow-[#00D4C8]/5 backdrop-blur-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-[#00D4C8] rounded-full blur-[80px] opacity-10 pointer-events-none" />
+          <p className="text-[10px] font-bold text-[#00D4C8] uppercase tracking-[0.2em]">Efficiency Rating</p>
+          <h3 className="text-5xl font-['Syne'] font-black">
             {habits.length > 0 
               ? Math.round((habits.filter(h => h.completedDates.includes(new Date().toISOString().split('T')[0])).length / habits.length) * 100)
               : 0}%
           </h3>
         </div>
-        <div className="bg-white rounded-[40px] p-8 border border-[#1a2b27]/5 shadow-sm space-y-2">
-          <p className="text-[10px] font-bold text-[#4a5a57] uppercase tracking-[0.2em]">Peak Performance</p>
-          <h3 className="text-5xl font-['Playfair_Display'] font-black text-[#1a2b27]">
-            {Math.max(0, ...habits.map(h => h.streak))} <span className="text-sm font-sans font-bold uppercase tracking-widest text-[#4a5a57]">Days</span>
+        <div className="bg-white/[0.05] rounded-[40px] p-8 border border-white/10 shadow-sm space-y-2 backdrop-blur-xl">
+          <p className="text-[10px] font-bold text-[#A0A5C0] uppercase tracking-[0.2em]">Peak Performance</p>
+          <h3 className="text-5xl font-['Syne'] font-black text-white">
+            {Math.max(0, ...habits.map(h => h.streak))} <span className="text-sm font-sans font-bold uppercase tracking-widest text-[#A0A5C0]">Days</span>
           </h3>
         </div>
       </div>
@@ -260,37 +261,40 @@ export default function HabitTracker() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-white border border-[#1a2b27]/10 rounded-[32px] overflow-hidden group hover:border-[#1a2b27]/30 transition-all flex flex-col h-full"
+                className="bg-white/[0.05] border border-white/10 rounded-[32px] overflow-hidden group hover:border-[#00D4C8]/40 transition-all flex flex-col h-full backdrop-blur-xl"
               >
                 <div className="p-8 flex items-start justify-between">
                   <div className="flex gap-5">
                     <div className={cn(
-                      "w-16 h-16 rounded-[24px] flex items-center justify-center transition-all",
-                      isCompletedToday ? "bg-[#1a2b27] text-white" : "bg-[#f0f4f3] text-[#1a2b27]"
+                      "w-16 h-16 rounded-[24px] flex items-center justify-center transition-all border",
+                      isCompletedToday 
+                        ? "bg-[#00D4C8] border-[#00D4C8] text-[#0A0F2C]" 
+                        : "bg-white/5 border-white/10 text-[#00D4C8]"
                     )}>
                       <HabitIcon size={32} />
                     </div>
                     <div className="space-y-1">
-                      <h3 className="font-bold text-xl text-[#1a2b27]">{habit.title}</h3>
-                      <p className="text-xs text-[#4a5a57] font-medium opacity-60 leading-relaxed max-w-[200px]">{habit.description || 'No system details provided.'}</p>
+                      <h3 className="font-bold text-xl text-white">{habit.title}</h3>
+                      <p className="text-xs text-[#A0A5C0] font-medium opacity-60 leading-relaxed max-w-[200px]">{habit.description || 'No system details provided.'}</p>
                     </div>
                   </div>
                   
-                  <div className="flex flex-col items-end gap-3">
+                  <div className="flex items-center gap-3">
                     <button 
                       onClick={() => toggleHabit(habit)}
                       className={cn(
-                        "w-12 h-12 rounded-full flex items-center justify-center transition-all",
+                        "w-12 h-12 rounded-full flex items-center justify-center transition-all cursor-pointer border-2",
                         isCompletedToday 
-                          ? "bg-[#2d7a36]/10 text-[#2d7a36] shadow-sm transform scale-110" 
-                          : "bg-[#f0f4f3] text-[#1a2b27] hover:bg-[#1a2b27] hover:text-white"
+                          ? "bg-[#00D4C8]/10 text-[#00D4C8] border-[#00D4C8]/30 shadow-md transform scale-110" 
+                          : "bg-white/5 text-white/50 border-white/10 hover:bg-[#00D4C8] hover:text-[#0A0F2C] hover:border-[#00D4C8]"
                       )}
                     >
                       {isCompletedToday ? <Check size={24} /> : <Plus size={24} />}
                     </button>
                     <button 
                       onClick={() => deleteHabit(habit.id)}
-                      className="text-[#4a5a57]/40 hover:text-red-500 transition-colors"
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-white/20 hover:text-red-400 hover:bg-white/5 transition-all cursor-pointer"
+                      title="Delete Protocol"
                     >
                       <Trash2 size={16} />
                     </button>
@@ -302,17 +306,17 @@ export default function HabitTracker() {
                   <div className="flex items-center gap-6">
                     <div className="flex gap-4">
                       <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-[#4a5a57]/40 uppercase tracking-widest">Streak</span>
-                        <div className="flex items-center gap-1 mt-1 text-[#1a2b27]">
+                        <span className="text-[10px] font-bold text-[#A0A5C0] uppercase tracking-widest">Streak</span>
+                        <div className="flex items-center gap-1 mt-1 text-white">
                           <Flame size={14} className="text-orange-500" fill="currentColor" />
                           <span className="font-bold text-lg leading-none">{habit.streak}</span>
                         </div>
                       </div>
-                      <div className="w-[1px] bg-[#1a2b27]/10" />
+                      <div className="w-[1px] bg-white/10" />
                       <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-[#4a5a57]/40 uppercase tracking-widest">Frequency</span>
-                        <div className="flex items-center gap-1 mt-1 text-[#1a2b27]">
-                          <RotateCcw size={14} className="opacity-40" />
+                        <span className="text-[10px] font-bold text-[#A0A5C0] uppercase tracking-widest">Frequency</span>
+                        <div className="flex items-center gap-1 mt-1 text-white">
+                          <RotateCcw size={14} className="text-[#00D4C8] opacity-60" />
                           <span className="font-bold text-lg leading-none">{habit.frequency}x</span>
                         </div>
                       </div>
@@ -324,7 +328,7 @@ export default function HabitTracker() {
                           <Line 
                             type="stepAfter" 
                             dataKey="completed" 
-                            stroke={habit.color} 
+                            stroke="#00D4C8" 
                             strokeWidth={3} 
                             dot={false}
                           />
@@ -334,18 +338,18 @@ export default function HabitTracker() {
                   </div>
 
                   {/* Week Heatmap */}
-                  <div className="pt-6 border-t border-[#1a2b27]/5">
-                    <div className="flex justify-between items-center text-[9px] font-bold text-[#4a5a57]/40 uppercase tracking-widest mb-3">
+                  <div className="pt-6 border-t border-white/10">
+                    <div className="flex justify-between items-center text-[9px] font-bold text-[#A0A5C0] uppercase tracking-widest mb-3">
                       <span>Protocol History (7D)</span>
                       <span>{Math.round((weekData.filter(d => d.completed).length / 7) * 100)}% Consistency</span>
                     </div>
-                    <div className="flex justify-between items-center bg-[#f0f4f3]/50 p-2 rounded-2xl">
+                    <div className="flex justify-between items-center bg-white/5 p-2 rounded-2xl border border-white/5">
                       {weekData.map((day, i) => (
                         <div key={i} className="flex flex-col items-center gap-2 flex-1">
-                          <span className="text-[8px] font-black opacity-30">{day.name[0]}</span>
+                          <span className="text-[8px] font-black text-white/40">{day.name[0]}</span>
                           <div className={cn(
-                            "w-full h-1.5 rounded-full",
-                            day.completed ? "bg-[#2d7a36]" : "bg-black/5"
+                            "w-1/2 h-1.5 rounded-full transition-all",
+                            day.completed ? "bg-[#00D4C8] shadow-[0_0_8px_rgba(0,212,200,0.6)]" : "bg-white/10"
                           )} />
                         </div>
                       ))}
@@ -359,16 +363,16 @@ export default function HabitTracker() {
 
         {habits.length === 0 && !loading && (
           <div className="col-span-full py-20 flex flex-col items-center justify-center text-center space-y-6">
-            <div className="w-24 h-24 bg-[#f0f4f3] rounded-[32px] flex items-center justify-center text-[#1a2b27]/20">
+            <div className="w-24 h-24 bg-white/5 border border-white/10 rounded-[32px] flex items-center justify-center text-[#A0A5C0]">
               <Activity size={48} />
             </div>
             <div className="space-y-2">
-              <h3 className="font-bold text-2xl text-[#1a2b27] uppercase italic tracking-tight">No Protocols Active</h3>
-              <p className="text-[#4a5a57] max-w-xs mx-auto">Define your first physiological or cognitive optimization protocol to begin tracking.</p>
+              <h3 className="font-bold text-2xl text-white uppercase italic tracking-tight">No Protocols Active</h3>
+              <p className="text-[#A0A5C0] max-w-xs mx-auto">Define your first physiological or cognitive optimization protocol to begin tracking.</p>
             </div>
             <button 
               onClick={() => setIsAdding(true)}
-              className="text-[#1a2b27] font-bold border-b-2 border-[#1a2b27] pb-1 hover:opacity-70 transition-opacity"
+              className="text-[#00D4C8] font-bold border-b-2 border-[#00D4C8] pb-1 hover:opacity-70 transition-opacity cursor-pointer"
             >
               Initialize protocol
             </button>
@@ -385,22 +389,22 @@ export default function HabitTracker() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsAdding(false)}
-              className="absolute inset-0 bg-[#1a2b27]/60 backdrop-blur-md"
+              className="absolute inset-0 bg-[#0A0F2C]/80 backdrop-blur-md"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-lg bg-white rounded-[48px] shadow-2xl p-10 space-y-8"
+              className="relative w-full max-w-lg bg-[#0D1B4B]/95 border border-white/10 rounded-[48px] shadow-2xl p-10 space-y-8 backdrop-blur-xl"
             >
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <h2 className="font-['Syne'] text-2xl font-bold text-[#1a2b27] uppercase italic">Habit Entry</h2>
-                  <p className="text-xs text-[#4a5a57] font-medium opacity-60">Specify optimization protocol parameters.</p>
+                  <h2 className="font-['Syne'] text-2xl font-bold text-white uppercase italic">Protocol Entry</h2>
+                  <p className="text-xs text-[#A0A5C0] font-medium opacity-60">Specify optimization protocol parameters.</p>
                 </div>
                 <button 
                   onClick={() => setIsAdding(false)}
-                  className="w-10 h-10 rounded-full bg-[#f0f4f3] flex items-center justify-center text-[#1a2b27] hover:bg-[#1a2b27] hover:text-white transition-all"
+                  className="w-10 h-10 rounded-full bg-white/5 text-white hover:bg-white/10 flex items-center justify-center transition-all cursor-pointer border border-white/5"
                 >
                   <X size={20} />
                 </button>
@@ -409,48 +413,48 @@ export default function HabitTracker() {
               <form onSubmit={handleAddHabit} className="space-y-6">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-[#4a5a57]/60 uppercase tracking-[0.2em] ml-2">Protocol Title</label>
+                    <label className="text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] ml-2">Protocol Title</label>
                     <input 
                       type="text"
                       required
                       placeholder="e.g. Circadian Realignment"
                       value={newHabit.title}
                       onChange={e => setNewHabit({...newHabit, title: e.target.value})}
-                      className="w-full bg-[#f0f4f3] border-none rounded-3xl p-6 text-[#1a2b27] font-bold focus:ring-2 focus:ring-[#1a2b27] transition-all"
+                      className="w-full bg-white/5 border border-white/10 rounded-3xl p-6 text-white font-bold focus:ring-2 focus:ring-[#00D4C8] focus:border-[#00D4C8] outline-none transition-all"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-[#4a5a57]/60 uppercase tracking-[0.2em] ml-2">Objective Detail</label>
+                    <label className="text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] ml-2">Objective Detail</label>
                     <textarea 
                       placeholder="Specify the target physiological state..."
                       value={newHabit.description}
                       onChange={e => setNewHabit({...newHabit, description: e.target.value})}
-                      className="w-full bg-[#f0f4f3] border-none rounded-3xl p-6 text-[#1a2b27] font-medium focus:ring-2 focus:ring-[#1a2b27] transition-all resize-none h-32"
+                      className="w-full bg-white/5 border border-white/10 rounded-3xl p-6 text-white font-medium focus:ring-2 focus:ring-[#00D4C8] focus:border-[#00D4C8] outline-none transition-all resize-none h-32"
                     />
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-[#4a5a57]/60 uppercase tracking-[0.2em] ml-2">Frequency</label>
+                      <label className="text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] ml-2">Frequency</label>
                       <select 
                         value={newHabit.frequency}
                         onChange={e => setNewHabit({...newHabit, frequency: parseInt(e.target.value)})}
-                        className="w-full bg-[#f0f4f3] border-none rounded-3xl p-6 text-[#1a2b27] font-bold focus:ring-2 focus:ring-[#1a2b27] transition-all"
+                        className="w-full bg-[#0D1B4B] border border-white/10 rounded-3xl p-6 text-white font-bold focus:ring-2 focus:ring-[#00D4C8] focus:border-[#00D4C8] outline-none transition-all"
                       >
-                        {[1,2,3,4,5,6,7].map(n => <option key={n} value={n}>{n}x / Day</option>)}
+                        {[1,2,3,4,5,6,7].map(n => <option key={n} value={n} className="bg-[#0D1B4B]">{n}x / Day</option>)}
                       </select>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-[#4a5a57]/60 uppercase tracking-[0.2em] ml-2">Indicator Icon</label>
-                      <div className="flex gap-2 flex-wrap bg-[#f0f4f3] p-4 rounded-3xl">
+                      <label className="text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] ml-2">Indicator Icon</label>
+                      <div className="flex gap-2 flex-wrap bg-white/5 border border-white/10 p-4 rounded-3xl">
                         {ICONS.map(i => (
                           <button
                             key={i.name}
                             type="button"
                             onClick={() => setNewHabit({...newHabit, icon: i.name})}
                             className={cn(
-                              "w-10 h-10 rounded-xl flex items-center justify-center transition-all",
-                              newHabit.icon === i.name ? "bg-[#1a2b27] text-white" : "text-[#1a2b27]/40 hover:bg-black/5"
+                              "w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer",
+                              newHabit.icon === i.name ? "bg-[#00D4C8] text-[#0A0F2C]" : "text-white/60 hover:bg-white/5 hover:text-white"
                             )}
                           >
                             <i.icon size={18} />
@@ -461,16 +465,16 @@ export default function HabitTracker() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-[#4a5a57]/60 uppercase tracking-[0.2em] ml-2">Visual Mapping</label>
-                    <div className="flex gap-3 bg-[#f0f4f3] p-4 rounded-3xl">
+                    <label className="text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] ml-2">Visual Mapping</label>
+                    <div className="flex gap-3 bg-white/5 border border-white/10 p-4 rounded-3xl">
                       {COLORS.map(c => (
                         <button
                           key={c.name}
                           type="button"
                           onClick={() => setNewHabit({...newHabit, color: c.value})}
                           className={cn(
-                            "w-10 h-10 rounded-xl transition-all border-4",
-                            newHabit.color === c.value ? "border-black/10 scale-110" : "border-transparent opacity-60"
+                            "w-10 h-10 rounded-xl transition-all border-4 cursor-pointer",
+                            newHabit.color === c.value ? "border-white scale-110 shadow-[0_0_10px_rgba(255,255,255,0.3)]" : "border-transparent opacity-60"
                           )}
                           style={{ backgroundColor: c.value }}
                         />
@@ -481,7 +485,7 @@ export default function HabitTracker() {
 
                 <button 
                   type="submit"
-                  className="w-full bg-[#1a2b27] text-white py-6 rounded-[32px] font-bold text-xs uppercase tracking-[0.3em] shadow-2xl shadow-black/20 hover:opacity-90 transition-all"
+                  className="w-full bg-[#00D4C8] text-[#0A0F2C] py-6 rounded-[32px] font-bold text-xs uppercase tracking-[0.3em] shadow-2xl shadow-[#00D4C8]/10 hover:bg-[#00C4B8] active:scale-95 transition-all cursor-pointer"
                 >
                   Confirm Strategy
                 </button>

@@ -108,30 +108,30 @@ export default function Assessments() {
         </motion.div>
       </div>
 
-      <div className="mt-24 p-12 bg-[#111110] rounded-[48px] text-white overflow-hidden relative">
-        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
-          <div className="max-w-xl space-y-6">
+      <div className="mt-12 sm:mt-24 p-6 sm:p-10 md:p-12 bg-[#111110] rounded-[32px] sm:rounded-[48px] text-white overflow-hidden relative">
+        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
+          <div className="max-w-xl space-y-4 sm:space-y-6 w-full">
             <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
               <Microscope className="text-[#8b7cf6]" size={24} />
             </div>
-            <h2 className="font-['Syne'] text-3xl font-bold tracking-tight">Our methodology is rooted in clinical excellence.</h2>
-            <p className="text-white/60 leading-relaxed italic">
+            <h2 className="font-['Syne'] text-2xl sm:text-3xl font-bold tracking-tight leading-normal">Our methodology is rooted in clinical excellence.</h2>
+            <p className="text-white/60 text-sm sm:text-base leading-relaxed italic">
               "We leverage standardized psychological markers and combine them with longitudinal data tracking to provide insights that are both clinically relevant and deeply personal."
             </p>
-            <div className="flex gap-4">
-              <div className="px-5 py-2 bg-white/5 rounded-full border border-white/10 text-[10px] font-bold uppercase tracking-widest">PHQ-9 Standard</div>
-              <div className="px-5 py-2 bg-white/5 rounded-full border border-white/10 text-[10px] font-bold uppercase tracking-widest">GAD-7 Protocol</div>
+            <div className="flex flex-wrap gap-2 sm:gap-4">
+              <div className="px-4 py-1.5 sm:px-5 sm:py-2 bg-white/5 rounded-full border border-white/10 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest whitespace-nowrap">PHQ-9 Standard</div>
+              <div className="px-4 py-1.5 sm:px-5 sm:py-2 bg-white/5 rounded-full border border-white/10 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest whitespace-nowrap">GAD-7 Protocol</div>
             </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-4 w-full md:w-auto">
-            <div className="p-8 bg-white/5 rounded-[32px] border border-white/10 text-center">
-              <p className="text-3xl font-bold font-['Syne'] mb-1">100%</p>
-              <p className="text-[10px] uppercase tracking-widest font-bold opacity-50">Private</p>
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 w-full md:w-auto flex-shrink-0">
+            <div className="p-4 sm:p-6 md:p-8 bg-white/5 rounded-[20px] sm:rounded-[32px] border border-white/10 text-center flex flex-col justify-center items-center min-w-[110px] sm:min-w-[140px]">
+              <p className="text-xl sm:text-2xl md:text-3xl font-bold font-['Syne'] mb-1 whitespace-nowrap">100%</p>
+              <p className="text-[9px] sm:text-[10px] uppercase tracking-widest font-bold opacity-50">Private</p>
             </div>
-            <div className="p-8 bg-white/5 rounded-[32px] border border-white/10 text-center">
-              <p className="text-3xl font-bold font-['Syne'] mb-1">Real-time</p>
-              <p className="text-[10px] uppercase tracking-widest font-bold opacity-50">Analysis</p>
+            <div className="p-4 sm:p-6 md:p-8 bg-white/5 rounded-[20px] sm:rounded-[32px] border border-white/10 text-center flex flex-col justify-center items-center min-w-[110px] sm:min-w-[140px]">
+              <p className="text-xl sm:text-2xl md:text-3xl font-bold font-['Syne'] mb-1 whitespace-nowrap">Real-time</p>
+              <p className="text-[9px] sm:text-[10px] uppercase tracking-widest font-bold opacity-50">Analysis</p>
             </div>
           </div>
         </div>

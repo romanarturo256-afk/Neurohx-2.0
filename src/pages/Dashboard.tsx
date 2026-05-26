@@ -11,6 +11,8 @@ import Settings from '../components/Settings';
 import Support from '../components/Support';
 import DeepWorkTimer from '../components/DeepWorkTimer';
 import Blog from '../components/Blog';
+import SleepTracker from '../components/SleepTracker';
+import Challenges from '../components/Challenges';
 
 export default function Dashboard() {
   return (
@@ -23,6 +25,8 @@ export default function Dashboard() {
         <Route path="habits" element={<HabitTracker />} />
         <Route path="assessments" element={<Assessments />} />
         <Route path="timer" element={<DeepWorkTimer />} />
+        <Route path="sleep-tracker" element={<SleepTracker />} />
+        <Route path="challenges" element={<Challenges />} />
         <Route path="settings" element={<Settings />} />
         <Route path="support" element={<Support />} />
         <Route path="blog" element={<Blog />} />
