@@ -45,6 +45,7 @@ interface UserProfile {
   };
   xp?: number;
   streakFreezes?: number;
+  lastClaimedXPDate?: string;
 }
 
 interface UserContextType {

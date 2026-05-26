@@ -45,8 +45,11 @@ export default function DuolingoStreak() {
   const [clickParticles, setClickParticles] = useState<Particle[]>([]);
   const [activeTab, setActiveTab] = useState<'tracker' | 'shop' | 'badges'>('tracker');
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [claimedXPToday, setClaimedXPToday] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Determine if login today is registered
+  const todayStr = new Date().toISOString().split('T')[0];
+  const claimedXPToday = profile?.lastClaimedXPDate === todayStr;
 
   // Fallback defaults for gamification properties
   const streakCount = profile?.streak?.count ?? 0;
@@ -55,8 +58,6 @@ export default function DuolingoStreak() {
   const currentXP = profile?.xp ?? 120; // Default startup XP if undefined
   const freezesCount = profile?.streakFreezes ?? 1; // Default startup freeze if undefined
 
-  // Determine if login today is registered
-  const todayStr = new Date().toISOString().split('T')[0];
   const loggedInToday = lastLoginStr === todayStr;
 
   // Sound triggering function
@@ -185,7 +186,10 @@ export default function DuolingoStreak() {
     const nextXP = currentXP + 15;
     
     // Also trigger profile increment in count if they haven't logged in today
-    let updateObj: any = { xp: nextXP };
+    let updateObj: any = { 
+      xp: nextXP,
+      lastClaimedXPDate: todayStr
+    };
     
     if (!loggedInToday) {
       updateObj.streak = {
@@ -197,7 +201,6 @@ export default function DuolingoStreak() {
 
     try {
       await updateProfile(updateObj);
-      setClaimedXPToday(true);
       playSound('success');
       showToast("+15 Mindful XP added directly to your profile!");
     } catch (err) {
@@ -446,33 +449,33 @@ export default function DuolingoStreak() {
               </div>
 
               {/* Complete Daily Nudge (claim initial XP or show lock) */}
-              <div className="flex items-center justify-between bg-gradient-to-br from-[#1a2b27] to-[#253f39] text-white p-6 rounded-[32px] overflow-hidden relative">
-                <div className="absolute right-0 bottom-0 pointer-events-none opacity-10">
-                  <Gift size={120} />
-                </div>
-                <div className="space-y-1 z-10 max-w-[200px] sm:max-w-xs">
-                  <h5 className="text-[12px] font-black uppercase tracking-wider text-amber-300 flex items-center gap-1">
-                    <Sparkles size={11} fill="currentColor" />
-                    Daily Check-In Reward
-                  </h5>
-                  <p className="text-[10px] text-white/70 leading-relaxed">
-                    Grab your day-to-day bio-balance stimulus to earn freezes and bonus trophies.
-                  </p>
-                </div>
+              {!claimedXPToday && (
+                <div className="flex items-center justify-between bg-gradient-to-br from-[#1a2b27] to-[#253f39] text-white p-6 rounded-[32px] overflow-hidden relative">
+                  <div className="absolute right-0 bottom-0 pointer-events-none opacity-10">
+                    <Gift size={120} />
+                  </div>
+                  <div className="space-y-1 z-10 max-w-[200px] sm:max-w-xs">
+                    <h5 className="text-[12px] font-black uppercase tracking-wider text-amber-300 flex items-center gap-1">
+                      <Sparkles size={11} fill="currentColor" />
+                      Daily Check-In Reward
+                    </h5>
+                    <p className="text-[10px] text-white/70 leading-relaxed">
+                      Grab your day-to-day bio-balance stimulus to earn freezes and bonus trophies.
+                    </p>
+                  </div>
 
-                <button
-                  onClick={claimDailyBonus}
-                  disabled={claimedXPToday}
-                  className={cn(
-                    "px-4 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all shadow-md z-10 shrink-0",
-                    claimedXPToday 
-                      ? "bg-white/10 text-white/40 cursor-not-allowed border border-white/5" 
-                      : "bg-amber-400 text-gray-900 hover:bg-amber-300 hover:scale-[1.03]"
-                  )}
-                >
-                  {claimedXPToday ? 'Claimed' : 'Claim +15 XP'}
-                </button>
-              </div>
+                  <button
+                    onClick={claimDailyBonus}
+                    disabled={claimedXPToday}
+                    className={cn(
+                      "px-4 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all shadow-md z-10 shrink-0",
+                      "bg-amber-400 text-gray-900 hover:bg-amber-300 hover:scale-[1.03]"
+                    )}
+                  >
+                    Claim +15 XP
+                  </button>
+                </div>
+              )}
 
             </motion.div>
           )}

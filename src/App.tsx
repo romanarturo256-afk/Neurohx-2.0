@@ -45,8 +45,8 @@ function AuthRedirect() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#9ba9a6] flex items-center justify-center">
-        <Loader2 className="animate-spin text-white/50" size={48} />
+      <div className="min-h-screen bg-[#0A0F2C] flex items-center justify-center">
+        <Loader2 className="animate-spin text-[#00D4C8]" size={48} />
       </div>
     );
   }
@@ -58,8 +58,8 @@ function DashboardGuard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#9ba9a6] flex items-center justify-center">
-        <Loader2 className="animate-spin text-white/50" size={48} />
+      <div className="min-h-screen bg-[#0A0F2C] flex items-center justify-center">
+        <Loader2 className="animate-spin text-[#00D4C8]" size={48} />
       </div>
     );
   }

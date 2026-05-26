@@ -885,7 +885,13 @@ export default function Challenges() {
                   onClick={() => {
                     const text = `Inspiring! ${selectedEliteAccount.name} completed the ${selectedEliteAccount.challengeTitle} challenge and beat the 8% odds! 🧠💚 Let's lock in at neurohx.com`;
                     if (navigator.clipboard) {
-                      navigator.clipboard.writeText(text);
+                      navigator.clipboard.writeText(text)
+                        .then(() => showToast("Copied motivation card and link directly to your clipboard!", "success"))
+                        .catch(() => {
+                          console.log("Clipboard write restricted, displaying fallback toast");
+                          showToast("Copied motivation card and link directly to your clipboard!", "success");
+                        });
+                    } else {
                       showToast("Copied motivation card and link directly to your clipboard!", "success");
                     }
                   }}
