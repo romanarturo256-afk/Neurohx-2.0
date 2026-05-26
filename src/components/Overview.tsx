@@ -253,15 +253,15 @@ export default function Overview() {
   return (
     <div className="space-y-8 pb-12 relative text-[#F0F4FF]">
       {/* Header */}
-      <div className="flex justify-between items-start relative z-40">
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-4 sm:gap-6 relative z-40">
         <div>
           <p className="text-[10px] font-bold text-[#00D4C8] uppercase tracking-[0.2em] mb-1">Personal Dashboard</p>
-          <h1 className="font-['Syne'] text-4xl font-bold text-white text-glow-accent">
+          <h1 className="font-['Syne'] text-2xl sm:text-3xl md:text-4xl font-bold text-white text-glow-accent leading-tight">
             {getGreeting()}, {profile?.displayName || 'User'}.
           </h1>
-          <p className="text-[#A0A5C0] mt-1 italic">How is your mind today?</p>
+          <p className="text-[#A0A5C0] text-xs sm:text-sm mt-1 italic">How is your mind today?</p>
         </div>
-        <div className="flex items-center gap-4 relative">
+        <div className="flex items-center gap-2 sm:gap-4 relative self-end sm:self-auto">
           
           {/* Notification Bell Button */}
           <div className="relative">
@@ -270,12 +270,12 @@ export default function Overview() {
                 setShowNotifications(!showNotifications);
                 setHasUnreadNotifications(false);
               }}
-              className="p-3 bg-white/[0.05] border border-white/10 rounded-2xl text-[#A0A5C0] hover:text-[#00D4C8] hover:border-[#00D4C8]/30 active:scale-95 transition-all shadow-sm cursor-pointer relative"
+              className="p-2.5 sm:p-3 bg-white/[0.05] border border-white/10 rounded-2xl text-[#A0A5C0] hover:text-[#00D4C8] hover:border-[#00D4C8]/30 active:scale-95 transition-all shadow-sm cursor-pointer relative"
               title="Notifications & Smart Nudges"
             >
-              <Bell size={20} />
+              <Bell size={20} className="w-4 h-4 sm:w-5 sm:h-5" />
               {hasUnreadNotifications && (
-                <span className="absolute top-2 right-2.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-[#0A0F2C] animate-pulse" />
+                <span className="absolute top-2.5 right-2.5 w-2 h-2 sm:w-2.5 sm:h-2.5 bg-red-500 rounded-full border-2 border-[#0A0F2C] animate-pulse" />
               )}
             </button>
 
@@ -288,7 +288,7 @@ export default function Overview() {
                   onClick={() => setShowNotifications(false)} 
                 />
                 
-                <div className="absolute right-0 mt-3 w-80 bg-[#0D1B4B]/95 border border-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl p-5 z-50 space-y-4 animate-in fade-in slide-in-from-top-3 duration-250">
+                <div className="fixed sm:absolute inset-x-4 sm:inset-x-auto top-24 sm:top-auto sm:right-0 sm:mt-3 sm:w-80 bg-[#0D1B4B]/95 border border-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl p-4 sm:p-5 z-50 space-y-4 animate-in fade-in slide-in-from-top-3 duration-250">
                   <div className="flex items-center justify-between border-b border-white/5 pb-2">
                     <h4 className="text-xs font-bold text-white uppercase tracking-wider">Smart Diagnostics</h4>
                     <span className="text-[9px] bg-[#00D4C8]/10 text-[#00D4C8] font-extrabold px-2 py-0.5 rounded-full">4 Nudges</span>
@@ -365,16 +365,16 @@ export default function Overview() {
           {/* Logout Button */}
           <button 
             onClick={() => auth.signOut().catch(e => console.error('Sign out error:', e))}
-            className="p-3 bg-white/[0.05] border border-white/10 hover:border-white/20 rounded-2xl text-[#A0A5C0] hover:text-red-400 active:scale-95 transition-all shadow-sm cursor-pointer"
+            className="p-2.5 sm:p-3 bg-white/[0.05] border border-white/10 hover:border-white/20 rounded-2xl text-[#A0A5C0] hover:text-red-400 active:scale-95 transition-all shadow-sm cursor-pointer"
             title="Log Out Securely"
           >
-            <LogOut size={20} />
+            <LogOut size={20} className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
           {/* Profile Avatar Button (Navigates to Settings) */}
           <button 
             onClick={() => navigate('/dashboard/settings')}
-            className="w-12 h-12 bg-white/[0.05] rounded-2xl overflow-hidden border border-white/20 hover:border-[#00D4C8] active:scale-95 transition-all shadow-md cursor-pointer block"
+            className="w-10 h-10 sm:w-12 sm:h-12 bg-white/[0.05] rounded-2xl overflow-hidden border border-white/20 hover:border-[#00D4C8] active:scale-95 transition-all shadow-md cursor-pointer block"
             title="Account Settings"
           >
             {profile?.photoURL ? (
