@@ -37,6 +37,8 @@ export default function DashboardReviews() {
         ...doc.data()
       })) as Review[];
       setReviews(fetchedReviews);
+    }, (err) => {
+      console.error('DashboardReviews snapshot error:', err);
     });
 
     return () => unsubscribe();

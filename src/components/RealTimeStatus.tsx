@@ -63,6 +63,8 @@ export default function RealTimeStatus() {
         const liveCount = doc.data().totalSignedUp || 0;
         setTotalSignedUp(prev => Math.max(prev, liveCount));
       }
+    }, (err) => {
+      console.warn('RealTimeStatus stats snapshot error:', err);
     });
 
     // Active Users (last 5 minutes)
@@ -79,6 +81,8 @@ export default function RealTimeStatus() {
         displayName: doc.data().displayName
       }));
       setActiveList(list);
+    }, (err) => {
+      console.error('RealTimeStatus presence snapshot error:', err);
     });
 
     return () => {

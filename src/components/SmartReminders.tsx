@@ -106,6 +106,8 @@ export default function SmartReminders() {
             }
           }
         }
+      }, (err) => {
+        console.error('SmartReminders assessment snapshot error:', err);
       });
     }
 
@@ -127,6 +129,8 @@ export default function SmartReminders() {
             showToast("Smart Reminder: It's been 3 days since your last reflection. Neural unloading via journaling is highly recommended today.", 'info');
           }
         }
+      }, (err) => {
+        console.error('SmartReminders journal snapshot error:', err);
       });
     }
 
@@ -146,6 +150,8 @@ export default function SmartReminders() {
             showToast("Smart Nudge: We noticed your mood is a bit low. Reflecting in your journal might help process these feelings.", 'info');
           }
         }
+      }, (err) => {
+        console.error('SmartReminders mood snapshot error:', err);
       });
     }
 

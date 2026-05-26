@@ -97,6 +97,9 @@ export default function HabitTracker() {
       })) as Habit[];
       setHabits(habitsData);
       setLoading(false);
+    }, (err) => {
+      console.error('HabitTracker snapshot error:', err);
+      setLoading(false);
     });
 
     return () => unsubscribe();

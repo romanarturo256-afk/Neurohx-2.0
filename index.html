@@ -9,6 +9,31 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Chatbase Embed Chatbot Script Integration -->
+    <script>
+      (function() {
+        if (!window.chatbase) {
+          window.chatbase = function() {
+            (window.chatbase.q = window.chatbase.q || []).push(arguments);
+          };
+        }
+        var chatbotId = "%VITE_CHATBOT_ID%";
+        if (!chatbotId || chatbotId === "%" + "VITE_CHATBOT_ID" + "%") {
+          chatbotId = "";
+        }
+        window.chatbaseConfig = {
+          chatbotId: chatbotId
+        };
+        if (chatbotId) {
+          var s = document.createElement("script");
+          s.src = "https://www.chatbase.co/embed.min.js";
+          s.id = chatbotId;
+          s.defer = true;
+          document.body.appendChild(s);
+        }
+      })();
+    </script>
   </body>
 </html>
 

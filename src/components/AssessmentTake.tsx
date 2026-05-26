@@ -6,16 +6,7 @@ import { cn } from '../lib/utils';
 import { db, auth, handleFirestoreError } from '../lib/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useToast } from './Toast';
-import { GoogleGenAI } from '@google/genai';
 import { useNavigate } from 'react-router-dom';
-
-const getAiClient = () => {
-  const key = process.env.GEMINI_API_KEY;
-  if (!key || key === 'MY_GEMINI_API_KEY' || key === 'undefined') {
-    throw new Error('GEMINI_API_KEY is not configured. Please add it to your project secrets.');
-  }
-  return new GoogleGenAI({ apiKey: key });
-};
 
 interface Props {
   assessment: AssessmentDefinition;
@@ -29,8 +20,6 @@ export default function AssessmentTake({ assessment, onBack }: Props) {
   const [responses, setResponses] = useState<Record<string, number>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [completedResult, setCompletedResult] = useState<any>(null);
-  const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const totalQuestions = assessment.questions.length;
   const currentQuestion = assessment.questions[currentStep];
@@ -48,52 +37,6 @@ export default function AssessmentTake({ assessment, onBack }: Props) {
   };
 
   const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
-
-  const getAiConclusion = async (score: number, label: string) => {
-    setIsAnalyzing(true);
-    try {
-      const ai = getAiClient();
-      const prompt = `As a professional psychological counselor, assess this assessment result:
-      Assessment: ${assessment.title}
-      User Score: ${score}
-      Clinical Label: ${label}
-      
-      The user just completed this assessment. 
-      First, provide a deep, empathetic analysis (2-3 paragraphs) of what this result means for their mental well-being.
-      Second, provide exactly 3 concrete, 10-minute daily habits they can start TODAY to improve in this specific area.
-      
-      Format your response EXACTLY as follows:
-      [ANALYSIS]
-      (Your analysis here)
-      
-      [SUGGESTIONS]
-      - Suggestion 1: Brief description
-      - Suggestion 2: Brief description
-      - Suggestion 3: Brief description`;
-
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      });
-
-      const text = response.text || "";
-      
-      const analysisPart = text.split('[SUGGESTIONS]')[0].replace('[ANALYSIS]', '').trim();
-      const suggestionsPart = text.split('[SUGGESTIONS]')[1] || "";
-      const parsedSuggestions = suggestionsPart
-        .split('\n')
-        .filter(line => line.trim().startsWith('-'))
-        .map(line => line.replace('-', '').trim());
-
-      setAiAnalysis(analysisPart || "I was unable to generate a deep analysis at this moment.");
-      setAiSuggestions(parsedSuggestions);
-    } catch (error) {
-      console.error('AI Analysis error:', error);
-      setAiAnalysis("Your result indicates we should talk more about this in our next session.");
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
 
   const handleSubmit = async () => {
     if (!auth.currentUser) {
@@ -136,14 +79,6 @@ export default function AssessmentTake({ assessment, onBack }: Props) {
       setAiSuggestions(resultData.suggestions || []); // Set static suggestions immediately
       showToast('Assessment submitted successfully!', 'success');
       
-      // Get AI Analysis if key exists
-      try {
-        getAiConclusion(totalScore, resultData.label).catch(err => {
-          console.error('Final AI Conclusion catch-all:', err);
-        });
-      } catch (e) {
-        console.log('Skipping AI analysis, key missing');
-      }
     } catch (error: any) {
       console.error('Error submitting assessment:', error);
       if (error?.code === 'resource-exhausted') {
@@ -191,55 +126,30 @@ export default function AssessmentTake({ assessment, onBack }: Props) {
               <div className="relative z-10">
                 <div className="flex items-center gap-2 mb-4">
                   <div className="p-1 bg-white/20 rounded-lg">
-                    <img 
-                      src="/logo.png" 
-                      alt="Neurohx" 
-                      className="w-5 h-5 object-contain"
-                      referrerPolicy="no-referrer"
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                        e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                      }}
-                    />
-                    <Sparkles size={16} className="hidden text-white/80" />
+                    <Brain size={16} className="text-white/80" />
                   </div>
-                  <span className="text-[10px] uppercase tracking-widest font-bold text-white/80">Neurohx AI Analysis</span>
+                  <span className="text-[10px] uppercase tracking-widest font-bold text-white/80">Clinical Recommendations</span>
                 </div>
                 
-                {isAnalyzing ? (
-                  <div className="flex flex-col items-center gap-4 py-8">
-                    <Loader2 className="animate-spin" size={32} />
-                    <p className="text-sm font-bold animate-pulse">Deeply analyzing your results...</p>
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    {aiAnalysis && (
-                      <div className="space-y-4">
-                        <p className="text-sm leading-relaxed text-white/90">
-                          {aiAnalysis}
-                        </p>
-                      </div>
-                    )}
-
-                    {aiSuggestions.length > 0 && (
-                      <div className="space-y-3 pt-4 border-t border-white/10">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-white/60 mb-2">Suggested Daily Rituals</p>
-                        {aiSuggestions.map((suggestion, idx) => (
-                          <div 
-                            key={idx} 
-                            className="bg-white/10 rounded-2xl p-4 flex items-center justify-between group/suggest"
-                          >
-                            <p className="text-xs font-medium text-white/90">{suggestion}</p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    <div className="pt-4 text-center">
-                      <p className="text-[10px] text-white/40 uppercase tracking-widest">Analysis Completed</p>
+                <div className="space-y-6">
+                  {aiSuggestions.length > 0 && (
+                    <div className="space-y-3">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-white/60 mb-2">Suggested Daily Rituals</p>
+                      {aiSuggestions.map((suggestion, idx) => (
+                        <div 
+                          key={idx} 
+                          className="bg-white/10 rounded-2xl p-4 flex items-center justify-between group/suggest"
+                        >
+                          <p className="text-xs font-medium text-white/90">{suggestion}</p>
+                        </div>
+                      ))}
                     </div>
+                  )}
+
+                  <div className="pt-4 text-center">
+                    <p className="text-[10px] text-white/40 uppercase tracking-widest">Rituals Loaded Successfully</p>
                   </div>
-                )}
+                </div>
               </div>
               
               {/* Decorative elements */}

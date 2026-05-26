@@ -636,7 +636,7 @@ export default function Settings() {
                       key={tone}
                       onClick={() => handleSettingsUpdate('aiTone', tone)}
                       className={cn(
-                        "px-4 py-2 rounded-xl text-xs font-bold capitalize transition-all",
+                        "px-4 py-2 rounded-xl text-xs font-bold capitalize transition-all cursor-pointer",
                         (profile?.settings?.aiTone || 'professional') === tone 
                           ? "bg-[#8b7cf6] text-white" 
                           : "bg-[#f5f2eb] text-[#888880] hover:bg-[#ede9df]"
@@ -1258,7 +1258,7 @@ export default function Settings() {
                 <button 
                   onClick={() => handleSettingsUpdate('autoSpeak', !profile?.settings?.autoSpeak)}
                   className={cn(
-                    "w-12 h-6 rounded-full transition-all relative",
+                    "w-12 h-6 rounded-full transition-all relative cursor-pointer",
                     profile?.settings?.autoSpeak ? "bg-[#8b7cf6]" : "bg-[#e0dbd0]"
                   )}
                 >

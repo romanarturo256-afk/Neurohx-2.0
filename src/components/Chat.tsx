@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { GoogleGenAI } from '@google/genai';
 import { 
   collection, 
   addDoc, 
@@ -43,14 +42,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
 
-const getAiClient = () => {
-  const key = process.env.GEMINI_API_KEY;
-  if (!key || key === 'MY_GEMINI_API_KEY' || key === 'undefined') {
-    throw new Error('GEMINI_API_KEY is not configured. Please add it to your project secrets.');
-  }
-  return new GoogleGenAI({ apiKey: key });
-};
-
 const TypingIndicator = () => (
   <div className="flex gap-1.5 items-center px-1">
     {[0, 1, 2].map((i) => (
@@ -77,11 +68,11 @@ export default function Chat() {
   const { isPlanAtLeast, profile } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
-  const [isAiComingSoon, setIsAiComingSoon] = useState(true); // Forced for maintenance
+  const [isAiComingSoon, setIsAiComingSoon] = useState(false); // Disabling maintenance block
   
   useEffect(() => {
-    // Maintenance mode active
-    setIsAiComingSoon(true);
+    // AI session is active and ready
+    setIsAiComingSoon(false);
   }, []);
 
   const [messages, setMessages] = useState<any[]>([]);
@@ -227,7 +218,6 @@ export default function Chat() {
     
     setLoading(true);
     try {
-      const ai = getAiClient();
       const tone = profile?.settings?.aiTone || 'professional';
       const language = profile?.settings?.language || 'en';
       
@@ -235,17 +225,29 @@ export default function Chat() {
         ? "The user has just opened the chat but hasn't said anything for 2 minutes. Please introduce yourself as Neurohx and start a conversation in a warm, empathetic way."
         : "The user has been quiet for 2 minutes. Please check in on them gently and see if there's anything else they'd like to discuss or reflect on.";
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        config: {
-          systemInstruction: isPremium 
-            ? `You are Neurohx Premium AI, a professional mental health counselor. Be warm, insightful, and proactive.`
-            : `You are Neurohx, a professional mental health counselor. Be human-like and supportive.`
-        }
+      const response = await fetch('/api/gemini/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'gemini-3.5-flash',
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          config: {
+            systemInstruction: isPremium 
+              ? `You are Neurohx Premium AI, a professional mental health counselor. Be warm, insightful, and proactive.`
+              : `You are Neurohx, a professional mental health counselor. Be human-like and supportive.`
+          }
+        })
       });
 
-      const aiText = response.text || "I'm still here if you'd like to talk.";
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Server responded with status ${response.status}`);
+      }
+
+      const data = await response.json();
+      const aiText = data.text || "I'm still here if you'd like to talk.";
       startTypingEffect(aiText);
     } catch (error) {
       console.error('Idle greeting error:', error);
@@ -424,7 +426,6 @@ export default function Chat() {
     setReplyTo(null);
 
     try {
-      const ai = getAiClient();
       const tone = profile?.settings?.aiTone || 'professional';
       const language = profile?.settings?.language || 'en';
       
@@ -476,16 +477,28 @@ export default function Chat() {
         promptParts.push({ text: finalInput });
       }
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: [{ role: 'user', parts: promptParts }],
-        config: {
-          systemInstruction: systemInstruction,
-          temperature: 0.7,
-        }
+      const response = await fetch('/api/gemini/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'gemini-3.5-flash',
+          contents: [{ role: 'user', parts: promptParts }],
+          config: {
+            systemInstruction: systemInstruction,
+            temperature: 0.7,
+          }
+        })
       });
 
-      let aiText = response.text || "I'm here for you. Could you tell me more about that?";
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Server responded with status ${response.status}`);
+      }
+
+      const data = await response.json();
+      let aiText = data.text || "I'm here for you. Could you tell me more about that?";
       
       const nameMatch = aiText.match(/\[UPDATE_NAME:\s*(.*?)\]/);
       if (nameMatch && nameMatch[1]) {

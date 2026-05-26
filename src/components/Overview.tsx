@@ -87,6 +87,8 @@ export default function Overview() {
         // If we already set a higher count (from getCountFromServer), keep the higher one
         setTotalUsers(prev => Math.max(prev, docCount));
       }
+    }, (err) => {
+      console.warn('Overview stats snapshot error:', err);
     });
 
     // Fetch habits for status
@@ -95,6 +97,8 @@ export default function Overview() {
     );
     const unsubHabits = onSnapshot(habitsQuery, (snapshot) => {
       setHabits(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    }, (err) => {
+      console.error('Overview habits snapshot error:', err);
     });
 
     // Fetch latest assessment
@@ -275,7 +279,7 @@ export default function Overview() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* AI Chat Hero */}
+        {/* Welcome Sanctuary Hero */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -283,18 +287,29 @@ export default function Overview() {
         >
           <div className="relative z-10 max-w-md space-y-6">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-widest">
-              <div className="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse" />
-              Neurohx AI is At Capacity
+              <div className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse" />
+              Clinical AI Companion Online
             </div>
             <h2 className="font-['Syne'] text-5xl font-bold leading-tight">
-              Assistant Offline for Maintenance.
+              A Safe Space to Talk & Process.
             </h2>
             <p className="text-white/80 text-lg leading-relaxed">
-              We're currently scaling our infrastructure to handle high demand. Please focus on your personal journals and metrics in the meantime.
+              Initiate a private, anonymous chat session with your AI Sage. Available 24/7 for supportive guidance and reflection.
             </p>
-            <div className="flex items-center gap-3 bg-white/10 text-white/50 px-8 py-4 rounded-full font-bold cursor-not-allowed border border-white/20">
-              Session Unavailable
-              <X size={20} />
+            <div className="flex flex-wrap gap-4">
+              <button 
+                onClick={() => navigate('/dashboard/chat')}
+                className="inline-flex items-center gap-3 bg-white text-[#8b7cf6] hover:bg-[#fcfaf7] px-8 py-4 rounded-full font-bold transition-all shadow-lg active:scale-95 cursor-pointer text-sm"
+              >
+                Talk with Neurohx AI
+                <ArrowRight size={18} />
+              </button>
+              <button 
+                onClick={() => navigate('/dashboard/journal')}
+                className="inline-flex items-center gap-3 bg-white/10 hover:bg-white/20 text-white px-6 py-4 rounded-full font-bold transition-all active:scale-95 cursor-pointer text-sm"
+              >
+                Open Private Journal
+              </button>
             </div>
           </div>
           
@@ -545,9 +560,9 @@ export default function Overview() {
             <div className="bg-[#fcfaf7] rounded-3xl p-6 border border-[#e0dbd0] flex flex-col justify-between">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center text-[#8b7cf6] shadow-sm">
-                  <Sparkles size={16} />
+                  <Clock size={16} />
                 </div>
-                <span className="text-[10px] font-bold text-[#111110] uppercase tracking-widest">AI Performance Insight</span>
+                <span className="text-[10px] font-bold text-[#111110] uppercase tracking-widest">Optimal Rhythm Insight</span>
               </div>
               <p className="text-xs text-[#555550] leading-relaxed italic">
                 "Your deep work sessions are 24% more effective when started before 10 AM. Try scheduling your most complex tasks for the morning."
@@ -757,7 +772,7 @@ export default function Overview() {
               }}
             />
             <Sparkles size={12} className="hidden" />
-            AI Connection Active
+            Clinical AI Companion Active
           </div>
         </div>
       </motion.div>

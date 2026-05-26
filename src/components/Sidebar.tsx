@@ -36,6 +36,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+  { icon: MessageSquare, label: 'AI Chat', path: '/dashboard/chat' },
   { icon: BookOpen, label: 'Journal', path: '/dashboard/journal' },
   { icon: Timer, label: 'Focus', path: '/dashboard/timer' },
   { icon: Zap, label: 'Habits', path: '/dashboard/habits' },
@@ -51,7 +52,7 @@ export default function Sidebar() {
   const { profile } = useUser();
 
   const SidebarContent = () => {
-    const isAiDisabled = !process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'MY_GEMINI_API_KEY' || process.env.GEMINI_API_KEY === 'undefined';
+    const isAiDisabled = false; // Secure server-side AI chat is always integrated and enabled
 
     return (
       <div className="flex flex-col h-full bg-[#f0f4f3] border-r border-[#1a2b27]/10 transition-colors duration-300">

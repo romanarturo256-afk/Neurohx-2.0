@@ -3,5 +3,8 @@
   "description": "An animated, serene landing page for mental health and wellness, featuring calming visuals, smooth transitions, and empathetic design.",
   "requestFramePermissions": [
     "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
   ]
 }

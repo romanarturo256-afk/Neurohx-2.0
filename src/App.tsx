@@ -14,6 +14,7 @@ import Legal from './pages/Legal';
 import { ToastProvider } from './components/Toast';
 import { UserProvider } from './contexts/UserContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { ChatbaseIntegrator } from './components/ChatbaseIntegrator';
 
 import { useUser } from './contexts/UserContext';
 import { Loader2 } from 'lucide-react';
@@ -23,6 +24,7 @@ export default function App() {
     <ErrorBoundary>
       <ToastProvider>
         <UserProvider>
+          <ChatbaseIntegrator />
           <Router>
             <Routes>
               <Route path="/" element={<Home />} />
