@@ -51,10 +51,10 @@ import { useUser } from '../contexts/UserContext';
 import { Link } from 'react-router-dom';
 
 const plans = [
-  { id: 'free', name: 'Free', price: '₹0', amount: 0, features: ['Unlimited AI Chat', 'Basic Responses'] },
+  { id: 'free', name: 'Free', price: '₹0', amount: 0, features: ['Support Chat', 'Basic Responses'] },
   { id: 'starter', name: 'Starter', price: '₹33', amount: 33, features: ['Save Journals', 'Daily Reminders'] },
   { id: 'pro', name: 'Pro', price: '₹99', amount: 99, features: ['Unlimited Journals', 'Mood Charts', 'PDF Export'] },
-  { id: 'premium', name: 'Premium', price: '₹222', amount: 222, features: ['AI Life Coach', 'Weekly Reports', 'Priority AI'] },
+  { id: 'premium', name: 'Premium', price: '₹222', amount: 222, features: ['Clinical Coach', 'Weekly Reports', 'Priority Support'] },
 ];
 
 declare global {

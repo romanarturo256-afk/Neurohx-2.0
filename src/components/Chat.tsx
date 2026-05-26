@@ -68,11 +68,11 @@ export default function Chat() {
   const { isPlanAtLeast, profile } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
-  const [isAiComingSoon, setIsAiComingSoon] = useState(false); // Disabling maintenance block
+  const [isAiComingSoon, setIsAiComingSoon] = useState(true); // Forced for maintenance
   
   useEffect(() => {
-    // AI session is active and ready
-    setIsAiComingSoon(false);
+    // Maintenance mode active
+    setIsAiComingSoon(true);
   }, []);
 
   const [messages, setMessages] = useState<any[]>([]);

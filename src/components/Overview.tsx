@@ -287,30 +287,22 @@ export default function Overview() {
         >
           <div className="relative z-10 max-w-md space-y-6">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-widest">
-              <div className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse" />
-              Clinical AI Companion Online
+              <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
+              Welcome to Your Sanctuary
             </div>
             <h2 className="font-['Syne'] text-5xl font-bold leading-tight">
-              A Safe Space to Talk & Process.
+              A Private Haven for Your Mind.
             </h2>
             <p className="text-white/80 text-lg leading-relaxed">
-              Initiate a private, anonymous chat session with your AI Sage. Available 24/7 for supportive guidance and reflection.
+              Explore custom metrics, trace your mood, track your routine habits, and write reflections in our clinical diary.
             </p>
-            <div className="flex flex-wrap gap-4">
-              <button 
-                onClick={() => navigate('/dashboard/chat')}
-                className="inline-flex items-center gap-3 bg-white text-[#8b7cf6] hover:bg-[#fcfaf7] px-8 py-4 rounded-full font-bold transition-all shadow-lg active:scale-95 cursor-pointer text-sm"
-              >
-                Talk with Neurohx AI
-                <ArrowRight size={18} />
-              </button>
-              <button 
-                onClick={() => navigate('/dashboard/journal')}
-                className="inline-flex items-center gap-3 bg-white/10 hover:bg-white/20 text-white px-6 py-4 rounded-full font-bold transition-all active:scale-95 cursor-pointer text-sm"
-              >
-                Open Private Journal
-              </button>
-            </div>
+            <button 
+              onClick={() => navigate('/dashboard/journal')}
+              className="inline-flex items-center gap-3 bg-white text-[#8b7cf6] hover:bg-[#fcfaf7] px-8 py-4 rounded-full font-bold transition-all shadow-lg active:scale-95 text-sm"
+            >
+              Start Journaling
+              <ArrowRight size={18} />
+            </button>
           </div>
           
           {/* Abstract Shapes */}
@@ -771,8 +763,8 @@ export default function Overview() {
                 e.currentTarget.nextElementSibling?.classList.remove('hidden');
               }}
             />
-            <Sparkles size={12} className="hidden" />
-            Clinical AI Companion Active
+            <Activity size={12} className="hidden" />
+            Secure Sync Active
           </div>
         </div>
       </motion.div>

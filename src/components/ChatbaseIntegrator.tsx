@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import { useEffect } from 'react';
 import { useUser } from '../contexts/UserContext';
 
@@ -20,6 +21,39 @@ export function ChatbaseIntegrator() {
   const { profile } = useUser();
 
   useEffect(() => {
+    const chatbotId = import.meta.env.VITE_CHATBOT_ID;
+    
+    // Check if configuration exists
+    if (!chatbotId || chatbotId === "your_chatbase_chatbot_id" || chatbotId === "") {
+      console.warn("⚠️ [Chatbase] VITE_CHATBOT_ID is not configured in your environment.");
+      return;
+    }
+
+    // Initialize window.chatbase if not already present
+    if (!window.chatbase) {
+      const cb: ChatbaseFunction = function (...args: any[]) {
+        cb.q = cb.q || [];
+        cb.q.push(args);
+      };
+      window.chatbase = cb;
+    }
+
+    // Configure window.chatbaseConfig before the library loads
+    window.chatbaseConfig = {
+      chatbotId: chatbotId
+    };
+
+    // Dynamically append the embed script if not already present
+    let script = document.getElementById(chatbotId) as HTMLScriptElement;
+    if (!script) {
+      script = document.createElement("script");
+      script.src = "https://www.chatbase.co/embed.min.js";
+      script.id = chatbotId;
+      script.defer = true;
+      document.body.appendChild(script);
+      console.log("✨ [Chatbase] Embed script injected dynamically with ID:", chatbotId);
+    }
+
     async function getUserTokenAndIdentify() {
       if (!profile || !profile.uid) {
         return;
@@ -34,7 +68,7 @@ export function ChatbaseIntegrator() {
           body: JSON.stringify({
             userId: profile.uid,
             email: profile.email,
-            stripe_accounts: [], // Add custom variables or stripe integration keys if any
+            stripe_accounts: [],
           }),
         });
 
@@ -47,17 +81,6 @@ export function ChatbaseIntegrator() {
           if (typeof window.chatbase === 'function') {
             window.chatbase('identify', { token: data.token });
             console.log('✨ [Chatbase] User identified securely with verified token.');
-          } else {
-            // Chatbase script is loaded asynchronously, so queue it or wait
-            if (!window.chatbase) {
-              const cb: ChatbaseFunction = function () {
-                cb.q = cb.q || [];
-                cb.q.push(arguments);
-              };
-              window.chatbase = cb;
-            }
-            window.chatbase('identify', { token: data.token });
-            console.log('✨ [Chatbase] Queued secure user identification payload.');
           }
         }
       } catch (error) {
